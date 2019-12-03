@@ -1,9 +1,9 @@
 {smcl}
-{* *! version 0.1.0  27mar2019}{...}
+{* *! version 0.1.0  11apr2019}{...}
 {viewerjumpto "Syntax" "getcensus##syntax"}{...}
-{viewerjumpto "Menu" "getcensus##menu"}{...}
 {viewerjumpto "Description" "getcensus##description"}{...}
-{viewerjumpto "Options" "getcensus##options"}{...}
+{viewerjumpto "Options for getcensus" "getcensus##options"}{...}
+{viewerjumpto "Options for getcensus catalog" "getcensus##catalog_options"}{...}
 {viewerjumpto "Examples" "getcensus##examples"}{...}
 {title:Title}
 
@@ -15,50 +15,86 @@
 {marker syntax}{...}
 {title:Syntax}
 
+{phang}
+Main program. Retrieves estimates from the American Community Survey.
+
 {p 8 16 2}
 {cmd:getcensus}
-{varlist}
+{estimate IDs, table ID, or keyword}
 [, {it:{help getcensus##options:options}}]
 
+{phang}
+Utility program. Searches estimate labels in API's dictionary to identify relevant estimate IDs.
+
+{p 8 16 2}
+{cmd:getcensus catalog}
+[, {it:{help getcensus##catalog_options:catalog_options}}]
 
 {synoptset 27 tabbed}{...}
 {synopthdr}
 {synoptline}
 {syntab:Main}
-    {synopt:{opth key(string)}}Census key to access API.{p_end}
-    {synopt:{opth years(numlist)}}Years to retrieve. Default is most recent year. {p_end}
-    {synopt:{opth data:set(#)}}ACS 1, 3, or 5-year estimates. Default is "1".{p_end}
-    {synopt:{opth geo:graphy(string)}}Geography to download. Default is "state".{p_end}
-    {synopt:{opth geoids(varlist)}}GEOIDs of geography to download. Default is usually all.{p_end}
-    {synopt:{opth st:atefips(varlist)}}States for which to download data. Default is usually all states.{p_end}
-    {synopt:{opth pr:oduct(string)}}Type of table. E.g., detailed tables, subject tables.{p_end}
-    {synopt:{opth path(string)}}Path where to store Census API dictionary. {p_end}
+    {synopt:{opth years(numlist)}}Years to retrieve. Default is most recent available year.{p_end}
+    {synopt:{opt data:set(#)}}ACS 1, 3, or 5-year estimates. Default is "1".{p_end}
+    {synopt:{opt pr:oduct(string)}}Product type of table (e.g., detailed table, subject table). Default is "DT".{p_end}
+    {synopt:{opt geo:graphy(string)}}Geography to download. Default is "state."{p_end}
+    {synopt:{opt br:owse}}Open data browser after execution of command.{p_end}
+    {synopt:{opt clear}}If there is data in memory, replace them with retrieved results.{p_end}
+    {synopt:{opth geoids(numlist)}}GEOIDs of geography to download. Default is usually all.{p_end}
+    {synopt:{opt key(string)}}Census key to access API.{p_end}
 
 {syntab:Options}
-    {synopt:{opt save:as(filename)}}Filename to save downloaded data.{p_end}
+    {synopt:{opth st:atefips(numlist)}}Two-digit state FIPS code of state(s) for which to download data. Default is usually all.{p_end}
+    {synopt:{opt co:untyfips(#)}}Three-digit county FIPS code of county for which to download data.{p_end}
+    {synopt:{opth save:as(filename)}}File name to save downloaded data (in .dta format).{p_end}
+    {synopt:{opt path(string)}}Path where to store downloaded information.{p_end}
+    {synopt:{opt ex:portexcel}}Export data in .xlsx format.{p_end}
     {synopt:{opt nol:abel}}Do not retrieve labels associated with estimate IDs.{p_end}
+    {synopt:{opt noerr:or}}Do not retrieve margins of errors associated with estimates.{p_end}
+    
+{syntab: Catalog options}
+    {synopt:{opth t:able(string)}}Search for all estimate IDs within a specific Census table.{p_end}
+    {synopt:{opth search(string)}}Search for estimate IDs whose labels contain search term.{p_end}
 
 
 {marker description}{...}
 {title:Description}
 
+{dlgtab:Overview}
 {pstd}
-{cmd:getcensus} passes a list of arguments to the Census' Application Programming
-    Interface (API), which loads data from American Community Survey (ACS)
-    into memory.
+{cmd:getcensus} imports data from the American Community Survey (ACS) into 
+memory. It accomplishes this by taking user-generated arguments to make a request
+to Census' Application Programming Interface (API), which returns the data
+in a structured format. {cmd:getcensus} parses the data and loads it into memory.
 
 {pstd}
-By default, {cmd:getcensus} retrieves a 1-year estimate for the U.S. of 
-B01001_001E and B01001_001M, the estimates and margin of error for population.
+A link to the Technical Documentation for the American Community Survey can be 
+found {browse "https://www.census.gov/programs-surveys/acs/technical-documentation.html":here}.
 
 {pstd}
-Be advised, {cmd:getcensus} retrieves both the estimate and margin of error 
-associated with a statistic. Estimates have the suffix "E", while margins of 
-errors have the suffix "M".
+To retrieve estimates, users can either pass specific estimate IDs, an entire
+table ID, or certain keywords to {cmd:getcensus}. By default, the program will
+retrieve the desired estimates using the most recent single year of data 
+available from the ACS by state.
+
+{pstd}
+Note that {cmd:getcensus} retrieves both the estimate and margin of error 
+associated with a statistic, unless you pass the "noerror" option. Estimates 
+have the suffix "E", while margins of errors have the suffix "M".
+
+{pstd}
+A note on vocabulary: When this documentation talks about a Census "table", 
+it refers to Census tables (sometimes referred to as groups) (e.g., S1701, B19013)
+that contain many estimates, all of which pertain to a shared concept (such as
+number in poverty).
+
+{pstd}
+"Estimates" refer to the individual data points within a table. For instance, 
+the total number of poor would be a single single estimate in table S1701. The
+estimate ID related to this concept is S1701_C02_001E.
 
 {pstd}
 Below are some commonly used estimates.
-Full list {browse "https://api.census.gov/data/2017/acs/acs1/variables.html":here}
 
 {marker estimates}{...}
 {synoptset 30}{...}
@@ -69,7 +105,8 @@ Full list {browse "https://api.census.gov/data/2017/acs/acs1/variables.html":her
 {synopt:{space 4}{opt B19013_001}} Median household income {p_end}
 
 {pstd}
-You can add a letter to the end of some "B" or "C" tables to get estimates by race. E.g.,
+You can add a letter to the end of some detailed tables (those that end in "B" or
+"C") to get estimates by race. E.g.,
 
 {marker estimatesbyrace}{...}
 {synoptset 30}{...}
@@ -85,6 +122,54 @@ You can add a letter to the end of some "B" or "C" tables to get estimates by ra
 {synopt:{space 4}{opt B17001H_001}} Total in poverty universe, non-Hispanic White {p_end}
 {synopt:{space 4}{opt B17001I_001}} Total in poverty universe, Hispanic {p_end}
 
+{dlgtab:Help: Program syntax}
+{pstd}
+If users need assistance using the program, they can simply type {cmd: getcensus}
+into the Command window without additional arguments. This will print tips on 
+getting started with the program.
+
+{dlgtab:Help: Retrieving estimates}
+
+{pstd}
+Often, users will not know the estimate or table IDs associated with the 
+estimates they are interested in obtaining. This program assists users in 
+retrieving relevants estimates in two ways.
+
+{pstd}
+First, {cmd:getcensus catalog} is a utility program that will help users search
+the API's dictionary to identify the table or estimate IDs they need to pass to
+the main program to get desired results. For example 
+{cmd: getcensus catalog, product(ST) table(S1701)} will return all estimate IDs
+that come from Census table S1701. Users can then view the data in browser to 
+identify the specific estimate IDs they want, which they can then pass to the 
+main program. E.g., {cmd: getcensus S1701_C02_001, pr(ST)}.
+
+{pstd}
+Second, the program allows you to pass a keyword to the program to retrieve
+relevant estimates {it: without} having to identify a specific estimate ID.
+
+{pstd}
+Note that you can pass multiple keywords or a mix of estimate IDs and keywords
+to {cmd: getcensus} (as long as the total number of underlying estimates 
+does not exceed 50 -- including margins of error -- which is the most 
+Census' API can handle).
+
+{pstd}
+Below is a full list of the keywords this program accepts (Clicking on
+'run' will retrieve the relevant estimates by state using the most recent
+1-year estimates.)
+
+{marker keywords}{...}
+{synoptset 30}{...}
+{synopt:{space 4}{it:Keyword}}Explanation{p_end}
+{space 4}{synoptline}
+{synopt:{space 4}{opt pop}}Population, overall and by sex, age, and race ({stata getcensus pop, clear:click to run}){p_end}
+{synopt:{space 4}{opt pov}}Poverty, overall and by sex, age, and race ({stata getcensus pov, clear:click to run}){p_end}
+{synopt:{space 4}{opt povrate}}Poverty rate, overall and by sex, age, and race ({stata getcensus povrate, clear:click to run}){p_end}
+{synopt:{space 4}{opt medinc}}Median household income, overall and by race of householder ({stata getcensus medinc, clear:click to run}){p_end}
+{synopt:{space 4}{opt snap}}SNAP participation overall and by poverty status, income, disability status, family composition, and family work effort ({stata getcensus snap, clear:click to run}){p_end}
+{synopt:{space 4}{opt medicaid}}Medicaid participants, by age ({stata getcensus medicaid, clear:click to run}){p_end}
+
 
 {marker options}{...}
 {title:Options}
@@ -92,111 +177,211 @@ You can add a letter to the end of some "B" or "C" tables to get estimates by ra
 {dlgtab:Main}
 
 {phang}
-{opth key(string)}          To access the API, you must acquire a key from Census: 
+{opth years(numlist)}       Year or list of years to return. Default is most current
+                            year. Range of years may be separated with "-" or "/". 
+                            API cannot access years before and including 2009 (except
+                            5-year data are available for 2009). Data
+                            for preceding calendar year are available starting
+                            mid-September (e.g., data for 2016 are available
+                            starting mid-September 2017).
+
+{phang}
+{opt data:set(#)}           Required option that specifies whether to return
+                            1-, 3-, or 5-year ACS estimates. Default is {bf:1}.
+                            
+{phang}
+{opt path(string)}          File path where to save results or, if running
+                            {cmd:getcensus catalog}, the API's dictionary. The 
+                            default path will be in your home directory. To avoid
+                            passing your desired path each time, add 
+                            {bf:global getcensuspath "YOUR_PATH"} to your
+                            profile.do.
+
+{phang}
+{opt pr:oduct(string)}      Two-letter acronym representing product type of table.
+                            For example, Table B19013 is a detailed table. This 
+                            program will figure out the relevant product type
+                            for the table or estimate ID you pass. It is only
+                            necessary to pass a product when you pass a search
+                            term to {cmd:getcensus catalog} so that the program
+                            searches the correct dictionary (each product type 
+                            has its own dictionary).
+
+{marker product}{...}
+{synoptset 30}{...}
+{synopt:{space 4}{it:product}}Definition{p_end}
+{space 4}{synoptline}
+{synopt:{space 4}{opt DT}} Detailed table ({browse "https://api.census.gov/data/2017/acs/acs1/variables.html":dictionary}){p_end}
+{synopt:{space 4}{opt ST}} Subject table ({browse "https://api.census.gov/data/2017/acs/acs1/subject/variables.html":dictionary}){p_end}
+{synopt:{space 4}{opt DP}} Data profile ({browse "https://api.census.gov/data/2017/acs/acs1/profile/variables.html":dictionary}){p_end}
+{synopt:{space 4}{opt CP}} Comparison profile ({browse "https://api.census.gov/data/2017/acs/acs1/cprofile/variables.html":dictionary}){p_end}
+
+{space 4}{synoptline}
+{p2colreset}{...}
+
+{phang}
+{opt br:owse}               Open data browser after execution of command.
+
+{phang}
+{opt clear}                 If there are existing data in memory, replace them with
+                            retrieved data.
+
+
+{dlgtab:Options}
+
+{phang}
+{opt key(string)}           To access the API, you must acquire a key from Census: 
                             To acquire, register
                             {browse "https://api.census.gov/data/key_signup.html":here}. 
                             To avoid passing the key each time, add 
                             {bf:global censuskey "YOUR_KEY"} to your profile.do.
 
 {phang}
-{opth years(numlist)}       Year or list of years to return. Default is most current
-                            year. Range of years may be separated with "-" or "/". 
-                            API cannot access years before and including 2009 (except
-                            5-year data are available for 2009). Data
-                            for preceding calendar year are available starting after
-                            the second Thursday of every September (e.g., data for
-                            2016 are available starting mid-September 2017).
-
-{phang}
-{opth data:set(#)}          Required option that specifies whether to return
-                            1-, 3-, or 5-year ACS estimates. Default is {bf:1}.
-
-{phang}
-{opth geo:graphy(string)}   Level of geography to return. Default is "state". Partial list  below.
+{opt geo:graphy(string)}    Level of geography to return. Default is "state". Partial list  below.
                             For more details, see 
                             {browse "https://api.census.gov/data/2016/acs/acs1/geography.html":here}.
 
 {marker geography}{...}
 {synoptset 30}{...}
-{synopt:{space 4}{it:geo}}Definition{p_end}
+{synopt:{space 4}{it:geography}}Definition{p_end}
 {space 4}{synoptline}
 {synopt:{space 4}{opt us}} United States {p_end}
-{synopt:{space 4}{opt states}} State {p_end}
+{synopt:{space 4}{opt state}} State {p_end}
 {synopt:{space 4}{opt region}} Census Region {p_end}
 {synopt:{space 4}{opt division}} Division {p_end}
 {synopt:{space 4}{opt county}} County {p_end}
-{synopt:{space 4}{opt county subdivision}} County Subdivision. Only available for 5-year data. Must pass single statefips. {p_end}
+{synopt:{space 4}{opt county subdivision}} County Subdivision. Only available for 5-year data. Must pass single state FIPS.{p_end}
 {synopt:{space 4}{opt cd}} Congressional District {p_end}
-{synopt:{space 4}{opt metro}} All metropolitan and micropolitan areas. Cannot pass statefips {p_end}
-{synopt:{space 4}{opt tract}} Census tracts. Only available for 5-year data. Must pass single statefips.{p_end}
-{synopt:{space 4}{opt block}} Census block groups. Only available for 5-year data. Must pass single statefips and countyfips{p_end}
-{synopt:{space 4}{opt sd}} Unified school districts. Must pass single statefips. {p_end}
+{synopt:{space 4}{opt metro}} All metropolitan and micropolitan areas. Can optionally pass state FIPS.{p_end}
+{synopt:{space 4}{opt tract}} Census tracts. Only available for 5-year data. Must pass single state FIPS.{p_end}
+{synopt:{space 4}{opt block}} Census block groups. Only available for 5-year data. Must pass single state FIPS and single county FIPS.{p_end}
+{synopt:{space 4}{opt sch}} Unified school districts. Must pass single state FIPS. {p_end}
+{synopt:{space 4}{opt place}} Legal or statistical entities. Includes cities, boroughs, towns, villages, or some other concentration of population, housing, or commercial structures identifiable by name.{p_end}
 
 {space 4}{synoptline}
 {p2colreset}{...}
 
 {phang}
-{opth geoids(varlist)}      Abbreviated GEOIDs for desired geographies. Most
+{opth geoids(numlist)}      Abbreviated GEOIDs for desired geographies. Most
                             commonly, you would pass a two digit FIPS code for a
                             specific state if your geo was "state" (e.g., 01 for
                             Alabama). Default is all. Can explicitly select all
                             with "*".
 
 {phang}
-{opth st:atefips(varlist)}  Two digit FIPS code(s) of state(s) for which to
+{opth st:atefips(numlist)}  Two digit FIPS code(s) of state(s) for which to
                             return data. Do not pass if geo is "us", "state",
                             "region", or "division". Default is all. Can
                             explicitly select all with "*".
-
-{phang}
-{opth pr:oduct(string)}     Type of table. Default is "detailed". Only pass one.
-                            See full list 
-                            {browse "https://api.census.gov/data/2016/acs/acs1.html":here}.
                             
-
-{marker geo}{...}
-{synoptset 17}{...}
-{synopt:{space 4}{it:geo}}Definition{p_end}
-{space 4}{synoptline}
-{synopt:{space 4}{opt dt}} Detailed Table {p_end}
-{synopt:{space 4}{opt st}} Subject Table {p_end}
-{synopt:{space 4}{opt cp}} Comparison Profile {p_end}
-{synopt:{space 4}{opt dp}} Data Profile {p_end}
-{space 4}{synoptline}
-{p2colreset}{...}                          
-                          
 {phang}
-{opth path(string)}         This program downloads the Census API dictionary in 
-                            order to label variables and to help search the codebook.
-                            {browse "https://api.census.gov/data/key_signup.html":here}.
-                            You can pass a path where you would like this to be
-                            downloaded; otherwise, the default path will be in your
-                            home directory. To avoid passing your desired path each
-                            time, add {bf:global getcensuspath "YOUR_PATH"} to your
-                            profile.do.
-
-{dlgtab:Options}
+{opt co:untyfips(#)}        Three digit FIPS code(s) of single county) for 
+                            which to return data. Only passed if geography is 
+                            "block".
 
 {phang}
-{opt save:as(filename)}     Will save in Stata's native format ({bf:.dta}).
+{opth save:as(filename)}     Will save in Stata's native format ({bf:.dta}).
+
+{phang}
+{opt ex:portexcel}          Will export table in .xlsx format based on name passed
+                            in {bf:saveas}.
 
 {phang}
 {opt nol:abel}              Will not retrieve labels associated with estimate IDs.
                             If you do not specify this option, program will either 
                             label variable or save label as note.
+                            
+{phang}
+{opt noerr:or}              Will not retrieve margins of error (MOEs) associated
+                            with estimates. If you do not specify, program will
+                            automatically retrieve associated MOEs.
 
+{marker catalog_options}{...}
+{dlgtab:Catalog options}
+
+{phang}
+{opt search(string)}        Searches the estimate labels using the API's dictionary.
+                            Returns a variable "searchmatch" that is equal to "1"
+                            if an estimate label contains the search term.
+
+{phang}
+{opt t:able(string)}        Returns all estimate IDs and labels associated with
+                            a single table (e.g., B19013). If table is not a
+                            detailed table, pass the relevant product type
+                            (see "product" above).
 
 {marker examples}{...}
 {title:Examples}
-
-    {pmore}. {bf:getcensus} B17001_001, clear{p_end}
-    {pmore}. {bf:getcensus} B17001_001, years(2014 - 2016) clear{p_end}
-    {pmore}. {bf:getcensus} B17001, years(2014 - 2016) clear{p_end}
-    {pmore}. {bf:getcensus} B17001_001 B19013_001, geo(county){p_end}
-    {pmore}. {bf:getcensus} B17001_001 B19013_001, geo(state) geoids(01 02) years(2014/2016){p_end}
-    {pmore}. {bf:getcensus} B17001_001 B19013_001, dataset(5) geo(tract) states(01) clear {p_end}
-    {pmore}. {bf:getcensus} B17001_001 B19013_001, geo(metro) clear {p_end}
-    {pmore}. {bf:getcensus} B19013, data(5) geo(metro) geoids(12260) st(13) clear {p_end}
+{dlgtab:Main program}
+    {pmore}. {bf:getcensus} B17001_001, clear
+        // single estimate (most recent 1-year data available)
+        ({stata getcensus B17001_001, clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus} B17001, clear
+        // all estimates from table B17001
+        ({stata getcensus B17001, clear:click to run}){p_end}
+    
+    {pmore}. {bf:getcensus} medinc, years(2014 - 2016) clear
+        // various estimates related to median household income, 2014-2016
+        ({stata getcensus medinc, years(2014 - 2016) clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus} B17001_001 B19013_001, geo(county) clear
+        // multiple estimates at county level
+        ({stata getcensus B17001_001 B19013_001, geo(county) clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus} B17001_001 B19013_001, geo(state) geoids(01 02)years(2014/2016) clear
+        // restricted to two states; alternative way of specifying years
+        ({stata getcensus B17001_001 B19013_001, geo(state) geoids(01 02) years(2014/2016) clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus} B17001_001 B19013_001, dataset(5) geo(tract) states(01) clear
+        // five-year estimates at the tract-level in a single state
+        ({stata getcensus B17001_001 B19013_001, dataset(5) geo(tract) states(01) clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus} B19013_001, geo(metro) clear
+        // estimates by metro/micro areas
+        ({stata getcensus B19013_001, geo(metro) clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus} B19013, data(5) geo(metro) geoids(12260) st(13) clear
+        // all estimates from a single table, choose portion of metro area that falls within a single state
+        ({stata getcensus B19013, data(5) geo(metro) geoids(12260) st(13) clear:click to run})
+    {p_end}
+    
+{dlgtab:Catalog }
+    {pmore}. {bf:getcensus catalog}, clear
+        // loads full dictionary for detailed tables
+        ({stata getcensus catalog, clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus catalog}, product(ST) clear
+        // loads full dictionary for subject tables
+        ({stata getcensus catalog, product(ST) clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus catalog}, table(S1701) clear
+        // loads only portion of dictionary corresponding to specified table
+        ({stata getcensus catalog, table(S1701) clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus catalog}, search(median income) clear
+        // searches detailed tables dictionary for labels that include words from search
+        ({stata getcensus catalog, search(median income) clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus catalog}, search(median income) browse clear
+        // opens browser at end of search
+        ({stata getcensus catalog, search(median income) browse clear:click to run})
+    {p_end}
+    
+    {pmore}. {bf:getcensus catalog}, search(median income) product(ST) clear
+        // searches subject tables instead of detailed tables
+        ({stata getcensus catalog, search(median income) product(ST) clear:click to run})
+    {p_end}
 
 {marker authors}{...}
 {title:Authors}

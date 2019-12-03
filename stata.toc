@@ -1,0 +1,1 @@
+p getcensus Loads data from the American Community Survey into memory.
