@@ -1,7 +1,10 @@
-*! version 0.1.0 (beta) 1jul2019   Raheem Chaudhry, Vincent Palacios
+*! version 0.1.1 (beta) 2019-12-02   
+*! Creators and authors: Raheem Chaudhry, Vincent Palacios
+*! Maintainers: Claire Zippel, Matt Saenz
 *! Description: Import American Community Survey estimates by accessing Census API
 
-* v0.1.0    1jul2019   Built out script
+* v0.1.0    1jul2019   	Built out script
+* v0.1.1    2019-12-02  Add additional sets of pre-packaged estimates; expand API error message
 
 /*******************************************************************************
 ** DESCRIPTION
@@ -436,9 +439,24 @@ local medicaid_total "S2704_C02_006"
 local medicaid_byage "S2704_C02_007 S2704_C02_008 S2704_C02_009"
 local medicaid "`medicaid_total' `medicaid_byage'"
 
+** Housing
+local costburden_renters "B25070"
+local costburden_owners "B25091"
+
+local ten "B25003_001 B25003_002 B25003_003"
+local ten_medinc "B25119_001 B25119_002 B25119_003"
+local ten_pov "C17019_001 C17019_002 C17019_003 C17019_004 C17019_005 C17019_006 C17019_007"
+local tenure_inc "`ten' `ten_medinc' `ten_pov'"
+
+** Children and nativity
+local kids_nativity "B05009"
+local kids_pov_parents_nativity "B05010"
 
 ** Create "estimates" based on expanding local if not from table
 // this works because keywords are lower case and strpos is case sensitive
+
+* switch for if a pre-packaged requires relabeling later on
+local switch_relabel = regexm("`estimates'", "tenure_inc|nativity")
 
 local prepackaged ""
 foreach estimate in `estimates' {
@@ -731,7 +749,7 @@ foreach year in `years' {
     
     qui des
     if r(N) == 0 {
-        dis as err "Website did not return data. Most likely one of following: 1) One of Table IDs were wrong, or 2) the Table ID does not belong to the product type you passed."
+        dis as err "The Census API did not return data. Most likely one of following: 1) One of Table IDs were wrong, or 2) the Table ID does not belong to the product type you passed. This can also happen if your API key is invalid or the API server is down. Click 'Link to data' to view the specific error message sent by the Census API."
         exit
     }
 
@@ -780,6 +798,19 @@ if "`nolabel'" == "" {
             qui drop if inlist(key, "/variables/for/label", "/variables/in/label")
             qui replace key = subinstr(key, "/variables/", "", .)
             qui replace key = subinstr(key, "/label", "", .)
+			
+			/* The new shortcuts combine estimates from several tables that have
+			the same estimate labels but different universes, and/or have unclear 
+			universes. The unwieldy patch below concatenates a short verion of 
+			the table name or universe to the estimate labels for clarity.*/
+			if `switch_relabel' == 1 {
+				replace value = "Families!!" + value ///
+					if regexm(key, "C17019")
+				replace value = "Own children in families and subfamilies" + value ///
+					if regexm(key, "B05009")
+				replace value = "Own children in families and subfamilies in poverty universe" + value ///
+					if regexm(key, "B05010")
+			}
             qui rename key estimateID
             qui rename value estimateLabel
             qui compress

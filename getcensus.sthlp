@@ -169,7 +169,13 @@ Below is a full list of the keywords this program accepts (Clicking on
 {synopt:{space 4}{opt medinc}}Median household income, overall and by race of householder ({stata getcensus medinc, clear:click to run}){p_end}
 {synopt:{space 4}{opt snap}}SNAP participation overall and by poverty status, income, disability status, family composition, and family work effort ({stata getcensus snap, clear:click to run}){p_end}
 {synopt:{space 4}{opt medicaid}}Medicaid participants, by age ({stata getcensus medicaid, clear:click to run}){p_end}
-
+{synopt:{space 4}{opt housing_overview}}Various housing estimates including occupancy, costs, and cost burden DP04 ({stata getcensus housing_overview, clear:click to run}){p_end}
+{synopt:{space 4}{opt costburden_renters}}Renter housing cost burden B25070 ({stata getcensus costburden_renters clear:click to run}){p_end}
+{synopt:{space 4}{opt costburden_owners}}Homeowner housing cost burden B25091 ({stata getcensus costburden_owners, clear:click to run}){p_end}
+{synopt:{space 4}{opt tenure_inc}}Median household income and poverty status of families, by housing tenure ({stata getcensus tenure_inc, clear:click to run}){p_end}
+{synopt:{space 4}{opt tenure_race}}Housing tenure, by race of householder ({stata getcensus tenure_race, clear:click to run}){p_end}
+{synopt:{space 4}{opt kids_nativity}}Nativity of children, by age and parent's natvity B05009 ({stata getcensus kids_nativity, clear:click to run}){p_end}
+{synopt:{space 4}{opt kids_pov_parents_nativity}}Children by poverty status and parent's nativity B05010 ({stata getcensus kids_pov_parents_nativity, clear:click to run}){p_end}
 
 {marker options}{...}
 {title:Options}
