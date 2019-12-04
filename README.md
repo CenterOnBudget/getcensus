@@ -29,7 +29,7 @@ The program works in two ways:
 To install this program, type the following command into the Command window:
 
 ```
-net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/build/))
+net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/build/)
 ```
 
 # Features
