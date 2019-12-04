@@ -239,6 +239,12 @@ program define getcensus_help
     dis "{stata global tablelist ""medinc"":Median household income, overall and by race of householder [medinc]}"
     dis "{stata global tablelist ""snap"":SNAP participation by poverty status, income, disability, family composition, and family work experience [snap]}"
     dis "{stata global tablelist ""medicaid"":Medicaid participants, by age [medicaid]}"
+	dis "{stata global tablelist ""housing_overview"":Various housing-related estimates including occupancy, tenure, costs, and cost burden [housing_overview]}"
+	dis "{stata global tablelist ""costburden_renters"":Detailed renter housing cost burden [costburden_renters]}"
+		dis "{stata global tablelist ""costburden_owners"":Detailed homeowner housing cost burden [costburden_owners]}"
+    dis "{stata global tablelist ""tenure_inc"":Median household income and poverty status of families, by housing tenure [tenure_inc]}"
+    dis "{stata global tablelist ""kids_nativity"":Nativity of children, by age and parent's natvity  [kids_nativity]}"
+	dis "{stata global tablelist ""kids_pov_parents_nativity"":Children by poverty status and parent's nativity[kids_pov_parents_nativity]}"
     
     dis as text ""
     dis as text "Are you looking for single-year data or 5-year averages?"
@@ -440,6 +446,7 @@ local medicaid_byage "S2704_C02_007 S2704_C02_008 S2704_C02_009"
 local medicaid "`medicaid_total' `medicaid_byage'"
 
 ** Housing
+local housing_overview "DP04"
 local costburden_renters "B25070"
 local costburden_owners "B25091"
 
@@ -454,9 +461,6 @@ local kids_pov_parents_nativity "B05010"
 
 ** Create "estimates" based on expanding local if not from table
 // this works because keywords are lower case and strpos is case sensitive
-
-* switch for if a pre-packaged requires relabeling later on
-local switch_relabel = regexm("`estimates'", "tenure_inc|nativity")
 
 local prepackaged ""
 foreach estimate in `estimates' {
@@ -798,19 +802,6 @@ if "`nolabel'" == "" {
             qui drop if inlist(key, "/variables/for/label", "/variables/in/label")
             qui replace key = subinstr(key, "/variables/", "", .)
             qui replace key = subinstr(key, "/label", "", .)
-			
-			/* The new shortcuts combine estimates from several tables that have
-			the same estimate labels but different universes, and/or have unclear 
-			universes. The unwieldy patch below concatenates a short verion of 
-			the table name or universe to the estimate labels for clarity.*/
-			if `switch_relabel' == 1 {
-				replace value = "Families!!" + value ///
-					if regexm(key, "C17019")
-				replace value = "Own children in families and subfamilies" + value ///
-					if regexm(key, "B05009")
-				replace value = "Own children in families and subfamilies in poverty universe" + value ///
-					if regexm(key, "B05010")
-			}
             qui rename key estimateID
             qui rename value estimateLabel
             qui compress
