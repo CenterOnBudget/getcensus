@@ -5,16 +5,16 @@
 *! changelog http://www.github.com/CenterOnBuget/getcensus/blob/master/NEWS.md
 
 
-This is a program that retrieves data from Census' API and imports it into 
-Stata. It has a number of utilities to make it easier to use Census' API.
+* DESCRIPTION -------------------------------------------------------------
 
-/*This program retrieves American Community Survey data from the Census Bureau API 
+/*
+This program retrieves American Community Survey data from the Census Bureau API 
 and imports it into Stata.
-This program has three subroutines:
+It has three subroutines:
 - The main command-driven program
-- A "catalog" that helps users search the data dictionaries for the API
-- And a "point-and-click" system to help users who are new to Stata and may
-need some help writing Stata commands.
+- A "catalog" that helps users search the data dictionaries
+- A "point-and-click" system to help users who are new to Stata and may
+need some help writing Stata commands
 */
 
 
