@@ -8,7 +8,7 @@
 {title:Title}
 
 {p2colset 5 20 22 2}{...}
-{p2col:{cmd: getcensus} {hline 2}}Import estimates from the American Community Survey{p_end}
+{p2col:{cmd: getcensus} {hline 2}}Load published estimates from the American Community Survey into memory.{p_end}
 {p2colreset}{...}
 
 
