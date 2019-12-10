@@ -105,6 +105,10 @@ There are primarily two ways to use this tool:
 
 By default, the program searches in the detailed tables. If you want to search other tables, make sure to add the `product` option. E.g., `getcensus catalog, search(poverty) product(ST)`
 
+# Bug Reports
+
+If you've thoroughly read the help file and are still having trouble, you may have found a bug. Check the [Issues](https://github.com/CenterOnBudget/getcensus/issues) to see if it's already been reported. If not, you can let us know by submiting a new issue (requires a free GitHub account). State Priorities Partnership members may contact the CBPP Data Team on the Loop.
+
 
 # License
 
