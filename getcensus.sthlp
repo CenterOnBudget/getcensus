@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0  11apr2019}{...}
+{* *! version 0.1.1  2019-12-XX}{...}
 {viewerjumpto "Syntax" "getcensus##syntax"}{...}
 {viewerjumpto "Description" "getcensus##description"}{...}
 {viewerjumpto "Options for getcensus" "getcensus##options"}{...}
@@ -8,7 +8,7 @@
 {title:Title}
 
 {p2colset 5 20 22 2}{...}
-{p2col:{cmd: getcensus} {hline 2}}Import estimates from the American Community Survey{p_end}
+{p2col:{cmd: getcensus} {hline 2}}Load published estimates from the American Community Survey into memory.{p_end}
 {p2colreset}{...}
 
 
@@ -16,7 +16,7 @@
 {title:Syntax}
 
 {phang}
-Main program. Retrieves estimates from the American Community Survey.
+Main program. Retrieves estimates from the American Community Survey via the Census Bureau API.
 
 {p 8 16 2}
 {cmd:getcensus}
@@ -65,11 +65,13 @@ Utility program. Searches estimate labels in API's dictionary to identify releva
 {cmd:getcensus} imports data from the American Community Survey (ACS) into 
 memory. It accomplishes this by taking user-generated arguments to make a request
 to Census' Application Programming Interface (API), which returns the data
-in a structured format. {cmd:getcensus} parses the data and loads it into memory.
+in a structured format. {cmd:getcensus} then parses the data and loads it into memory. 
+{cmd:getcensus} uses the Census Bureau Data API but is not endorsed or certified 
+by the Census Bureau.
 
 {pstd}
 A link to the Technical Documentation for the American Community Survey can be 
-found {browse "https://www.census.gov/programs-surveys/acs/technical-documentation.html":here}.
+found {browse "https://www.census.gov/programs-surveys/acs/technical-documentation.html":here}. 
 
 {pstd}
 To retrieve estimates, users can either pass specific estimate IDs, an entire
@@ -123,6 +125,7 @@ You can add a letter to the end of some detailed tables (those that end in "B" o
 {synopt:{space 4}{opt B17001I_001}} Total in poverty universe, Hispanic {p_end}
 
 {dlgtab:Help: Program syntax}
+
 {pstd}
 If users need assistance using the program, they can simply type {cmd: getcensus}
 into the Command window without additional arguments. This will print tips on 
@@ -169,6 +172,16 @@ Below is a full list of the keywords this program accepts (Clicking on
 {synopt:{space 4}{opt medinc}}Median household income, overall and by race of householder ({stata getcensus medinc, clear:click to run}){p_end}
 {synopt:{space 4}{opt snap}}SNAP participation overall and by poverty status, income, disability status, family composition, and family work effort ({stata getcensus snap, clear:click to run}){p_end}
 {synopt:{space 4}{opt medicaid}}Medicaid participants, by age ({stata getcensus medicaid, clear:click to run}){p_end}
+{synopt:{space 4}{opt housing_overview}}Various housing-related estimates including occupancy, tenure, costs, and cost burden({stata getcensus housing_overview, clear:click to run}){p_end}
+{synopt:{space 4}{opt costburden_renters}}Detailed renter housing cost burden({stata getcensus costburden_renters clear:click to run}){p_end}
+{synopt:{space 4}{opt costburden_owners}}Detailed homeowner housing cost burden ({stata getcensus costburden_owners, clear:click to run}){p_end}
+{synopt:{space 4}{opt tenure_inc}}Median household income and poverty status of families, by housing tenure ({stata getcensus tenure_inc, clear:click to run}){p_end}
+{synopt:{space 4}{opt kids_nativity}}Nativity of children, by age and parent's natvity ({stata getcensus kids_nativity, clear:click to run}){p_end}
+{synopt:{space 4}{opt kids_pov_parents_nativity}}Children by poverty status and parent's nativity ({stata getcensus kids_pov_parents_nativity, clear:click to run}){p_end}
+
+{pstd}
+{it}Note: When using the data returned by the keyword {bf}costburden_renters{it} to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the total number of renters (B25070_001). This step is not necessary when using the table returned by the keyword {bf}housing_overview{it}; the total in this table's section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed.{sf}
+
 
 
 {marker options}{...}
@@ -238,8 +251,9 @@ Below is a full list of the keywords this program accepts (Clicking on
 
 {phang}
 {opt geo:graphy(string)}    Level of geography to return. Default is "state". Partial list  below.
-                            For more details, see 
-                            {browse "https://api.census.gov/data/2016/acs/acs1/geography.html":here}.
+                            For more details, see {browse "https://api.census.gov/data/2017/acs/acs1/geography.html":here}.
+							To look up state FIPS codes and GEOIDs, see 
+							{browse "https://www.census.gov/geographies/reference-files/2017/demo/popest/2017-fips.html":here}.
 
 {marker geography}{...}
 {synoptset 30}{...}
@@ -386,5 +400,7 @@ Below is a full list of the keywords this program accepts (Clicking on
 {marker authors}{...}
 {title:Authors}
 
-{pstd} Vincent Palacios, {browse "mailto:palacios@cbpp.org":palacios@cbpp.org}; Raheem Chaudhry, {browse "mailto:rchaudhry@cbpp.org":rchaudhry@cbpp.org}{p_end}
+{pstd} Authors/creators: Raheem Chaudhry; Vincent Palacios. {p_end}
+{pstd} Maintainers: Claire Zippel, {browse "mailto:czippel@cbpp.org":czippel@cbpp.org}; 
+Matt Saenz, {browse "mailto:msaenz@cbpp.org":msaenz@cbpp.org}. {p_end}
 {pstd} Center on Budget and Policy Priorities {p_end}

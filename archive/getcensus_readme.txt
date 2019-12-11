@@ -176,5 +176,5 @@ comparison profiles don't work -- i think because no margins of error?
 /*******************************************************************************
 ** END OF FILE
 *******************************************************************************/
-https://api.census.gov/data/2017/acs/acs1/subject?get=S2704_C02_006E,S2704_C02_006M,S2704_C02_007E,S2704_C02_007M,S2704_C02_008E,S2704_C02_008M,S2704_C02_009E,S2704_C02_009M,NAME&for=state:*&key=daa1343c8d20e382aa287d308a80674f42fc1f92
+
 

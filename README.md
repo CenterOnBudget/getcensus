@@ -1,6 +1,6 @@
 # getcensus
 
-Loads published estimates from the American Community Survey into memory.
+Load published estimates from the American Community Survey into memory.
 
 
 # Introduction
@@ -110,9 +110,14 @@ By default, the program searches in the detailed tables. If you want to search o
 If you've thoroughly read the help file and are still having trouble, you may have found a bug. Check the [Issues](https://github.com/CenterOnBudget/getcensus/issues) to see if it's already been reported. If not, you can let us know by submiting a new issue (requires a free GitHub account). State Priorities Partnership members may contact the CBPP Data Team on the Loop.
 
 
-# License
+# About
 
-`getcensus` is made available by the Center on Budget and Policy Priorities under XXXXX license. (see file).
+## License
 
-# Authors
+`getcensus` is made available by the Center on Budget and Policy Priorities under the XXXX License.
 
+## Contributors
+
+`getcensus` is maintained by Claire Zippel and Matt Saenz.
+The program's creators and authors are [Raheem Chaudhry](https://github.com/raheem03) and Vincent Palacios.  
+ 

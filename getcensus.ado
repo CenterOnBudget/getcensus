@@ -1,26 +1,24 @@
-*! version 0.1.0 (beta) 1jul2019   Raheem Chaudhry, Vincent Palacios
-*! Description: Import American Community Survey estimates by accessing Census API
+*! v 0.1.1 2019-12-XX   
+*! authors Raheem Chaudhry, Vincent Palacios
+*! maintainers Claire Zippel, Matt Saenz
+*! description Load published estimates from the American Community Survey into memory.
+*! changelog http://www.github.com/CenterOnBuget/getcensus/blob/master/NEWS.md
 
-* v0.1.0    1jul2019   Built out script
 
-/*******************************************************************************
-** DESCRIPTION
-*******************************************************************************/
+* DESCRIPTION -------------------------------------------------------------
 
 /*
-This is a program that retrieves data from Census' API and imports it into 
-Stata. It has a number of utilities to make it easier to use Census' API.
-
-This program has three subroutines:
+This program retrieves American Community Survey data from the Census Bureau API 
+and imports it into Stata.
+It has three subroutines:
 - The main command-driven program
-- A "catalog" that helps users search the data dictionaries for the API
-- And a "point-and-click" system to help users who are new to Stata and may
-need some help writing Stata commands.
+- A "catalog" that helps users search the data dictionaries
+- A "point-and-click" system to help users who are new to Stata and may
+need some help writing Stata commands
 */
 
-/*******************************************************************************
-** DEFINE
-*******************************************************************************/
+
+* DEFINE ------------------------------------------------------------------
 
 cap program drop getcensus
 program define getcensus
@@ -31,9 +29,8 @@ global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string
 
 ${syntax}
 
-/*******************************************************************************
-** DEPENDENCIES
-*******************************************************************************/
+
+* DEPENDENCIES ------------------------------------------------------------
 
 // This program requires jsonio to run (just "catalog" portion)
 foreach program in jsonio {
@@ -49,9 +46,8 @@ foreach program in jsonio {
     }
 }
 
-/*******************************************************************************
-** DEFAULTS
-*******************************************************************************/
+
+* DEFAULTS ----------------------------------------------------------------
 
 ** Dataset (Default: 1-year data)
 if "`dataset'" == ""                            local dataset "1"
@@ -88,9 +84,8 @@ if "`path'" == "" {
     cap mkdir "`path'"
 }
 
-/*******************************************************************************
-** PARSE YEARS
-*******************************************************************************/
+
+* PARSE YEARS -------------------------------------------------------------
 
 local switch 0
 local allyears ""
@@ -130,9 +125,7 @@ foreach year in `years' {
     if `year' > `recentyear' local recentyear `year'
 }
 
-/*******************************************************************************
-** ERROR HANDLING
-*******************************************************************************/
+* ERROR HANDLING ----------------------------------------------------------
 
 if (`c(changed)' | `c(N)' | `c(k)') & "`clear'" == "" & "`estimates'" != ""{
     dis as err "no; data in memory would be lost"
@@ -173,9 +166,7 @@ if !inlist(`dataset', 1, 3, 5) {
     // exit
 }
 
-/*******************************************************************************
-** SWITCHES
-*******************************************************************************/
+* SWITCHES ----------------------------------------------------------------
 
 if "`estimates'" == "" {
     getcensus_help
@@ -204,9 +195,7 @@ else {
 macro drop syntax
 end
 
-/*******************************************************************************
-** HELP
-*******************************************************************************/
+* SUBROUTINE: HELP --------------------------------------------------------
 
 program define getcensus_help
     dis as text "You didn't pass any arguments. Here are some tips for getting started:"
@@ -236,6 +225,12 @@ program define getcensus_help
     dis "{stata global tablelist ""medinc"":Median household income, overall and by race of householder [medinc]}"
     dis "{stata global tablelist ""snap"":SNAP participation by poverty status, income, disability, family composition, and family work experience [snap]}"
     dis "{stata global tablelist ""medicaid"":Medicaid participants, by age [medicaid]}"
+	dis "{stata global tablelist ""housing_overview"":Various housing-related estimates including occupancy, tenure, costs, and cost burden [housing_overview]}"
+	dis "{stata global tablelist ""costburden_renters"":Detailed renter housing cost burden [costburden_renters]}"
+		dis "{stata global tablelist ""costburden_owners"":Detailed homeowner housing cost burden [costburden_owners]}"
+    dis "{stata global tablelist ""tenure_inc"":Median household income and poverty status of families, by housing tenure [tenure_inc]}"
+    dis "{stata global tablelist ""kids_nativity"":Nativity of children, by age and parent's natvity  [kids_nativity]}"
+	dis "{stata global tablelist ""kids_pov_parents_nativity"":Children by poverty status and parent's nativity[kids_pov_parents_nativity]}"
     
     dis as text ""
     dis as text "Are you looking for single-year data or 5-year averages?"
@@ -278,16 +273,13 @@ program define getcensus_help
     
 end
 
-/*******************************************************************************
-** CATALOG
-******************************\*************************************************/
+
+* SUBROUTINE: CATALOG -----------------------------------------------------
 
 program define getcensus_catalog
 ${syntax}
 
-/*******************************************************************************
-** ERROR HANDLING
-*******************************************************************************/
+* ERROR HANDLING ----------------------------------------------------------
 
 ** Product
 local table = upper("`table'")
@@ -324,9 +316,8 @@ if "`clear'" != "" {
     clear
 }
 
-/*******************************************************************************
-** GET CATALOG
-*******************************************************************************/
+
+* GET CATALOG -------------------------------------------------------------
 
 ** Download data dictionary if it doesn't exist
 qui cap confirm file "`path'/`productdir'variables_`dataset'yr_`years'.dta"
@@ -381,16 +372,13 @@ restore, not
     
 end
 
-/*******************************************************************************
-** MAIN
-*******************************************************************************/
+* SUBROUTINE: MAIN --------------------------------------------------------
 
 program define getcensus_main
 ${syntax}
 
-/*******************************************************************************
-** PRE-PACKAGED ESTIMATES
-*******************************************************************************/
+
+* PRE-PACKAGED ESTIMATES --------------------------------------------------
 
 /*
 For this program, we have a list of 'curated' tables. These are keywords that
@@ -436,6 +424,19 @@ local medicaid_total "S2704_C02_006"
 local medicaid_byage "S2704_C02_007 S2704_C02_008 S2704_C02_009"
 local medicaid "`medicaid_total' `medicaid_byage'"
 
+** Housing
+local housing_overview "DP04"
+local costburden_renters "B25070"
+local costburden_owners "B25091"
+
+local ten "B25003_001 B25003_002 B25003_003"
+local ten_medinc "B25119_001 B25119_002 B25119_003"
+local ten_pov "C17019_001 C17019_002 C17019_003 C17019_004 C17019_005 C17019_006 C17019_007"
+local tenure_inc "`ten' `ten_medinc' `ten_pov'"
+
+** Children and nativity
+local kids_nativity "B05009"
+local kids_pov_parents_nativity "B05010"
 
 ** Create "estimates" based on expanding local if not from table
 // this works because keywords are lower case and strpos is case sensitive
@@ -453,9 +454,8 @@ foreach estimate in `estimates' {
 
 local estimates = upper("`estimates'")
 
-/*******************************************************************************
-** ERROR HANDLING
-*******************************************************************************/
+
+* ERROR HANDLING ----------------------------------------------------------
 
 preserve
 if "`clear'" != "" {
@@ -594,7 +594,6 @@ else {
     local order "year `geovarname' name"
 }
 
-
 if strpos("`estimates'", "_") == 0 & strpos("`estimates'", " ")!= 0 {
     dis as err "Only pass one group at a time."
     exit
@@ -691,9 +690,8 @@ if "`key'" == "" {
     exit
 }
 
-/*******************************************************************************
-** API CALL
-*******************************************************************************/
+
+* API CALL ----------------------------------------------------------------
 
 ** Generate URL
 tempname temp
@@ -731,7 +729,7 @@ foreach year in `years' {
     
     qui des
     if r(N) == 0 {
-        dis as err "Website did not return data. Most likely one of following: 1) One of Table IDs were wrong, or 2) the Table ID does not belong to the product type you passed."
+        dis as err "The Census API did not return data. This can happen if 1) the Table IDs were wrong; 2) the Table ID does not belong to the product type you passed; 3) your API key is invalid; 4) you are not connected to the internet or the Census API server is down. Click 'Link to data' to view the specific error message sent by the Census API."
         exit
     }
 
@@ -847,6 +845,4 @@ dis "For a discussion of how to interpret negative margins of error, see {browse
 
 end
 
-/*******************************************************************************
-** END OF PROGRAM
-*******************************************************************************/
+* END ---------------------------------------------------------------------
