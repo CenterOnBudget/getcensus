@@ -288,7 +288,7 @@ if "`table'" != "" & "`product'" != "" {
     dis "Program will derive product from 'table' and ignore 'product'"
 }
 
-if strpos("`table'", "B") == 1 | strpos("`table'", "C") == 1 | "`product'" == "" | "`product'" == "DT" {
+if ustrregexm("`table'", "(^B)|(^C(?!P))") == 1 | "`product'" == "" | "`product'" == "DT" {
     local product "DT"
     local productdir ""
 }
@@ -467,7 +467,7 @@ if "`estimates'" != "" & "`product'" != "" {
     dis "Program will derive product from 'estimates' and ignore 'product'"
 }
 
-if strpos("`estimates'", "B") == 1 | strpos("`estimate'", "C") == 1     {
+if (ustrregexm("`estimates'", "(^B)|(^C(?!P))")) == 1     {
     local product "DT"
     local productdir ""
 }
@@ -508,7 +508,8 @@ local api_estimateslist ""
 
 foreach estimate in `estimates' {
     ** Estimates must all be of the same type
-    if ("`product'" != "DT" & strpos("`product'", substr("`estimate'", 1, 1)) != 1) | ("`product'" == "DT" & !(inlist(substr("`estimate'", 1, 1), "B", "C"))){
+    if ("`product'" != "DT" & strpos("`product'", substr("`estimate'", 1, 1)) != 1) | ///
+	("`product'" == "DT" & !(ustrregexm("`estimate'", "(^B)|(^C(?!P))"))) {
         dis as err "`estimate' is not from product `product'. All estimates must come from same product."
         exit
     }
