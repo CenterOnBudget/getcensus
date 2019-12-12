@@ -725,7 +725,7 @@ foreach year in `years' {
     else {
         dis "Link to data: `APIcall'"
     }
-    import delimited using "`APIcall'", varnames(1)
+    import delimited using "`APIcall'", varnames(1) stringcols(_all)
     
     qui des
     if r(N) == 0 {
@@ -800,6 +800,11 @@ if "`nolabel'" == "" {
         qui label var `estimate`j'' "`label`j''"
         qui notes `estimate`j'': `label`j''
     }
+}
+
+** Replace missing values with "."
+foreach var of varlist _all {
+	replace `var' = "." if inlist(`var', "null", "-222222222", "-666666666")
 }
 
 ** Destring, sort, order
