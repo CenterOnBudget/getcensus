@@ -1,123 +1,135 @@
+<img align="right" width="200" src="https://www.cbpp.org/sites/all/themes/custom/cbpp/logo.png">
+
 # getcensus
 
 Load published estimates from the American Community Survey into memory.
 
 
+# Table of Contents
+
+[Introduction](#introduction)  
+[Installation](#installation)  
+[Features](#features):
+
+  - [Main Program](#main-program)
+  - [Interactive Mode](#interactive-mode)
+  - [Data Dictionary Search Mode](#data-dictionary-search-mode)
+  
+[Reporting Bugs](#reporting-bugs)  
+[About](#about)
+
 # Introduction
 
-The Census Bureau collects information on the U.S. population, including information on the population's demographics, and economic and social characteristics.
+The U.S. Census Bureau's [American Community Survey](https://www.census.gov/programs-surveys/acs) (ACS) collects detailed information on the U.S. population, including demographic, economic, and housing characteristics.
 
-While the data Census collects is extremely useful, it is not always easy to retrieve these data. Many users use [data.census.gov](https://data.census.gov/) or [American FactFinder](https://factfinder.census.gov/) to do so. While these interfaces are helpful, they can sometimes be difficult to navigate, queries are hard to share with others, and its difficult to easily revise queries and retrieve them in an easy-to-use format.
+The most popular way to access ACS data is by visting [data.census.gov](https://data.census.gov/), the successor to the Census's [American FactFinder](https://factfinder.census.gov/) website. While these web tools are invaluable for browsing, they can be cumbersome for retrieving data at scale. That's why Census data users who need to obtain data for many years or geographies, or who need many estimates from multiple tables, often rely on the Census Bureau's [Application Programming Interface](https://www.census.gov/data/developers/updates/new-discovery-tool.html) (API). In simple terms, data users use the Census API to query to the Census's databases, and the Census Bureau server sends the requested data back to the user.
 
-To overcome some of these limitations, the [Center on Budget and Policy Priorities](https://www.cbpp.org) has developed `getcensus`, a Stata program that allows users to construct a query and quickly retrieve Census data and import it directly into Stata, with options to then export the data into Excel.
+Composing API data queries and transforming the returned data into an easy-to-use format can be tricky. That's why the [Center on Budget and Policy Priorities](https://www.cbpp.org) has developed `getcensus`, a Stata program to help policy analysts obtain ACS tables and portions of tables through the Census API. With `getcensus`, Stata users can easily compose API queries, retrieve data fast, and import it into Stata or Excel, ready for analysis. 
 
 `getcensus` uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.
 
-# Overview
 
-At its core, `getcensus` is a program built to communicate with the Census Bureau's Application Programming Interface (API). In English, `getcensus` constructs a request to the Census API based on a user's specifications. For example, it might ask the API to return certain tables for all counties in a given state for a specific year.
+# Getting Started
 
-The Census API will process the request and return these data to Stata. From there, users can analyze the data like they would with any other dataset, or export the results to an Excel workbook.
-
-The program works in two ways:
-
-- You can write Stata commands to retrieve data
-- If you find writing Stata code a little daunting, there is a "point-and-click" interface to help you retrieve data
-
-# Installation
+### Installation
 
 To install this program, type the following command into the Command window:
-
-_For Stata version <13, download the program as a zip folder, unzip it, and replace the URL in the code snippet above with the full local path to the files._
 
 ```
 net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/)
 ```
 
+For older Stata versions (< 13), download the program as a zip folder, unzip it, and replace the URL in the code snippet above with the full local path to the files.
+
+### Obtaining & Storing an API Key
+
+To use the Census API, you'll need an API key, which you can acquire
+at: [https://api.census.gov/data/key_signup.html](https://api.census.gov/data/key_signup.html).
+
+Next, you'll need to direct the `getcensus` program to your API key. You can accomplish this one of two ways:
+
+  - Add `global censuskey "YOUR_KEY_HERE"` to your Stata `profile.do` file (recommended). Learn about where to find this file [here](https://www.stata.com/support/faqs/programming/profile-do-file/). This only needs to be done once.
+
+  - Include `global censuskey "YOUR_KEY_HERE"` at the top of every `.do` file using `getcensus`.
+
+
 # Features
 
-## Main Program
+### Help File
 
-### Getting Started
+You can find a complete description of `getcensus` in the help file, accessible by typing `help getcensus` into the Command Window. The help file includes information on the program's syntax, details on how to pass options, a list of keywords you can use to retreive popular sets of estimates, and many examples. If you ever get stuck using the program, we strongly recommend you start with the help file.
 
-You can find complete documentation, including notes on how the program works
-by typing `help getcensus` into the Command Window.
+### Main Program
 
-Before you start, you need a key from Census' API, which you can acquire
-here: [https://api.census.gov/data/key_signup.html](https://api.census.gov/data/key_signup.html).
-
-Once you have that, you can put the following into your `profile.do` or at the top of all your do-files using `getcensus`: `global censuskey "YOUR_KEY"`.
-
-### Syntax
+__Syntax__
 
 `getcensus [estimate IDs, table ID, or keyword] [, options]`
 
-Some key options include:
+Some useful options include:
 
-- `years`: Years of data to retrieve.
-- `geography`: Geography to download. Default is "state".
-- `geoids`: GEOIDs of geography to download.
-- `statefips`: Two-digit state FIPS code for which to download data.
+- `years`: Year(s) of data to retrieve.
+- `geography`: Geography to download. Default is state.
+- `geoids`: GEOIDs[^1] of geography to download.
+- `statefips`: Two-digit state FIPS codes[^2] for which to download data.
 
-For more information on these and other options, see the `getcensus` [help file](#help-file).
+For more information on these and other options, see the `getcensus` [help file](#help-file.
 
-### Examples
+
+__Examples__
 
 ```
-** Retrieve data from table B19013 for all states in most recent year
+* Retrieve data from table B19013 for all states in most recent year
 getcensus B19013, clear
 
-** Retrieve data from table B19013 for all counties in most recent year
+* Retrieve data from table B19013 for all counties in most recent year
 getcensus B19013, geography(county) clear
 
-** Retrieve data from table B19013 for all states in last three years
+* Retrieve data from table B19013 for all states in 2015, 2016, and 2017
 getcensus B19013, years(2015/2017) clear
 
-** Retrieve data from table B19013 for all counties in two states
-getcensus B19013, years(2015/2017) geography(county) statefips(01 02) clear
+* Retrieve data from table B19013 for all counties in two states (Alabama and Wyoming) in three years
+getcensus B19013, years(2015/2017) geography(county) statefips(01 56) clear
 ```
 
-## Point and Click System
+### Interactive Mode
 
-If you find writing Stata code intimidating, have no fear! 
+If you find writing Stata code intimidating, you may be interested in `getcensus`'s interactive (point-and-click) mode. This mode provides access to a limited set of `getcensus` functionality through an easy to use, point-and-click interface. 
 
-If you type `getcensus` directly into Stata's Command window, a menu will appear in the Results window. Here, you can have access to some limited functionality of the program. You can select from among a number of pre-selected tables, and choose the year and geography. 
-
-Once you're ready, select `Retrieve my data!` to import the data to Stata. Select `Click here to export results to Excel` to, well, export the results to Excel.
+Enter interactive mode by typing `getcensus` directly into Stata's Command window. A menu will appear in the Results window. Here, you can choose from among a number of pre-selected tables, and select the year and geography. After making your selections, click <kbd>Retrieve my data</kbd> to load the data into Stata. Or, select <kbd> Retrieve my data and export to Excel</kbd> to save the data as an Excel spreadsheet in your current working directory.
 
 
-## Help File
+### Data Dictionary Search Mode
 
-If you type `help getcensus` into the Command window, you will gain access to `getcensus`'s complete documentation. The help file includes information on the program's syntax, helpful keywords to easily retrieve key estimates, details on how to pass options, and many examples. If you ever get stuck using the program, we strongly recommend you start here!
+To retreive data from the Census API, users must supply the table or estimate ID. For instance, the table ID of "[Poverty Status in the Past 12 Months](https://data.census.gov/cedsci/table?q=s1701)" is S1701. The estimate ID of "Population for whom poverty status is determined" (the first estimate in table S1701) is S1701_C01_001E. 
 
-## Data Dictionary
+Few users know offhand the table number or estimate ID for the data they're interested in. One option is to search for a topic on [data.census.gov](https://data.census.gov/), find a table of interest, and locate the TableID. Finding estimate IDs is less straightforward; it requires searching through the API data dictionaries. You can take a look at the API data dictionary for the detailed tables [here](https://api.census.gov/data/2017/acs/acs1/variables.html).
 
-Census' API provides thousands of estimates. However, to access these estimates, you have to know the specific table number (e.g., S1701) or estimate ID (e.g., S1701_C01_001E), which are not intuitive.
+A more convenient option is `getcensus`'s data dictionary search mode. The `getcensus catalog` sub-program  allows users to search the API data dictionaries from within Stata. 
 
-In order to figure out these table IDs, you could navigate to [data.census.gov](https://data.census.gov/) or [American FactFinder](https://factfinder.census.gov/). In order to figure out desired estimate IDs, you have to  use one of the API's four data dictionaries (one for each type of table (e.g., detailed or subject tables). However, these dictionaries are not so easy to use (you can take a look at the dictionary for the detailed tables [here](https://api.census.gov/data/2017/acs/acs1/variables.html)).
+There are primarily two ways to search: 
 
-The `getcensus` program has a utility function, accessed via the command `getcensus catalog`, to help users try to figure out the estimate IDs associated with the estimates they care about.
+- `getcensus catalog, table()`: Insert a table ID between the parentheses to retreive all the estimate IDs and estimate labels associated with the table.
+- `getcensus catalog, search()`: Insert a search term, such as "income" or "Hispanic" to find all estimate IDs whose labels contain the search term.
 
-There are primarily two ways to use this tool:
+By default, the program searches the detailed tables. If you want to search other table types, make sure use the `product` option. For instance, to search the subject tables: `getcensus catalog, search(poverty) product(ST)`. More information on ACS table types can be found [here](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html).
 
-- `getcensus catalog, table()`: Insert the table number to get all estimate IDs associated with a specific Census table
-- `getcensus catalog, search()`: Insert a search term to find all estimate IDs whose labels contain the search term
+# Reporting Bugs
 
-By default, the program searches in the detailed tables. If you want to search other tables, make sure to add the `product` option. E.g., `getcensus catalog, search(poverty) product(ST)`
-
-# Bug Reports
-
-If you've thoroughly read the help file and are still having trouble, you may have found a bug. Check the [Issues](https://github.com/CenterOnBudget/getcensus/issues) to see if it's already been reported. If not, you can let us know by submiting a new issue (requires a free GitHub account). State Priorities Partnership members may contact the CBPP Data Team on the Loop.
+If you've thoroughly read the [help file](#help-file) and are still having trouble, you may have found a bug. Check the [Issues](https://github.com/CenterOnBudget/getcensus/issues) to see if it's already been reported. If not, you can let us know by submiting a new issue (requires a [free GitHub account](www.github.com/join)). State Priorities Partnership members may contact the CBPP Data Team on The Loop.
 
 
 # About
 
-## License
+__License__
 
 `getcensus` is made available by the Center on Budget and Policy Priorities under the XXXX License.
 
-## Contributors
+__Contributors__
 
-`getcensus` is maintained by Claire Zippel and Matt Saenz.
-The program's creators and authors are [Raheem Chaudhry](https://github.com/raheem03) and Vincent Palacios.  
+`getcensus` is maintained by [Claire Zippel](https://www.cbpp.org/claire-zippel) and [Matt Saenz](https://www.cbpp.org/matt-saenz).  
+The program was created by [Raheem Chaudhry](https://github.com/raheem03) and Vincent Palacios.  
  
+
+[^1]: FIPS codes for the 50 states, District of Columbia, and Puerto Rico are listed [here](https://www.census.gov/library/reference/code-lists/ansi/ansi-codes-for-states.html).
+[^2]: GEOIDs for counties, places, and other geographies can be found [here](https://www.census.gov/geographies/reference-files/2018/demo/popest/2018-fips.html).
+

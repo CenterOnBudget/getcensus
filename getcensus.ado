@@ -1,8 +1,8 @@
-*! v 0.1.1 2019-12-XX
-*! authors Raheem Chaudhry, Vincent Palacios
-*! maintainers Claire Zippel, Matt Saenz
-*! description Load published estimates from the American Community Survey into memory.
-*! changelog http://www.github.com/CenterOnBuget/getcensus/blob/master/NEWS.md
+*! v 0.1.1 	2019-12-20
+*! maintainers  Claire Zippel, Matt Saenz
+*! authors 	Raheem Chaudhry, Vincent Palacios
+*! description  Load published estimates from the American Community Survey into memory.
+*! changelog 	http://www.github.com/CenterOnBuget/getcensus/blob/master/NEWS.md
 
 
 * DESCRIPTION -------------------------------------------------------------
@@ -230,7 +230,7 @@ program define getcensus_help
 		dis "{stata global tablelist ""costburden_owners"":Detailed homeowner housing cost burden [costburden_owners]}"
     dis "{stata global tablelist ""tenure_inc"":Median household income and poverty status of families, by housing tenure [tenure_inc]}"
     dis "{stata global tablelist ""kids_nativity"":Nativity of children, by age and parent's natvity  [kids_nativity]}"
-	dis "{stata global tablelist ""kids_pov_parents_nativity"":Children by poverty status and parent's nativity[kids_pov_parents_nativity]}"
+	dis "{stata global tablelist ""kids_pov_parents_nativity"":Children by poverty status and parent's nativity [kids_pov_parents_nativity]}"
     
     dis as text ""
     dis as text "Are you looking for single-year data or 5-year averages?"

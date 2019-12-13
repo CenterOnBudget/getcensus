@@ -400,7 +400,6 @@ Below is a full list of the keywords this program accepts (Clicking on
 {marker authors}{...}
 {title:Authors}
 
-{pstd} Authors/creators: Raheem Chaudhry; Vincent Palacios. {p_end}
-{pstd} Maintainers: Claire Zippel, {browse "mailto:czippel@cbpp.org":czippel@cbpp.org}; 
-Matt Saenz, {browse "mailto:msaenz@cbpp.org":msaenz@cbpp.org}. {p_end}
-{pstd} Center on Budget and Policy Priorities {p_end}
+{pstd} Created by Raheem Chaudhry and Vincent Palacios. {p_end}
+{pstd} Maintained by Claire Zippel and Matt Saenz, {browse "http://www.cbpp.org":Center on Budget and Policy Priorities}. {p_end}
+{p_end}
