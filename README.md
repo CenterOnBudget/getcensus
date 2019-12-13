@@ -22,11 +22,11 @@ Load published estimates from the American Community Survey into memory.
 
 The U.S. Census Bureau's [American Community Survey](https://www.census.gov/programs-surveys/acs) (ACS) collects detailed information on the U.S. population, including demographic, economic, and housing characteristics.
 
-The most popular way to access ACS data is by visting [data.census.gov](https://data.census.gov/), the successor to the Census's [American FactFinder](https://factfinder.census.gov/) website. While these web tools are invaluable for browsing, they can be cumbersome for retrieving data at scale. That's why Census data users who need to obtain data for many years or geographies, or who need a group of estimates from multiple tables, often rely on the Census Bureau's [Application Programming Interface](https://www.census.gov/data/developers/updates/new-discovery-tool.html) (API). In simple terms, data users use the Census API to query to the Census's databases, and the Census Bureau server sends the requested data back to the user.
+The most popular way to access ACS data is by visting [data.census.gov](https://data.census.gov/), the successor to the Census's [American FactFinder](https://factfinder.census.gov/) website. While these web tools are invaluable for browsing, they can be cumbersome for retrieving data at scale. That's why Census data users who need to obtain data for many years or geographies, or who need many estimates from multiple tables, often rely on the Census Bureau's [Application Programming Interface](https://www.census.gov/data/developers/updates/new-discovery-tool.html) (API). In simple terms, data users use the Census API to query to the Census's databases, and the Census Bureau server sends the requested data back to the user.
 
-Composing API data queries and transforming the returned data into an easy-to-use format can be tricky. That's why the [Center on Budget and Policy Priorities](https://www.cbpp.org) has developed `getcensus`, a Stata program to help policy analysts obtain ACS tables and portions of tables through the Census API. With `getcensus`, Stata users can easily compose API queries, retrieve data fast, and import it into Stata or Excel, ready for analysist. 
+Composing API data queries and transforming the returned data into an easy-to-use format can be tricky. That's why the [Center on Budget and Policy Priorities](https://www.cbpp.org) has developed `getcensus`, a Stata program to help policy analysts obtain ACS tables and portions of tables through the Census API. With `getcensus`, Stata users can easily compose API queries, retrieve data fast, and import it into Stata or Excel, ready for analysis. 
 
-_`getcensus` uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau._
+`getcensus` uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.
 
 
 # Getting Started
@@ -46,13 +46,16 @@ For older Stata versions (< 13), download the program as a zip folder, unzip it,
 To use the Census API, you'll need an API key, which you can acquire
 at: [https://api.census.gov/data/key_signup.html](https://api.census.gov/data/key_signup.html).
 
-Next, you'll need to direct the `getcensus` program to your API key. You can accomplish this by:
+Next, you'll need to direct the `getcensus` program to your API key. You can accomplish this one of two ways:
 
-(1) Adding `global censuskey "YOUR_KEY_HERE"` to your Stata `profile.do` file (recommended). Learn about where to find this file [here](https://www.stata.com/support/faqs/programming/profile-do-file/) This only needs to be done once.
-(2) Including `global censuskey "YOUR_KEY_HERE"` at the top of any `.do` file using `getcensus`.
+  - Add `global censuskey "YOUR_KEY_HERE"` to your Stata `profile.do` file (recommended). Learn about where to find this file [here](https://www.stata.com/support/faqs/programming/profile-do-file/). This only needs to be done once.
+
+  - Include `global censuskey "YOUR_KEY_HERE"` at the top of every `.do` file using `getcensus`.
 
 
 # Features
+
+### Help File
 
 You can find a complete description of `getcensus` in the help file, accessible by typing `help getcensus` into the Command Window. The help file includes information on the program's syntax, details on how to pass options, a list of keywords you can use to retreive popular sets of estimates, and many examples. If you ever get stuck using the program, we strongly recommend you start with the help file.
 
@@ -66,12 +69,11 @@ Some useful options include:
 
 - `years`: Year(s) of data to retrieve.
 - `geography`: Geography to download. Default is state.
-- `geoids`: GEOIDs of geography to download.
-- `statefips`: Two-digit state FIPS code for which to download data.
+- `geoids`: GEOIDs[^1] of geography to download.
+- `statefips`: Two-digit state FIPS codes[^2] for which to download data.
 
-For more information on these and other options, see the `getcensus` help file.
+For more information on these and other options, see the `getcensus` [help file](#help-file.
 
-(Note: FIPS codes for the 50 states, District of Columbia, and Puerto Rico are listed [here](https://www.census.gov/library/reference/code-lists/ansi/ansi-codes-for-states.html). GEOIDs for counties, places, and other geographies can be found [here](https://www.census.gov/geographies/reference-files/2018/demo/popest/2018-fips.html).)
 
 __Examples__
 
@@ -85,7 +87,7 @@ getcensus B19013, geography(county) clear
 * Retrieve data from table B19013 for all states in 2015, 2016, and 2017
 getcensus B19013, years(2015/2017) clear
 
-* Retrieve data from table B19013 for all counties in two states, Alabama and Wyoming, in three years
+* Retrieve data from table B19013 for all counties in two states (Alabama and Wyoming) in three years
 getcensus B19013, years(2015/2017) geography(county) statefips(01 56) clear
 ```
 
@@ -113,7 +115,7 @@ By default, the program searches the detailed tables. If you want to search othe
 
 # Reporting Bugs
 
-If you've thoroughly read the help file and are still having trouble, you may have found a bug. Check the [Issues](https://github.com/CenterOnBudget/getcensus/issues) to see if it's already been reported. If not, you can let us know by submiting a new issue (requires a [free GitHub account](www.github.com/join)). State Priorities Partnership members may contact the CBPP Data Team on The Loop.
+If you've thoroughly read the [help file](#help-file) and are still having trouble, you may have found a bug. Check the [Issues](https://github.com/CenterOnBudget/getcensus/issues) to see if it's already been reported. If not, you can let us know by submiting a new issue (requires a [free GitHub account](www.github.com/join)). State Priorities Partnership members may contact the CBPP Data Team on The Loop.
 
 
 # About
@@ -124,7 +126,10 @@ __License__
 
 __Contributors__
 
-`getcensus` is maintained by Claire Zippel (@c-zippel) and Matt Saenz (@vmsaenz).  
-
-The program was created by Raheem Chaudhry (@raheem03) and Vincent Palacios.  
+`getcensus` is maintained by [Claire Zippel](https://www.cbpp.org/claire-zippel) and [Matt Saenz](https://www.cbpp.org/matt-saenz).  
+The program was created by [Raheem Chaudhry](https://github.com/raheem03) and Vincent Palacios.  
  
+
+[^1]: FIPS codes for the 50 states, District of Columbia, and Puerto Rico are listed [here](https://www.census.gov/library/reference/code-lists/ansi/ansi-codes-for-states.html).
+[^2]: GEOIDs for counties, places, and other geographies can be found [here](https://www.census.gov/geographies/reference-files/2018/demo/popest/2018-fips.html).
+
