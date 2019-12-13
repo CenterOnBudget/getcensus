@@ -69,10 +69,12 @@ Some useful options include:
 
 - `years`: Year(s) of data to retrieve.
 - `geography`: Geography to download. Default is state.
-- `geoids`: GEOIDs[^1] of geography to download.
-- `statefips`: Two-digit state FIPS codes[^2] for which to download data.
+- `geoids`: GEOIDs of geography to download.
+- `statefips`: Two-digit state FIPS codes for which to download data.
 
 For more information on these and other options, see the `getcensus` [help file](#help-file.
+
+Note: FIPS codes for the 50 states, District of Columbia, and Puerto Rico are listed [here](https://www.census.gov/library/reference/code-lists/ansi/ansi-codes-for-states.html). GEOIDs for counties, places, and other geographies can be found [here](https://www.census.gov/geographies/reference-files/2018/demo/popest/2018-fips.html).
 
 
 __Examples__
@@ -128,8 +130,4 @@ __Contributors__
 
 `getcensus` is maintained by [Claire Zippel](https://www.cbpp.org/claire-zippel) and [Matt Saenz](https://www.cbpp.org/matt-saenz).  
 The program was created by [Raheem Chaudhry](https://github.com/raheem03) and Vincent Palacios.  
- 
-
-[^1]: FIPS codes for the 50 states, District of Columbia, and Puerto Rico are listed [here](https://www.census.gov/library/reference/code-lists/ansi/ansi-codes-for-states.html).
-[^2]: GEOIDs for counties, places, and other geographies can be found [here](https://www.census.gov/geographies/reference-files/2018/demo/popest/2018-fips.html).
 
