@@ -804,15 +804,16 @@ if "`nolabel'" == "" {
 
 ** Replace missing values with "."
 foreach var of varlist _all {
-	replace `var' = "." if inlist(`var', "null", "-222222222", "-666666666")
+	qui replace `var' = "." if inlist(`var', "null", "-222222222", "-666666666")
 }
 
 ** Destring, sort, order
 qui destring _all, replace
+qui tostring state, format(%02.0f) replace
 sort `sort'
 order `order'
 
-** Export using putexcel (so that we can export variable names
+** Export using putexcel (so that we can export variable names)
 if "`exportexcel'" != "" {
     qui ds
     local i = 1
