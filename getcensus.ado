@@ -1,8 +1,8 @@
-*! v 0.1.1 2019-12-XX   
-*! authors Raheem Chaudhry, Vincent Palacios
-*! maintainers Claire Zippel, Matt Saenz
-*! description Load published estimates from the American Community Survey into memory.
-*! changelog http://www.github.com/CenterOnBuget/getcensus/blob/master/NEWS.md
+*! v 0.1.1 	2019-12-20
+*! maintainers  Claire Zippel, Matt Saenz
+*! authors 	Raheem Chaudhry, Vincent Palacios
+*! description  Load published estimates from the American Community Survey into memory.
+*! changelog 	http://www.github.com/CenterOnBuget/getcensus/blob/master/NEWS.md
 
 
 * DESCRIPTION -------------------------------------------------------------
@@ -230,7 +230,7 @@ program define getcensus_help
 		dis "{stata global tablelist ""costburden_owners"":Detailed homeowner housing cost burden [costburden_owners]}"
     dis "{stata global tablelist ""tenure_inc"":Median household income and poverty status of families, by housing tenure [tenure_inc]}"
     dis "{stata global tablelist ""kids_nativity"":Nativity of children, by age and parent's natvity  [kids_nativity]}"
-	dis "{stata global tablelist ""kids_pov_parents_nativity"":Children by poverty status and parent's nativity[kids_pov_parents_nativity]}"
+	dis "{stata global tablelist ""kids_pov_parents_nativity"":Children by poverty status and parent's nativity [kids_pov_parents_nativity]}"
     
     dis as text ""
     dis as text "Are you looking for single-year data or 5-year averages?"
@@ -726,7 +726,7 @@ foreach year in `years' {
     else {
         dis "Link to data: `APIcall'"
     }
-    import delimited using "`APIcall'", varnames(1)
+    import delimited using "`APIcall'", varnames(1) stringcols(_all)
     
     qui des
     if r(N) == 0 {
@@ -803,12 +803,21 @@ if "`nolabel'" == "" {
     }
 }
 
+** Replace missing values with "."
+foreach var of varlist _all {
+	qui replace `var' = "." if inlist(`var', "null", "-222222222", "-666666666")
+}
+
 ** Destring, sort, order
 qui destring _all, replace
 sort `sort'
 order `order'
 
-** Export using putexcel (so that we can export variable names
+** Restring state and county fips with leading zeros
+qui cap tostring state, format(%02.0f) replace
+qui cap tostring county, format(%03.0f) replace
+
+** Export using putexcel (so that we can export variable names)
 if "`exportexcel'" != "" {
     qui ds
     local i = 1
