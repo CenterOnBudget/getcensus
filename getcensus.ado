@@ -1,4 +1,4 @@
-*! v 0.1.1 	2019-12-20 
+*! v 0.1.1 	2019-12-20
 *! maintainers  Claire Zippel, Matt Saenz
 *! authors 	Raheem Chaudhry, Vincent Palacios
 *! description  Load published estimates from the American Community Survey into memory.
@@ -725,7 +725,7 @@ foreach year in `years' {
     else {
         dis "Link to data: `APIcall'"
     }
-    import delimited using "`APIcall'", varnames(1)
+    import delimited using "`APIcall'", varnames(1) stringcols(_all)
     
     qui des
     if r(N) == 0 {
@@ -802,12 +802,21 @@ if "`nolabel'" == "" {
     }
 }
 
+** Replace missing values with "."
+foreach var of varlist _all {
+	qui replace `var' = "." if inlist(`var', "null", "-222222222", "-666666666")
+}
+
 ** Destring, sort, order
 qui destring _all, replace
 sort `sort'
 order `order'
 
-** Export using putexcel (so that we can export variable names
+** Restring state and county fips with leading zeros
+qui cap tostring state, format(%02.0f) replace
+qui cap tostring county, format(%03.0f) replace
+
+** Export using putexcel (so that we can export variable names)
 if "`exportexcel'" != "" {
     qui ds
     local i = 1
