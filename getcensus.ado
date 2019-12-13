@@ -1,4 +1,4 @@
-*! v 0.1.1 2019-12-XX   
+*! v 0.1.1 2019-12-XX
 *! authors Raheem Chaudhry, Vincent Palacios
 *! maintainers Claire Zippel, Matt Saenz
 *! description Load published estimates from the American Community Survey into memory.
@@ -809,9 +809,12 @@ foreach var of varlist _all {
 
 ** Destring, sort, order
 qui destring _all, replace
-qui tostring state, format(%02.0f) replace
 sort `sort'
 order `order'
+
+** Restring state and county fips with leading zeros
+qui cap tostring state, format(%02.0f) replace
+qui cap tostring county, format(%03.0f) replace
 
 ** Export using putexcel (so that we can export variable names)
 if "`exportexcel'" != "" {
