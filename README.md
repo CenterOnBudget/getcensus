@@ -16,7 +16,7 @@ Load published estimates from the American Community Survey into memory.
   - [Data Dictionary Search Mode](#data-dictionary-search-mode)
   
 [Reporting Bugs](#reporting-bugs)  
-[License](#license)
+[About](#about)
 
 # Introduction
 
@@ -115,38 +115,19 @@ There are primarily two ways to search:
 
 By default, the program searches the detailed tables. If you want to search other table types, make sure use the `product` option. For instance, to search the subject tables: `getcensus catalog, search(poverty) product(ST)`. More information on ACS table types can be found [here](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html).
 
-
 # Reporting Bugs
 
 If you've thoroughly read the [help file](#help-file) and are still having trouble, you may have found a bug. Check the [Issues](https://github.com/CenterOnBudget/getcensus/issues) to see if it's already been reported. If not, you can let us know by submiting a new issue (requires a [free GitHub account](www.github.com/join)). State Priorities Partnership members may contact the CBPP Data Team on The Loop.
 
 
-# License
+# About
 
-`getcensus` is made available by the Center on Budget and Policy Priorities under the following [license](https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE):
+__License__
 
-> Copyright (c) 2019 Center on Budget and Policy Priorities 
-> 
-> Permission is hereby granted, free of charge, to members of the State Priorities 
-> Partnership network described at https://statepriorities.org/state-priorities-partners/, 
-> and to all other organizations and individuals granted permission by the Center on 
-> Budget and Policies Priorities, to use copies of this software and associated 
-> documentation files (the "Software") without restriction, subject to the following 
-> conditions:
-> 
-> The above copyright notice and this permission notice shall be included in all
-> copies or substantial portions of the Software.
-> 
-> The Software is provided "as is", without warranty of any kind, express or
-> implied, including but not limited to the warranties of merchantability,
-> fitness for a particular purpose and noninfringement. In no event shall the
-> authors or copyright holders be liable for any claim, damages or other
-> liability, whether in an action of contract, tort or otherwise, arising from, 
-> out of or in connection with the software or the use or other dealings in the
-> Software.
+`getcensus` is made available by the Center on Budget and Policy Priorities under the XXXX License.
 
-
-# Contributors
+__Contributors__
 
 `getcensus` is maintained by [Claire Zippel](https://www.cbpp.org/claire-zippel) and [Matt Saenz](https://www.cbpp.org/matt-saenz).  
 The program was created by [Raheem Chaudhry](https://github.com/raheem03) and Vincent Palacios.  
+
