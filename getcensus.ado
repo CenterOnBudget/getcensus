@@ -719,13 +719,13 @@ foreach year in `years' {
     }
 
     ** Retrieve Data
-    if strlen("`APIcall'") < 255 {
+    *if strlen("`APIcall'") < 255 {
         local displaylink "{browse "`APIcall'": Link to data}"
         dis `"`displaylink'"'
-    }
-    else {
-        dis "Link to data: `APIcall'"
-    }
+    *}
+    *else {
+    *    dis "Link to data: `APIcall'"
+    *}
     import delimited using "`APIcall'", varnames(1) stringcols(_all)
     
     qui des
