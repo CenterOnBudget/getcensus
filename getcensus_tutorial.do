@@ -5,7 +5,7 @@
 * 1. Install getcensus --------------------------------------------------------
 
 * Install the program from GitHub
-net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/)
+net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src)
 
 * Check to see if Stata can find getcensus
 which getcensus
