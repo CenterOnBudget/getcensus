@@ -1,3 +1,9 @@
+---------------------------------------
+***Soft Launch. Beta Testing in Progress.*** [***View and Report Issues Here.***](https://github.com/CenterOnBudget/getcensus/issues)
+
+---------------------------------------
+
+
 <img align="right" width="200" src="https://www.cbpp.org/sites/all/themes/custom/cbpp/logo.png">
 
 # getcensus
@@ -36,7 +42,7 @@ Composing API data queries and transforming the returned data into an easy-to-us
 To install this program, type the following command into the Command window:
 
 ```
-net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/)
+net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src) replace
 ```
 
 For older Stata versions (< 13), download the program as a zip folder, unzip it, and replace the URL in the code snippet above with the full local path to the files.
@@ -59,6 +65,8 @@ Next, you'll need to direct the `getcensus` program to your API key. You can acc
 
 You can find a complete description of `getcensus` in the help file, accessible by typing `help getcensus` into the Command Window. The help file includes information on the program's syntax, details on how to pass options, a list of keywords you can use to retreive popular sets of estimates, and many examples. If you ever get stuck using the program, we strongly recommend you start with the help file.
 
+A `getcensus` tutorial can be found in this repository: [`getcensus_tutorial.do`](https://github.com/CenterOnBudget/getcensus/blob/master/getcensus_tutorial.do).
+
 ### Main Program
 
 __Syntax__
@@ -72,7 +80,7 @@ Some useful options include:
 - `geoids`: GEOIDs of geography to download.
 - `statefips`: Two-digit state FIPS codes for which to download data.
 
-For more information on these and other options, see the `getcensus` [help file](#help-file.
+For more information on these and other options, see the `getcensus` [help file](#help-file).
 
 Note: FIPS codes for the 50 states, District of Columbia, and Puerto Rico are listed [here](https://www.census.gov/library/reference/code-lists/ansi/ansi-codes-for-states.html). GEOIDs for counties, places, and other geographies can be found [here](https://www.census.gov/geographies/reference-files/2018/demo/popest/2018-fips.html).
 

@@ -24,7 +24,7 @@ Main program. Retrieves estimates from the American Community Survey via the Cen
 [, {it:{help getcensus##options:options}}]
 
 {phang}
-Utility program. Searches estimate labels in API's dictionary to identify relevant estimate IDs.
+Utility program. Searches labels in the API data dictionary to identify relevant estimate IDs.
 
 {p 8 16 2}
 {cmd:getcensus catalog}
@@ -39,13 +39,13 @@ Utility program. Searches estimate labels in API's dictionary to identify releva
     {synopt:{opt pr:oduct(string)}}Product type of table (e.g., detailed table, subject table). Default is "DT".{p_end}
     {synopt:{opt geo:graphy(string)}}Geography to download. Default is "state."{p_end}
     {synopt:{opt br:owse}}Open data browser after execution of command.{p_end}
-    {synopt:{opt clear}}If there is data in memory, replace them with retrieved results.{p_end}
+    {synopt:{opt clear}}Replace data in memory with retrieved results.{p_end}
     {synopt:{opth geoids(numlist)}}GEOIDs of geography to download. Default is usually all.{p_end}
     {synopt:{opt key(string)}}Census key to access API.{p_end}
 
 {syntab:Options}
     {synopt:{opth st:atefips(numlist)}}Two-digit state FIPS code of state(s) for which to download data. Default is usually all.{p_end}
-    {synopt:{opt co:untyfips(#)}}Three-digit county FIPS code of county for which to download data.{p_end}
+    {synopt:{opt co:untyfips(#)}}Three-digit county FIPS code(s) of county/counties for which to download data.{p_end}
     {synopt:{opth save:as(filename)}}File name to save downloaded data (in .dta format).{p_end}
     {synopt:{opt path(string)}}Path where to store downloaded information.{p_end}
     {synopt:{opt ex:portexcel}}Export data in .xlsx format.{p_end}
@@ -63,9 +63,9 @@ Utility program. Searches estimate labels in API's dictionary to identify releva
 {dlgtab:Overview}
 {pstd}
 {cmd:getcensus} imports data from the American Community Survey (ACS) into 
-memory. It accomplishes this by taking user-generated arguments to make a request
-to Census' Application Programming Interface (API), which returns the data
-in a structured format. {cmd:getcensus} then parses the data and loads it into memory. 
+memory. It accomplishes this by translating the user's input into a query
+to the Census Brueau's Application Programming Interface (API), which returns the data
+in a structured format. {cmd:getcensus} then parses the data and loads it into Stata. 
 {cmd:getcensus} uses the Census Bureau Data API but is not endorsed or certified 
 by the Census Bureau.
 
@@ -87,13 +87,13 @@ have the suffix "E", while margins of errors have the suffix "M".
 {pstd}
 A note on vocabulary: When this documentation talks about a Census "table", 
 it refers to Census tables (sometimes referred to as groups) (e.g., S1701, B19013)
-that contain many estimates, all of which pertain to a shared concept (such as
-number in poverty).
+that contain many estimates, all of which pertain to a shared concept, such as
+number in poverty.
 
 {pstd}
 "Estimates" refer to the individual data points within a table. For instance, 
-the total number of poor would be a single single estimate in table S1701. The
-estimate ID related to this concept is S1701_C02_001E.
+the total number of people in poverty can be found in table B17001. The
+estimate ID for this number is B17001_002E.
 
 {pstd}
 Below are some commonly used estimates.
@@ -103,11 +103,11 @@ Below are some commonly used estimates.
 {synopt:{space 4}{it:Estimate}}Concept{p_end}
 {space 4}{synoptline}
 {synopt:{space 4}{opt B17001_001}} Total in poverty universe {p_end}
-{synopt:{space 4}{opt B17001_002}} Total living below poverty line {p_end}
+{synopt:{space 4}{opt B17001_002}} Total with income below poverty level {p_end}
 {synopt:{space 4}{opt B19013_001}} Median household income {p_end}
 
 {pstd}
-You can add a letter to the end of some detailed tables (those that end in "B" or
+You can add a letter to the end of some detailed tables (those that begin with "B" or
 "C") to get estimates by race. E.g.,
 
 {marker estimatesbyrace}{...}
@@ -121,8 +121,8 @@ You can add a letter to the end of some detailed tables (those that end in "B" o
 {synopt:{space 4}{opt B17001E_001}} Total in poverty universe, Native Hawaiian or Pacific Islander alone {p_end}
 {synopt:{space 4}{opt B17001F_001}} Total in poverty universe, Some other race alone {p_end}
 {synopt:{space 4}{opt B17001G_001}} Total in poverty universe, Two or more races {p_end}
-{synopt:{space 4}{opt B17001H_001}} Total in poverty universe, non-Hispanic White {p_end}
-{synopt:{space 4}{opt B17001I_001}} Total in poverty universe, Hispanic {p_end}
+{synopt:{space 4}{opt B17001H_001}} Total in poverty universe, non-Hispanic White alone{p_end}
+{synopt:{space 4}{opt B17001I_001}} Total in poverty universe, Hispanic (any race){p_end}
 
 {dlgtab:Help: Program syntax}
 
@@ -145,21 +145,23 @@ the main program to get desired results. For example
 {cmd: getcensus catalog, product(ST) table(S1701)} will return all estimate IDs
 that come from Census table S1701. Users can then view the data in browser to 
 identify the specific estimate IDs they want, which they can then pass to the 
-main program. E.g., {cmd: getcensus S1701_C02_001, pr(ST)}.
+main program. E.g., {cmd: getcensus S1701_C02_001, product(ST)}.
 
 {pstd}
-Second, the program allows you to pass a keyword to the program to retrieve
-relevant estimates {it: without} having to identify a specific estimate ID.
+Second, users can pass a keyword to {cmd: getcensus}. The keywords are shortcuts 
+to a curated set of estimates related to the given topic. For instance, 
+{cmd: getcensus snap} retrieves 18 estimates describing households participating
+in SNAP.
 
 {pstd}
 Note that you can pass multiple keywords or a mix of estimate IDs and keywords
-to {cmd: getcensus} (as long as the total number of underlying estimates 
-does not exceed 50 -- including margins of error -- which is the most 
-Census' API can handle).
+to {cmd: getcensus} (as long as the total number of estimates does not exceed 
+50 -- including margins of error -- which is the maximum allowed by the Census 
+API).
 
 {pstd}
-Below is a full list of the keywords this program accepts (Clicking on
-'run' will retrieve the relevant estimates by state using the most recent
+Below is a full list of the keywords this program accepts (Click on
+'run' to retrieve the relevant estimates by state using the most recent
 1-year estimates.)
 
 {marker keywords}{...}
@@ -364,6 +366,11 @@ Below is a full list of the keywords this program accepts (Clicking on
     {pmore}. {bf:getcensus} B19013, data(5) geo(metro) geoids(12260) st(13) clear
         // all estimates from a single table, choose portion of metro area that falls within a single state
         ({stata getcensus B19013, data(5) geo(metro) geoids(12260) st(13) clear:click to run})
+    {p_end}
+	
+	{pmore}. {bf:getcensus} kids_nativity, clear
+        // use a keyword to retrieve a curated set of estimates related to children's nativity
+        ({stata getcensus kids_nativity, clear:click to run})
     {p_end}
     
 {dlgtab:Catalog }

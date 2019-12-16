@@ -730,7 +730,7 @@ foreach year in `years' {
     
     qui des
     if r(N) == 0 {
-        dis as err "The Census API did not return data. This can happen if 1) the Table IDs were wrong; 2) the Table ID does not belong to the product type you passed; 3) your API key is invalid; 4) you are not connected to the internet or the Census API server is down. Click 'Link to data' to view the specific error message sent by the Census API."
+        dis as err "The Census API did not return data. This can happen if 1) the Table IDs were wrong; 2) the Table ID does not belong to the product type you passed; 3) your API key is invalid; 4) you are not connected to the internet or the Census API server is down. Click 'Link to data', or copy the URL into your browser, to view the specific error message sent by the Census API."
         exit
     }
 
