@@ -123,12 +123,12 @@ If you've thoroughly read the [help file](#help-file) and are still having troub
 
 # License
 
-`getcensus` is made available by the Center on Budget and Policy Priorities under the following [license](https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE):
+`getcensus` is made available under the following [license](https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE):
 
 > Copyright (c) 2019 Center on Budget and Policy Priorities 
 > 
 > Permission is hereby granted, free of charge, to members of the State Priorities 
-> Partnership network described at https://statepriorities.org/state-priorities-partners/, 
+> Partnership network described at [https://statepriorities.org/state-priorities-partners/](https://statepriorities.org/state-priorities-partners/), 
 > and to all other organizations and individuals granted permission by the Center on 
 > Budget and Policies Priorities, to use copies of this software and associated 
 > documentation files (the "Software") without restriction, subject to the following 
@@ -148,5 +148,4 @@ If you've thoroughly read the [help file](#help-file) and are still having troub
 
 # Contributors
 
-`getcensus` is maintained by [Claire Zippel](https://www.cbpp.org/claire-zippel) and [Matt Saenz](https://www.cbpp.org/matt-saenz).  
-The program was created by [Raheem Chaudhry](https://github.com/raheem03) and Vincent Palacios.  
+`getcensus` is maintained by [Claire Zippel](https://www.cbpp.org/claire-zippel) and [Matt Saenz](https://www.cbpp.org/matt-saenz). The program was created by [Raheem Chaudhry](https://github.com/raheem03) and [Vincent Palacios](https://github.com/vincentpalacios).  
