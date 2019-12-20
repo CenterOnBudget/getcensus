@@ -1,9 +1,3 @@
----------------------------------------
-***Soft Launch. Beta Testing in Progress.*** [***View and Report Issues Here.***](https://github.com/CenterOnBudget/getcensus/issues)
-
----------------------------------------
-
-
 <img align="right" width="200" src="https://www.cbpp.org/sites/all/themes/custom/cbpp/logo.png">
 
 # getcensus
@@ -28,7 +22,7 @@ Load published estimates from the American Community Survey into memory.
 
 The U.S. Census Bureau's [American Community Survey](https://www.census.gov/programs-surveys/acs) (ACS) collects detailed information on the U.S. population, including demographic, economic, and housing characteristics.
 
-The most popular way to access ACS data is by visting [data.census.gov](https://data.census.gov/), the successor to the Census's [American FactFinder](https://factfinder.census.gov/) website. While these web tools are invaluable for browsing, they can be cumbersome for retrieving data at scale. That's why Census data users who need to obtain data for many years or geographies, or who need many estimates from multiple tables, often rely on the Census Bureau's [Application Programming Interface](https://www.census.gov/data/developers/updates/new-discovery-tool.html) (API). In simple terms, data users use the Census API to query to the Census's databases, and the Census Bureau server sends the requested data back to the user.
+The most popular way to access ACS data is by visiting [data.census.gov](https://data.census.gov/), the successor to the Census's [American FactFinder](https://factfinder.census.gov/) website. While these web tools are invaluable for browsing, they can be cumbersome for retrieving data at scale. That's why Census data users who need to obtain data for many years or geographies, or who need many estimates from multiple tables, often rely on the Census Bureau's [Application Programming Interface](https://www.census.gov/data/developers/updates/new-discovery-tool.html) (API). In simple terms, data users use the Census API to query to the Census's databases, and the Census Bureau server sends the requested data back to the user.
 
 Composing API data queries and transforming the returned data into an easy-to-use format can be tricky. That's why the [Center on Budget and Policy Priorities](https://www.cbpp.org) has developed `getcensus`, a Stata program to help policy analysts obtain ACS tables and portions of tables through the Census API. With `getcensus`, Stata users can easily compose API queries, retrieve data fast, and import it into Stata or Excel, ready for analysis. 
 
