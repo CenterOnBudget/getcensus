@@ -39,7 +39,7 @@ To install this program, type the following command into the Command window:
 net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src) replace
 ```
 
-For older Stata versions (< 13), download the program as a zip folder, unzip it, and replace the URL in the code snippet above with the full local path to the files.
+`getcensus` requires Stata version 14.0 or later.
 
 ### Obtaining & Storing an API Key
 

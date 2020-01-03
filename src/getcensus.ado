@@ -1,4 +1,4 @@
-*! v 0.1.1 	2019-12-20
+*! v 0.1.1 	20191220
 *! maintainers  Claire Zippel, Matt Saenz
 *! authors 	Raheem Chaudhry, Vincent Palacios
 *! description  Load published estimates from the American Community Survey into memory.
