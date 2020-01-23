@@ -8,7 +8,7 @@ Load published estimates from the American Community Survey into memory.
 # Table of Contents
 
 [Introduction](#introduction)  
-[Installation](#installation)  
+[Getting Started](#getting-started)  
 [Features](#features):
 
   - [Main Program](#main-program)
