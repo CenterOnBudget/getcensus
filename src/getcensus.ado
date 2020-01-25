@@ -248,6 +248,7 @@ program define getcensus_help
     dis "{stata global years 2015:2015}"
     dis "{stata global years 2016:2016}"
     dis "{stata global years 2017:2017}"
+    dis "{stata global years 2018:2018}"
     
     dis as text "(If you want a range of years, type something like"
     dis as text "'global years 2010-2017' into the Command Window"
