@@ -776,6 +776,9 @@ if "`nolabel'" == "" {
     preserve
         clear
         local year = 2018
+		local url_acs_table_changes "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html"
+		local click_acs_table_changes "{browse "`url_acs_table_changes'": ACS Table & Geography Changes}"
+		display as yellow `"Using data dictionary for `year'. If you requested data for a different year, check the `click_acs_table_changes' on the Census Bureau website."'
         local product = subinstr("`productdir'", "/", "", .)
         qui cap confirm file "`path'/acs`product'variables_`dataset'yr_`year'.dta"
         if _rc {
