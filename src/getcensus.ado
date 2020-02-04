@@ -844,9 +844,12 @@ if "`exportexcel'" != "" {
 
 ** Save and export
 if "`saveas'" != "" {
-    saveold `saveas'.dta, replace
+	local dest_dir = c(pwd)
+    qui saveold `saveas'.dta, replace
+	dis as yellow `"Results saved as `dest_dir'/`saveas'.dta."'
     if "`exportexcel'" != "" {
-        export excel using "`saveas'.xlsx", cell(A2) sheetmodify firstrow(var)
+        qui export excel using "`saveas'.xlsx", cell(A2) sheetmodify firstrow(var)
+		dis as yellow `"Results saved as `dest_dir'`saveas'.xlsx."'
     }
 }
 
