@@ -20,7 +20,13 @@ need some help writing Stata commands
 
 * DEFINE ------------------------------------------------------------------
 
+/*
 cap program drop getcensus
+cap program drop getcensus_catalog
+cap program drop getcensus_help
+cap program drop getcensus_main 
+**/ 								// for debugging
+
 program define getcensus
 version 14.0
 
@@ -73,7 +79,6 @@ if "`years'" == ""                              local years "`lastacs1yr'"
 if "`years'" == "" & "`dataset'" == "5"         local years "`lastacs5yr'"
 
 ** Path (Default: Save data in App Support)
-if "`path'" == "" local path "$getcensuspath"
 if "`path'" == "" {
     if "`c(os)'" == "Windows" {
         local path "~/AppData/Local/getcensus"
@@ -770,8 +775,10 @@ if "`nolabel'" == "" {
     local varlist `r(varlist)'
     preserve
         clear
-        // foreach year in `years' {
-        local year = 2017
+        local year = 2018
+		local url_acs_table_changes "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html"
+		local click_acs_table_changes "{browse "`url_acs_table_changes'": ACS Table & Geography Changes}"
+		display as yellow `"Using data dictionary for `year'. If you requested data for a different year, check the `click_acs_table_changes' on the Census Bureau website."'
         local product = subinstr("`productdir'", "/", "", .)
         qui cap confirm file "`path'/acs`product'variables_`dataset'yr_`year'.dta"
         if _rc {
@@ -786,6 +793,10 @@ if "`nolabel'" == "" {
             qui save "`path'/acs`product'variables_`dataset'yr_`year'.dta", replace
         }
         qui use "`path'/acs`product'variables_`dataset'yr_`year'.dta", clear
+		qui replace estimateLabel = subinstr(estimateLabel, 					///
+									 "(in `year' inflation-adjusted dollars)", 	///
+									 "(in nominal dollars)", 					///
+									 1)
         local i = 0
         foreach estimate in `varlist' {
             local i = `i' + 1
@@ -793,7 +804,6 @@ if "`nolabel'" == "" {
             local label`i' `r(levels)'
             local estimate`i' "`estimate'"
         }
-        // }
     restore
     forvalues j = 1/`i' {
         if strlen("`label`j''") > 80 {
