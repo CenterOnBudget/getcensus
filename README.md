@@ -41,6 +41,12 @@ net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/get
 
 `getcensus` requires Stata version 14.0 or later.
 
+This program is updated regularly with enhancements and important bug fixes. To update your installation of `getcensus` to the latest version, run:
+
+```
+ado update getcensus
+```
+
 ### Obtaining & Storing an API Key
 
 To use the Census API, you'll need an API key, which you can acquire
