@@ -1,3 +1,13 @@
+# 0.1.2
+
+__Main program__
+  - Fix issue [#13](https://github.com/CenterOnBudget/getcensus/issues/13) 
+  - When `saveas` option used, new message tells users the path to the saved files. ([#15](https://github.com/CenterOnBudget/getcensus/issues/15))
+
+__Documentation__
+
+  - Several minor edits and typo fixes
+
 # 0.1.1
 
 __Main program__
