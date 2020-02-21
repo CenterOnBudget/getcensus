@@ -175,7 +175,7 @@ Below is a full list of the keywords this program accepts (Click on
 {synopt:{space 4}{opt snap}}SNAP participation overall and by poverty status, income, disability status, family composition, and family work effort ({stata getcensus snap, clear:click to run}){p_end}
 {synopt:{space 4}{opt medicaid}}Medicaid participants, by age ({stata getcensus medicaid, clear:click to run}){p_end}
 {synopt:{space 4}{opt housing_overview}}Various housing-related estimates including occupancy, tenure, costs, and cost burden({stata getcensus housing_overview, clear:click to run}){p_end}
-{synopt:{space 4}{opt costburden_renters}}Detailed renter housing cost burden({stata getcensus costburden_renters clear:click to run}){p_end}
+{synopt:{space 4}{opt costburden_renters}}Detailed renter housing cost burden({stata getcensus costburden_renters, clear:click to run}){p_end}
 {synopt:{space 4}{opt costburden_owners}}Detailed homeowner housing cost burden ({stata getcensus costburden_owners, clear:click to run}){p_end}
 {synopt:{space 4}{opt tenure_inc}}Median household income and poverty status of families, by housing tenure ({stata getcensus tenure_inc, clear:click to run}){p_end}
 {synopt:{space 4}{opt kids_nativity}}Nativity of children, by age and parent's natvity ({stata getcensus kids_nativity, clear:click to run}){p_end}
