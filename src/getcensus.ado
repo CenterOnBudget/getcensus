@@ -445,11 +445,9 @@ local kids_nativity "B05009"
 local kids_pov_parents_nativity "B05010"
 
 ** Create "estimates" based on expanding local if not from table
-// this works because keywords are lower case and strpos is case sensitive
-
 local prepackaged ""
 foreach estimate in `estimates' {
-    if !inlist(1, strpos(upper("`estimates'"), "B"), strpos(upper("`estimates'"), "C"), strpos(upper("`estimates'"), "DP"), strpos(upper("`estimates'"), "S")) {
+    if !ustrregexm("`estimates'", "^(B|C|DP|S)(?=\d)", 1) {
         local prepackaged "`prepackaged' ``estimate''"
     }
     else {
