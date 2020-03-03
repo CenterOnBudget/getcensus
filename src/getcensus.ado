@@ -1,13 +1,12 @@
-*! v 0.1.1 	20191220
 *! maintainers  Claire Zippel, Matt Saenz
-*! authors 	Raheem Chaudhry, Vincent Palacios
+*! authors      Raheem Chaudhry, Vincent Palacios
 *! description  Load published estimates from the American Community Survey into memory.
-*! changelog 	http://www.github.com/CenterOnBuget/getcensus/blob/master/NEWS.md
+*! changelog    https://github.com/CenterOnBudget/getcensus/blob/master/NEWS.md
 
 
-* DESCRIPTION -------------------------------------------------------------
+/* DESCRIPTION -----------------------------------------------------------------
 
-/*
+
 This program retrieves American Community Survey data from the Census Bureau API 
 and imports it into Stata.
 It has three subroutines:
@@ -15,17 +14,16 @@ It has three subroutines:
 - A "catalog" that helps users search the data dictionaries
 - A "point-and-click" system to help users who are new to Stata and may
 need some help writing Stata commands
-*/
 
 
-* DEFINE ------------------------------------------------------------------
+* DEFINE -------------------------------------------------------------------- */
 
-/*
+/* // for debugging
 cap program drop getcensus
 cap program drop getcensus_catalog
 cap program drop getcensus_help
-cap program drop getcensus_main 
-**/ 								// for debugging
+cap program drop getcensus_main
+*/
 
 program define getcensus
 version 14.0
@@ -36,7 +34,7 @@ global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string
 ${syntax}
 
 
-* DEPENDENCIES ------------------------------------------------------------
+* DEPENDENCIES -----------------------------------------------------------------
 
 // This program requires jsonio to run (just "catalog" portion)
 foreach program in jsonio {
@@ -53,10 +51,10 @@ foreach program in jsonio {
 }
 
 
-* DEFAULTS ----------------------------------------------------------------
+* DEFAULTS ---------------------------------------------------------------------
 
 ** Dataset (Default: 1-year data)
-if "`dataset'" == ""                            local dataset "1"
+if "`dataset'" == "" local dataset "1"
 
 ** Years (Default: most current year)
 local curryear  year(td(`c(current_date)'))
@@ -90,7 +88,7 @@ if "`path'" == "" {
 }
 
 
-* PARSE YEARS -------------------------------------------------------------
+* PARSE YEARS ------------------------------------------------------------------
 
 local switch 0
 local allyears ""
@@ -130,7 +128,7 @@ foreach year in `years' {
     if `year' > `recentyear' local recentyear `year'
 }
 
-* ERROR HANDLING ----------------------------------------------------------
+* ERROR HANDLING ---------------------------------------------------------------
 
 if (`c(changed)' | `c(N)' | `c(k)') & "`clear'" == "" & "`estimates'" != ""{
     dis as err "no; data in memory would be lost"
@@ -171,7 +169,7 @@ if !inlist(`dataset', 1, 3, 5) {
     // exit
 }
 
-* SWITCHES ----------------------------------------------------------------
+* SWITCHES ---------------------------------------------------------------------
 
 if "`estimates'" == "" {
     getcensus_help
@@ -182,7 +180,6 @@ else if "`estimates'" == "catalog" {
     }
     getcensus_catalog, years(`recentyear') dataset(`dataset') path(`path') search(`search') table(`table') product(`product') `browse' `clear'
 }
-
 else if "`estimates'" == "point_and_click" {
     if "`exportexcel'" != "" local export "exportexcel saveas(Results)"
     getcensus ${tablelist}, years(${years}) dataset(${dataset}) geography(${geography}) `export' clear
@@ -200,7 +197,7 @@ else {
 macro drop syntax
 end
 
-* SUBROUTINE: HELP --------------------------------------------------------
+* SUBROUTINE: HELP -------------------------------------------------------------
 
 program define getcensus_help
     dis as text "You didn't pass any arguments. Here are some tips for getting started:"
@@ -280,12 +277,12 @@ program define getcensus_help
 end
 
 
-* SUBROUTINE: CATALOG -----------------------------------------------------
+* SUBROUTINE: CATALOG ----------------------------------------------------------
 
 program define getcensus_catalog
 ${syntax}
 
-* ERROR HANDLING ----------------------------------------------------------
+* ERROR HANDLING ---------------------------------------------------------------
 
 ** Product
 local table = upper("`table'")
@@ -323,7 +320,7 @@ if "`clear'" != "" {
 }
 
 
-* GET CATALOG -------------------------------------------------------------
+* GET CATALOG ------------------------------------------------------------------
 
 ** Download data dictionary if it doesn't exist
 qui cap confirm file "`path'/`productdir'variables_`dataset'yr_`years'.dta"
@@ -378,13 +375,13 @@ restore, not
     
 end
 
-* SUBROUTINE: MAIN --------------------------------------------------------
+* SUBROUTINE: MAIN -------------------------------------------------------------
 
 program define getcensus_main
 ${syntax}
 
 
-* PRE-PACKAGED ESTIMATES --------------------------------------------------
+* PRE-PACKAGED ESTIMATES -------------------------------------------------------
 
 /*
 For this program, we have a list of 'curated' tables. These are keywords that
@@ -459,7 +456,7 @@ foreach estimate in `estimates' {
 local estimates = upper("`estimates'")
 
 
-* ERROR HANDLING ----------------------------------------------------------
+* ERROR HANDLING ---------------------------------------------------------------
 
 preserve
 if "`clear'" != "" {
@@ -471,22 +468,22 @@ if "`estimates'" != "" & "`product'" != "" {
     dis "Program will derive product from 'estimates' and ignore 'product'"
 }
 
-if (ustrregexm("`estimates'", "(^B)|(^C(?!P))")) == 1     {
+if (ustrregexm("`estimates'", "(^B)|(^C(?!P))")) == 1 {
     local product "DT"
     local productdir ""
 }
 
-if strpos("`estimates'", "CP") == 1   {
+if strpos("`estimates'", "CP") == 1 {
     local product "CP"
     local productdir "/cprofile"
 }
 
-if strpos("`estimates'", "DP") == 1         {
+if strpos("`estimates'", "DP") == 1 {
     local product "DP"
     local productdir "/profile"
 }
 
-if strpos("`estimates'", "S") == 1      {
+if strpos("`estimates'", "S") == 1 {
     local product "ST"
     local productdir "/subject"
 }
@@ -553,7 +550,7 @@ if "`statefips'" == "*" {
 }
 else {
     foreach statefip in `statefips' {
-    local statefip = string(`statefip',"%02.0f")
+		local statefip = string(`statefip',"%02.0f")
         local statefipslist "`statefipslist'`statefip',"
     }
     local statefipslist = substr("`statefipslist'", 1, length("`statefipslist'") - 1)
@@ -615,10 +612,16 @@ foreach estimate in `estimates' {
 
 ** Geography
 if "`geography'" == "state" & "`statefips'" != "*" & "`geoids'" == "*" {
-    dis as yellow "If chosen geography is 'state', pass selected state to 'geoids' instead of 'statefips'. We'll fix that for you."
-    local geoids "`statefips'"
-    local statefips "*"
-    }
+    dis as yellow "If chosen geography is 'state', pass selected state(s) to 'geoids' instead of 'statefips'. We'll fix that for you."
+	
+	* Redefine geoids and geoidslist with statefips and statefipslist
+	local geoids "`statefips'"
+	local geoidslist "`statefipslist'"
+	
+	* Reset statefips and statefipslist to default
+	local statefips "*"
+	local statefipslist "*"
+}
 
 if "`geography'" == "state" & "`statefips'" != "*" & "`statefips'" != "`geoids'" {
     dis as err "If chosen geography is 'state', 'statefips' must be blank or equal to 'geoids'."
@@ -696,7 +699,7 @@ if "`key'" == "" {
 }
 
 
-* API CALL ----------------------------------------------------------------
+* API CALL ---------------------------------------------------------------------
 
 ** Generate URL
 tempname temp
@@ -717,7 +720,6 @@ foreach year in `years' {
             local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME&for=`geography':`geoidslist'&in=state:`statefipslist'`countycondition'&key=`key'"
         }
     }
-    
     else {
         local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME&for=`geography':`geoidslist'&key=`key'"
     }
@@ -861,10 +863,11 @@ if "`saveas'" != "" {
     }
 }
 
-cap erase `temp'.dta // should delete automatically but it isn't
+cap erase `temp'.dta // should delete automatically but it doesn't
 dis "For a discussion of how to interpret negative margins of error, see {browse www.census.gov/data/developers/data-sets/acs-1year/notes-on-acs-estimate-and-annotation-values.html:here}."
 // note if there is an error earlier, this command won't run and won't delete the temp file
 
 end
 
-* END ---------------------------------------------------------------------
+* END --------------------------------------------------------------------------
+
