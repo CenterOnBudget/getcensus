@@ -224,6 +224,8 @@ program define getcensus_help
     dis "{stata global tablelist ""pop"":Population, overall and by sex, age, and race [pop]}"
     dis "{stata global tablelist ""pov"":Poverty, overall and by sex, age, and race [pov]}"
     dis "{stata global tablelist ""povrate"":Poverty rate, overall and by sex, age, and race [povrate]}"
+	dis "{stata global tablelist ""povratio"":Population by ratio of income to poverty level [povratio]}"
+	dis "{stata global tablelist ""povratio_char"":Characteristics of the population at specified povery levels [povratio_char]}"
     dis "{stata global tablelist ""medinc"":Median household income, overall and by race of householder [medinc]}"
     dis "{stata global tablelist ""snap"":SNAP participation by poverty status, income, disability, family composition, and family work experience [snap]}"
     dis "{stata global tablelist ""medicaid"":Medicaid participants, by age [medicaid]}"
@@ -407,6 +409,9 @@ local povrate_byage "S1701_C03_002 S1701_C03_006 S1701_C03_010"
 local povrate_bysex "S1701_C03_011 S1701_C03_012"
 local povrate_byrace "S1701_C03_014 S1701_C03_015 S1701_C03_016 S1701_C03_017 S1701_C03_018 S1701_C03_019 S1701_C03_020 S1701_C03_021"
 local povrate "`povrate_total' `povrate_byage' `povrate_bysex' `povrate_byrace'"
+
+local povratio "B17002"
+local povratio_char "S1703"
 
 ** Income
 local medinc "B19013_001"
