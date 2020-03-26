@@ -133,7 +133,7 @@ If you've thoroughly read the [help file](#help-file) and are still having troub
 
 `getcensus` is made available under the following [license](https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE):
 
-> Copyright (c) 2019 Center on Budget and Policy Priorities 
+> Copyright (c) 2020 Center on Budget and Policy Priorities 
 > 
 > Permission is hereby granted, free of charge, to members of the State Priorities 
 > Partnership network described at [https://statepriorities.org/state-priorities-partners/](https://statepriorities.org/state-priorities-partners/), 
