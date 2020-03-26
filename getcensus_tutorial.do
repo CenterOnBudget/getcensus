@@ -99,7 +99,7 @@ getcensus snap
 
 * To export data in Stata's native format, .dta, use the option saveas()
 
-* For this tutorial, the files will be exported to your current working directory, 
+* The files will be exported to your current working directory, 
 * which is: 
 cd
 
