@@ -36,7 +36,7 @@ Composing API data queries and transforming the returned data into an easy-to-us
 To install this program, type the following command into the Command window:
 
 ```
-net install getcensus, from(https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src) replace
+net install getcensus, from("https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src") replace
 ```
 
 `getcensus` requires Stata version 14.0 or later.

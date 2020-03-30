@@ -34,7 +34,7 @@ Utility program. Searches labels in the API data dictionary to identify relevant
 {synopthdr}
 {synoptline}
 {syntab:Main}
-    {synopt:{opth years(numlist)}}Year(s) to retrieve. Default is most recent available year.{p_end}
+    {synopt:{opth year:s(numlist)}}Year(s) to retrieve. Default is most recent available year.{p_end}
     {synopt:{opt data:set(#)}}ACS 1, 3, or 5-year estimates. Default is "1".{p_end}
     {synopt:{opth geo:graphy(string)}}Geography to download. Default is "state."{p_end}
     {synopt:{opt br:owse}}Open data browser after execution of command.{p_end}
@@ -192,7 +192,7 @@ Below is a full list of the keywords this program accepts (Click on
 {dlgtab:Main}
 
 {phang}
-{opth years(numlist)}       Year or list of years to return. Default is most current
+{opth year:s(numlist)}      Year or list of years to return. Default is most current
                             year. Range of years may be separated with "-" or "/". 
                             API cannot access years before and including 2009 (except
                             5-year data are available for 2009). Data
@@ -205,7 +205,7 @@ Below is a full list of the keywords this program accepts (Click on
                             1-, 3-, or 5-year ACS estimates. Default is {bf:1}.
                             
 {phang}
-{opth cache:path(string)}    The program automatically caches API data dictionaries 
+{opth cache:path(string)}   The program automatically caches API data dictionaries 
 							for future retreival. By default, these files are
 							saved in application support ("~AppData/Local/" on
 							Windows and "~/Library/Application Support" on Macs). 
@@ -356,9 +356,9 @@ Below is a full list of the keywords this program accepts (Click on
         ({stata getcensus B17001_001 B19013_001, geo(state) geoids(01 02) years(2014/2016) clear:click to run})
     {p_end}
     
-    {pmore}. {bf:getcensus} B17001_001 B19013_001, dataset(5) geo(tract) states(01) clear
+    {pmore}. {bf:getcensus} B17001_001 B19013_001, dataset(5) geo(tract) statefips(01) clear
         // five-year estimates at the tract-level in a single state
-        ({stata getcensus B17001_001 B19013_001, dataset(5) geo(tract) states(01) clear:click to run})
+        ({stata getcensus B17001_001 B19013_001, dataset(5) geo(tract) statefips(01) clear:click to run})
     {p_end}
     
     {pmore}. {bf:getcensus} B19013_001, geo(metro) clear
