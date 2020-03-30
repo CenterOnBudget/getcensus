@@ -29,7 +29,7 @@ program define getcensus
 version 14.0
 
 // store syntax in global since it is repeated for each of the subroutines
-global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) geoids(string) STatefips(string) COuntyfips(string) key(string) SAVEas(string) path(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear]"
+global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) geoids(string) STatefips(string) COuntyfips(string) key(string) SAVEas(string) CACHEpath(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear]"
 
 ${syntax}
 
@@ -77,14 +77,14 @@ if "`years'" == ""                              local years "`lastacs1yr'"
 if "`years'" == "" & "`dataset'" == "5"         local years "`lastacs5yr'"
 
 ** Path (Default: Save data in App Support)
-if "`path'" == "" {
+if "`cachepath'" == "" {
     if "`c(os)'" == "Windows" {
-        local path "~/AppData/Local/getcensus"
+        local cachepath "~/AppData/Local/getcensus"
     }
     else {
-        local path "~/Library/Application Support/getcensus"
+        local cachepath "~/Library/Application Support/getcensus"
     }
-    cap mkdir "`path'"
+    cap mkdir "`cachepath'"
 }
 
 
@@ -176,9 +176,9 @@ if "`estimates'" == "" {
 }
 else if "`estimates'" == "catalog" {
     if "`geography'" != "" | "`geoids'" != "" | "`statefips'" != "" | "`countyfips'" != "" | "`saveas'" != "" {
-        dis as err "The 'catalog' program only accepts arguments for 'dataset', 'path', 'product', 'search', 'table', and 'years' options. All other arguments will be disregarded."
+        dis as err "The 'catalog' program only accepts arguments for 'dataset', 'cachepath', 'product', 'search', 'table', and 'years' options. All other arguments will be disregarded."
     }
-    getcensus_catalog, years(`recentyear') dataset(`dataset') path(`path') search(`search') table(`table') product(`product') `browse' `clear'
+    getcensus_catalog, years(`recentyear') dataset(`dataset') cachepath(`cachepath') search(`search') table(`table') product(`product') `browse' `clear'
 }
 else if "`estimates'" == "point_and_click" {
     if "`exportexcel'" != "" local export "exportexcel saveas(Results)"
@@ -192,6 +192,7 @@ else if "`estimates'" == "point_and_click" {
 }
 else {
 	getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') key(`key') saveas(`saveas') path(`path') `nolabel' `noerror' `exportexcel' `browse' `clear' recentyear(`recentyear')
+
 }
 
 macro drop syntax
@@ -224,6 +225,8 @@ program define getcensus_help
     dis "{stata global tablelist ""pop"":Population, overall and by sex, age, and race [pop]}"
     dis "{stata global tablelist ""pov"":Poverty, overall and by sex, age, and race [pov]}"
     dis "{stata global tablelist ""povrate"":Poverty rate, overall and by sex, age, and race [povrate]}"
+	dis "{stata global tablelist ""povratio"":Population by ratio of income to poverty level [povratio]}"
+	dis "{stata global tablelist ""povratio_char"":Characteristics of the population at specified poverty levels [povratio_char]}"
     dis "{stata global tablelist ""medinc"":Median household income, overall and by race of householder [medinc]}"
     dis "{stata global tablelist ""snap"":SNAP participation by poverty status, income, disability, family composition, and family work experience [snap]}"
     dis "{stata global tablelist ""medicaid"":Medicaid participants, by age [medicaid]}"
@@ -323,7 +326,7 @@ if "`clear'" != "" {
 * GET CATALOG ------------------------------------------------------------------
 
 ** Download data dictionary if it doesn't exist
-qui cap confirm file "`path'/`productdir'variables_`dataset'yr_`years'.dta"
+qui cap confirm file "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta"
 if _rc {
     jsonio kv, file("https://api.census.gov/data/`years'/acs/acs`dataset'`productdir'/variables.json") elem("(/variables/)(.*)(label)(.*)")
     dis "https://api.census.gov/data/`years'/acs/acs`dataset'`productdir'/variables.json"
@@ -334,16 +337,16 @@ if _rc {
     rename value estimateLabel
     compress
     sort estimateID
-    save "`path'/`productdir'variables_`dataset'yr_`years'.dta", replace
+    save "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta", replace
 }
 
 ** Conduct search use 'table' and 'search'
 if "`table'" == "" {
-    use "`path'/`productdir'variables_`dataset'yr_`years'.dta", clear
+    use "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta", clear
     dis as result "Searched for all tables for product `product'"
 }
 else {
-    use "`path'/`productdir'variables_`dataset'yr_`years'.dta" if strpos(estimateID, "`table'") != 0, clear
+    use "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta" if strpos(estimateID, "`table'") != 0, clear
     dis as result "Searched for table `table'"
 }
 
@@ -408,6 +411,9 @@ local povrate_byage "S1701_C03_002 S1701_C03_006 S1701_C03_010"
 local povrate_bysex "S1701_C03_011 S1701_C03_012"
 local povrate_byrace "S1701_C03_014 S1701_C03_015 S1701_C03_016 S1701_C03_017 S1701_C03_018 S1701_C03_019 S1701_C03_020 S1701_C03_021"
 local povrate "`povrate_total' `povrate_byage' `povrate_bysex' `povrate_byrace'"
+
+local povratio "B17002"
+local povratio_char "S1703"
 
 ** Income
 local medinc "B19013_001"
@@ -782,7 +788,7 @@ if "`nolabel'" == "" {
 		display as yellow `"Using data dictionary for `year'. If you requested data for multiple years,"'
 		display as yellow `"check the `click_acs_table_changes' on the Census Bureau website."'
         local product = subinstr("`productdir'", "/", "", .)
-        qui cap confirm file "`path'/acs`product'variables_`dataset'yr_`year'.dta"
+        qui cap confirm file "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta"
         if _rc {
             qui jsonio kv, file("https://api.census.gov/data/`year'/acs/acs`dataset'`productdir'/variables.json") elem("(/variables/)(.*)(label)(.*)")
             qui dis "https://api.census.gov/data/`year'/acs/acs`dataset'`productdir'/variables.json"
@@ -792,9 +798,9 @@ if "`nolabel'" == "" {
             qui rename key estimateID
             qui rename value estimateLabel
             qui compress
-            qui save "`path'/acs`product'variables_`dataset'yr_`year'.dta", replace
+            qui save "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta", replace
         }
-        qui use "`path'/acs`product'variables_`dataset'yr_`year'.dta", clear
+        qui use "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta", clear
 		qui replace estimateLabel = subinstr(estimateLabel, 					///
 									 "(in `year' inflation-adjusted dollars)", 	///
 									 "(in nominal dollars)", 					///
