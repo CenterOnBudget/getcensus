@@ -191,8 +191,7 @@ else if "`estimates'" == "point_and_click" {
     macro drop geography
 }
 else {
-    getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') key(`key') saveas(`saveas') path(`path') `nolabel' `noerror' `exportexcel' `browse' `clear'
-    getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') key(`key') saveas(`saveas') path(`path') `nolabel' `noerror' `exportexcel' `browse' `clear' recentyear(`recentyear')
+	getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') key(`key') saveas(`saveas') path(`path') `nolabel' `noerror' `exportexcel' `browse' `clear' recentyear(`recentyear')
 }
 
 macro drop syntax
@@ -779,7 +778,7 @@ if "`nolabel'" == "" {
         clear
         local year `recentyear'
 		local url_acs_table_changes "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html"
-		local click_acs_table_changes "{browse "`url_acs_table_changes'": ACS Table & Geography Changes}"
+		local click_acs_table_changes "{browse "`url_acs_table_changes'":ACS Table & Geography Changes}"
 		display as yellow `"Using data dictionary for `year'. If you requested data for multiple years,"'
 		display as yellow `"check the `click_acs_table_changes' on the Census Bureau website."'
         local product = subinstr("`productdir'", "/", "", .)
