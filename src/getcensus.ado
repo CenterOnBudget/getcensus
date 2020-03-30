@@ -191,7 +191,8 @@ else if "`estimates'" == "point_and_click" {
     macro drop geography
 }
 else {
-    getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') key(`key') saveas(`saveas') cachepath(`cachepath') `nolabel' `noerror' `exportexcel' `browse' `clear'
+	getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') key(`key') saveas(`saveas') path(`path') `nolabel' `noerror' `exportexcel' `browse' `clear' recentyear(`recentyear')
+
 }
 
 macro drop syntax
@@ -380,7 +381,8 @@ end
 * SUBROUTINE: MAIN -------------------------------------------------------------
 
 program define getcensus_main
-${syntax}
+
+syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) geoids(string) STatefips(string) COuntyfips(string) key(string) SAVEas(string) path(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear recentyear(string)]
 
 
 * PRE-PACKAGED ESTIMATES -------------------------------------------------------
@@ -731,7 +733,7 @@ foreach year in `years' {
 
     ** Retrieve Data
     if strlen("`APIcall'") < 255 {
-        local displaylink "{browse "`APIcall'": Link to data}"
+        local displaylink "{browse "`APIcall'": Link to data for `year'}"
         dis `"`displaylink'"'
     }
     else {
@@ -780,10 +782,11 @@ if "`nolabel'" == "" {
     local varlist `r(varlist)'
     preserve
         clear
-        local year = 2018
+        local year `recentyear'
 		local url_acs_table_changes "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html"
-		local click_acs_table_changes "{browse "`url_acs_table_changes'": ACS Table & Geography Changes}"
-		display as yellow `"Using data dictionary for `year'. If you requested data for a different year, check the `click_acs_table_changes' on the Census Bureau website."'
+		local click_acs_table_changes "{browse "`url_acs_table_changes'":ACS Table & Geography Changes}"
+		display as yellow `"Using data dictionary for `year'. If you requested data for multiple years,"'
+		display as yellow `"check the `click_acs_table_changes' on the Census Bureau website."'
         local product = subinstr("`productdir'", "/", "", .)
         qui cap confirm file "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta"
         if _rc {
