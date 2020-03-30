@@ -39,13 +39,13 @@ Utility program. Searches labels in the API data dictionary to identify relevant
     {synopt:{opth geo:graphy(string)}}Geography to download. Default is "state."{p_end}
     {synopt:{opt br:owse}}Open data browser after execution of command.{p_end}
     {synopt:{opt clear}}Replace data in memory with retrieved results.{p_end}
-    {synopt:{opth geoids(numlist)}}GEOIDs of geography to download. Default is usually all.{p_end}
+    {synopt:{opth geoid:s(numlist)}}GEOID(s) of geography to download. Default is usually all.{p_end}
     {synopt:{opth key(string)}}Census key to access API.{p_end}
 
 {syntab:Options}
     {synopt:{opth st:atefips(numlist)}}Two-digit state FIPS code of state(s) for which to download data. Default is usually all.{p_end}
     {synopt:{opt co:untyfips(#)}}Three-digit county FIPS code of county for which to download data if geography is "block".{p_end}
-	{synopt:{opt geocomp:onent(string)}}Geographic component code(s) for which to download data.{p_end}
+	{synopt:{opth geocomp:onent(string)}}Geographic component code(s) for which to download data.{p_end}
     {synopt:{opth save:as(filename)}}File name to save downloaded data (no file extension).{p_end}
     {synopt:{opt ex:portexcel}}Export data in .xlsx format. Must also specify saveas.{p_end}
     {synopt:{opt nol:abel}}Do not retrieve labels associated with estimate IDs.{p_end}
@@ -208,14 +208,6 @@ Below is a full list of the keywords this program accepts (Click on
                             1-, 3-, or 5-year ACS estimates. Default is {bf:1}.
                             
 {phang}
-{opth cache:path(string)}   The program automatically caches API data dictionaries 
-							for future retreival. By default, these files are
-							saved in application support ("~AppData/Local/" on
-							Windows and "~/Library/Application Support" on Macs). 
-							To save these files elsewhere, pass your desired 
-							location to cachepath.
-
-{phang}
 {opt br:owse}               Open data browser after execution of command.
 
 {phang}
@@ -259,7 +251,7 @@ Below is a full list of the keywords this program accepts (Click on
 {p2colreset}{...}
 
 {phang}
-{opth geoid:s(numlist)}      Abbreviated GEOIDs for desired geographies. Most
+{opth geoid:s(numlist)}     Abbreviated GEOIDs for desired geographies. Most
                             commonly, you would pass a two digit FIPS code for a
                             specific state if your geo was "state" (e.g., 01 for
                             Alabama). Default is all. Can explicitly select all
@@ -310,6 +302,14 @@ Below is a full list of the keywords this program accepts (Click on
                             with estimates. If you do not specify, program will
                             automatically retrieve associated MOEs.
 
+{phang}
+{opth cache:path(string)}   The program automatically caches API data dictionaries 
+							for future retreival. By default, these files are
+							saved in application support ("~AppData/Local/" on
+							Windows and "~/Library/Application Support" on Macs). 
+							To save these files elsewhere, pass your desired 
+							location to cachepath.							
+							
 {marker catalog_options}{...}
 {dlgtab:Catalog options}
 

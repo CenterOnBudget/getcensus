@@ -18,7 +18,7 @@ need some help writing Stata commands
 
 * DEFINE -------------------------------------------------------------------- */
 
-/* for debugging
+//* for debugging
 cap program drop getcensus
 cap program drop getcensus_catalog
 cap program drop getcensus_help
@@ -29,7 +29,7 @@ program define getcensus
 version 14.0
 
 // store syntax in global since it is repeated for each of the subroutines
-global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) geoids(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) CACHEpath(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear]"
+global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) GEOIDs(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) CACHEpath(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear]"
 
 ${syntax}
 
@@ -382,7 +382,7 @@ end
 
 program define getcensus_main
 
-syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) geoids(string) STatefips(string) COuntyfips(string) key(string) SAVEas(string) path(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear recentyear(string)]
+syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) GEOIDs(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) path(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear recentyear(string)]
 
 
 * PRE-PACKAGED ESTIMATES -------------------------------------------------------
@@ -586,6 +586,7 @@ else {
 
 ** Geographic components
 // validate geocomponent(s) and geography combo
+local geocomponent = upper("`geocomponent'")
 foreach g in `geocomponent' {
 	if !(inlist("`g'", "", "00", "C0", "C1", "C2", "E0", "E1", "E2", "G0") |	///
 		 inlist("`g'", "H0", "01", "43", "89", "90", "91", "92", "93", "94") |	///
@@ -613,7 +614,6 @@ if "`geocomponent'" != "" {
 		local geocomplist "`geocomplist'`g'&"
 	}
 	local geocomplist = substr("`geocomplist'", 1, length("`geocomplist'") - 1)
-	di "`geocomplist'"
 }
 
 ** Set order of dataset
