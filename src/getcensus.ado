@@ -29,7 +29,7 @@ program define getcensus
 version 14.0
 
 // store syntax in global since it is repeated for each of the subroutines
-global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) geoids(string) STatefips(string) COuntyfips(string) key(string) SAVEas(string) path(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear]"
+global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) geoids(string) STatefips(string) COuntyfips(string) key(string) SAVEas(string) CACHEpath(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear]"
 
 ${syntax}
 
@@ -77,14 +77,14 @@ if "`years'" == ""                              local years "`lastacs1yr'"
 if "`years'" == "" & "`dataset'" == "5"         local years "`lastacs5yr'"
 
 ** Path (Default: Save data in App Support)
-if "`path'" == "" {
+if "`cachepath'" == "" {
     if "`c(os)'" == "Windows" {
-        local path "~/AppData/Local/getcensus"
+        local cachepath "~/AppData/Local/getcensus"
     }
     else {
-        local path "~/Library/Application Support/getcensus"
+        local cachepath "~/Library/Application Support/getcensus"
     }
-    cap mkdir "`path'"
+    cap mkdir "`cachepath'"
 }
 
 
@@ -176,9 +176,9 @@ if "`estimates'" == "" {
 }
 else if "`estimates'" == "catalog" {
     if "`geography'" != "" | "`geoids'" != "" | "`statefips'" != "" | "`countyfips'" != "" | "`saveas'" != "" {
-        dis as err "The 'catalog' program only accepts arguments for 'dataset', 'path', 'product', 'search', 'table', and 'years' options. All other arguments will be disregarded."
+        dis as err "The 'catalog' program only accepts arguments for 'dataset', 'cachepath', 'product', 'search', 'table', and 'years' options. All other arguments will be disregarded."
     }
-    getcensus_catalog, years(`recentyear') dataset(`dataset') path(`path') search(`search') table(`table') product(`product') `browse' `clear'
+    getcensus_catalog, years(`recentyear') dataset(`dataset') cachepath(`cachepath') search(`search') table(`table') product(`product') `browse' `clear'
 }
 else if "`estimates'" == "point_and_click" {
     if "`exportexcel'" != "" local export "exportexcel saveas(Results)"
@@ -191,7 +191,7 @@ else if "`estimates'" == "point_and_click" {
     macro drop geography
 }
 else {
-    getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') key(`key') saveas(`saveas') path(`path') `nolabel' `noerror' `exportexcel' `browse' `clear'
+    getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') key(`key') saveas(`saveas') cachepath(`cachepath') `nolabel' `noerror' `exportexcel' `browse' `clear'
 }
 
 macro drop syntax
@@ -323,7 +323,7 @@ if "`clear'" != "" {
 * GET CATALOG ------------------------------------------------------------------
 
 ** Download data dictionary if it doesn't exist
-qui cap confirm file "`path'/`productdir'variables_`dataset'yr_`years'.dta"
+qui cap confirm file "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta"
 if _rc {
     jsonio kv, file("https://api.census.gov/data/`years'/acs/acs`dataset'`productdir'/variables.json") elem("(/variables/)(.*)(label)(.*)")
     dis "https://api.census.gov/data/`years'/acs/acs`dataset'`productdir'/variables.json"
@@ -334,16 +334,16 @@ if _rc {
     rename value estimateLabel
     compress
     sort estimateID
-    save "`path'/`productdir'variables_`dataset'yr_`years'.dta", replace
+    save "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta", replace
 }
 
 ** Conduct search use 'table' and 'search'
 if "`table'" == "" {
-    use "`path'/`productdir'variables_`dataset'yr_`years'.dta", clear
+    use "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta", clear
     dis as result "Searched for all tables for product `product'"
 }
 else {
-    use "`path'/`productdir'variables_`dataset'yr_`years'.dta" if strpos(estimateID, "`table'") != 0, clear
+    use "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta" if strpos(estimateID, "`table'") != 0, clear
     dis as result "Searched for table `table'"
 }
 
@@ -780,7 +780,7 @@ if "`nolabel'" == "" {
 		local click_acs_table_changes "{browse "`url_acs_table_changes'": ACS Table & Geography Changes}"
 		display as yellow `"Using data dictionary for `year'. If you requested data for a different year, check the `click_acs_table_changes' on the Census Bureau website."'
         local product = subinstr("`productdir'", "/", "", .)
-        qui cap confirm file "`path'/acs`product'variables_`dataset'yr_`year'.dta"
+        qui cap confirm file "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta"
         if _rc {
             qui jsonio kv, file("https://api.census.gov/data/`year'/acs/acs`dataset'`productdir'/variables.json") elem("(/variables/)(.*)(label)(.*)")
             qui dis "https://api.census.gov/data/`year'/acs/acs`dataset'`productdir'/variables.json"
@@ -790,9 +790,9 @@ if "`nolabel'" == "" {
             qui rename key estimateID
             qui rename value estimateLabel
             qui compress
-            qui save "`path'/acs`product'variables_`dataset'yr_`year'.dta", replace
+            qui save "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta", replace
         }
-        qui use "`path'/acs`product'variables_`dataset'yr_`year'.dta", clear
+        qui use "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta", clear
 		qui replace estimateLabel = subinstr(estimateLabel, 					///
 									 "(in `year' inflation-adjusted dollars)", 	///
 									 "(in nominal dollars)", 					///
