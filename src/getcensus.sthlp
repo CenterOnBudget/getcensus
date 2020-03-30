@@ -46,6 +46,7 @@ Utility program. Searches labels in the API data dictionary to identify relevant
 {syntab:Options}
     {synopt:{opth st:atefips(numlist)}}Two-digit state FIPS code of state(s) for which to download data. Default is usually all.{p_end}
     {synopt:{opt co:untyfips(#)}}Three-digit county FIPS code(s) of county/counties for which to download data.{p_end}
+	{synopt:{opt geocomp:onent(string)}}Geographic component code(s) for which to download data.{p_end}
     {synopt:{opth save:as(filename)}}File name to save downloaded data (in .dta format).{p_end}
     {synopt:{opt path(string)}}Path where to store downloaded information.{p_end}
     {synopt:{opt ex:portexcel}}Export data in .xlsx format.{p_end}
@@ -278,7 +279,7 @@ Below is a full list of the keywords this program accepts (Click on
 {p2colreset}{...}
 
 {phang}
-{opth geoids(numlist)}      Abbreviated GEOIDs for desired geographies. Most
+{opth geoid:s(numlist)}      Abbreviated GEOIDs for desired geographies. Most
                             commonly, you would pass a two digit FIPS code for a
                             specific state if your geo was "state" (e.g., 01 for
                             Alabama). Default is all. Can explicitly select all
@@ -294,6 +295,15 @@ Below is a full list of the keywords this program accepts (Click on
 {opt co:untyfips(#)}        Three digit FIPS code(s) of single county) for 
                             which to return data. Only passed if geography is 
                             "block".
+
+{phang}
+{opth geocomp:onent(string)}	Geographic component code(s) for which to 
+								download data, e.g. "H0" for not in metro area or
+								"C0" for in metro area. For most geographic 
+								components, geography must be "us", "state", 
+								"region" or "division"; for other components, 
+								geography must be "us". View the list of codes 
+								and valid geographies {browse "https://api.census.gov/data/2016/acs/acs5/profile/variables/GEOCOMP.json":here}.
 
 {phang}
 {opth save:as(filename)}     Will save in Stata's native format ({bf:.dta}).
@@ -407,6 +417,5 @@ Below is a full list of the keywords this program accepts (Click on
 {marker authors}{...}
 {title:Authors}
 
-{pstd} Created by Raheem Chaudhry and Vincent Palacios. {p_end}
-{pstd} Maintained by Claire Zippel and Matt Saenz, {browse "http://www.cbpp.org":Center on Budget and Policy Priorities}. {p_end}
-{p_end}
+Created by Raheem Chaudhry and Vincent Palacios.
+Maintained by Claire Zippel and Matt Saenz, {browse "http://www.cbpp.org":Center on Budget and Policy Priorities}.

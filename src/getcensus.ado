@@ -18,18 +18,18 @@ need some help writing Stata commands
 
 * DEFINE -------------------------------------------------------------------- */
 
-/* // for debugging
+/* for debugging
 cap program drop getcensus
 cap program drop getcensus_catalog
 cap program drop getcensus_help
 cap program drop getcensus_main
-*/
+**/
 
 program define getcensus
 version 14.0
 
 // store syntax in global since it is repeated for each of the subroutines
-global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) geoids(string) STatefips(string) COuntyfips(string) key(string) SAVEas(string) path(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear]"
+global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) GEOIDs(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) path(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear]"
 
 ${syntax}
 
@@ -191,7 +191,8 @@ else if "`estimates'" == "point_and_click" {
     macro drop geography
 }
 else {
-    getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') key(`key') saveas(`saveas') path(`path') `nolabel' `noerror' `exportexcel' `browse' `clear'
+    getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') geocomponent(`geocomponent') key(`key') saveas(`saveas') path(`path') `nolabel' `noerror' `exportexcel' `browse' `clear'
+
 }
 
 macro drop syntax
@@ -577,6 +578,38 @@ else {
     local geoidslist = substr("`geoidslist'", 1, length("`geoidslist'") - 1)
 }
 
+** Geographic components
+// validate geocomponent(s) and geography combo
+foreach g in `geocomponent' {
+	if !(inlist("`g'", "", "00", "C0", "C1", "C2", "E0", "E1", "E2", "G0") |	///
+		 inlist("`g'", "H0", "01", "43", "89", "90", "91", "92", "93", "94") |	///
+		 inlist("`g'", "95", "A0")) {
+		display as error "Invalid geocomponent `g'."
+		exit
+	}
+	if inlist("`g'", "89", "90", "91", "92", "93", "94", "95") & 	///
+	   "`geography'" != "us" {
+		display as error "Geography must be us if geocomponent is `g'."
+		exit
+	}
+	if (inlist("`g'", "C0", "C1", "C2", "E0", "E1", "E2", "G0", "H0") |		///
+		inlist("`g'" "01", "43", "A0")) & 									///
+	   !inlist("`geography'", "us", "state", "region", "division") {
+		display as error "Geography must be us, state, region, or division if geocomponent is `g'."
+		exit
+	}
+}
+// expand geocomponent(s) and construct API phrase
+if "`geocomponent'" != "" {
+	local geocomplist "&"
+	foreach g in `geocomponent' {
+		local g = "GEOCOMP=`g'"
+		local geocomplist "`geocomplist'`g'&"
+	}
+	local geocomplist = substr("`geocomplist'", 1, length("`geocomplist'") - 1)
+	di "`geocomplist'"
+}
+
 ** Set order of dataset
 local geovarname = "`geography'"
 if "`geography'" == "county" local geovarname "state county"
@@ -717,11 +750,11 @@ foreach year in `years' {
             local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME&for=state%20(or%20part):`statefipslist'&in=`geography':`geoidslist'&key=`key'"
         }
         else {
-            local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME&for=`geography':`geoidslist'&in=state:`statefipslist'`countycondition'&key=`key'"
+            local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME`geocomplist'&for=`geography':`geoidslist'&in=state:`statefipslist'`countycondition'&key=`key'"
         }
     }
     else {
-        local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME&for=`geography':`geoidslist'&key=`key'"
+        local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME`geocomplist'&for=`geography':`geoidslist'&key=`key'"
     }
 
     ** Retrieve Data
