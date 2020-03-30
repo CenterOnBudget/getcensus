@@ -172,7 +172,7 @@ Below is a full list of the keywords this program accepts (Click on
 {synopt:{space 4}{opt pov}}Poverty, overall and by sex, age, and race ({stata getcensus pov, clear:click to run}){p_end}
 {synopt:{space 4}{opt povrate}}Poverty rate, overall and by sex, age, and race ({stata getcensus povrate, clear:click to run}){p_end}
 {synopt:{space 4}{opt povratio}}Population by ratio of income to poverty level ({stata getcensus povratio, clear:click to run}){p_end}
-{synopt:{space 4}{opt povratio_char}}Characteristics of the population at specified povery levels ({stata getcensus povratio_char, clear:click to run}){p_end}
+{synopt:{space 4}{opt povratio_char}}Characteristics of the population at specified poverty levels ({stata getcensus povratio_char, clear:click to run}){p_end}
 {synopt:{space 4}{opt medinc}}Median household income, overall and by race of householder ({stata getcensus medinc, clear:click to run}){p_end}
 {synopt:{space 4}{opt snap}}SNAP participation overall and by poverty status, income, disability status, family composition, and family work effort ({stata getcensus snap, clear:click to run}){p_end}
 {synopt:{space 4}{opt medicaid}}Medicaid participants, by age ({stata getcensus medicaid, clear:click to run}){p_end}

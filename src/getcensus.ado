@@ -225,7 +225,7 @@ program define getcensus_help
     dis "{stata global tablelist ""pov"":Poverty, overall and by sex, age, and race [pov]}"
     dis "{stata global tablelist ""povrate"":Poverty rate, overall and by sex, age, and race [povrate]}"
 	dis "{stata global tablelist ""povratio"":Population by ratio of income to poverty level [povratio]}"
-	dis "{stata global tablelist ""povratio_char"":Characteristics of the population at specified povery levels [povratio_char]}"
+	dis "{stata global tablelist ""povratio_char"":Characteristics of the population at specified poverty levels [povratio_char]}"
     dis "{stata global tablelist ""medinc"":Median household income, overall and by race of householder [medinc]}"
     dis "{stata global tablelist ""snap"":SNAP participation by poverty status, income, disability, family composition, and family work experience [snap]}"
     dis "{stata global tablelist ""medicaid"":Medicaid participants, by age [medicaid]}"
