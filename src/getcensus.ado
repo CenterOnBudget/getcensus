@@ -191,7 +191,7 @@ else if "`estimates'" == "point_and_click" {
     macro drop geography
 }
 else {
-	getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') geocomponent(`geocomponent') key(`key') saveas(`saveas') path(`path') `nolabel' `noerror' `exportexcel' `browse' `clear' recentyear(`recentyear')
+	getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') geocomponent(`geocomponent') key(`key') saveas(`saveas') cachepath(`cachepath') `nolabel' `noerror' `exportexcel' `browse' `clear' recentyear(`recentyear')
 
 }
 
@@ -382,7 +382,7 @@ end
 
 program define getcensus_main
 
-syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) GEOIDs(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) path(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear recentyear(string)]
+syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) GEOIDs(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) CACHEpath(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear recentyear(string)]
 
 
 * PRE-PACKAGED ESTIMATES -------------------------------------------------------
@@ -769,7 +769,7 @@ foreach year in `years' {
         dis `"`displaylink'"'
     }
     else {
-        dis "Link to data: `APIcall'"
+        dis "Link to data for `year': `APIcall'"
     }
     import delimited using "`APIcall'", varnames(1) stringcols(_all)
     
