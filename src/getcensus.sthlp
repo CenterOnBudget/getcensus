@@ -34,28 +34,28 @@ Utility program. Searches labels in the API data dictionary to identify relevant
 {synopthdr}
 {synoptline}
 {syntab:Main}
-    {synopt:{opth years(numlist)}}Years to retrieve. Default is most recent available year.{p_end}
+    {synopt:{opth year:s(numlist)}}Year(s) to retrieve. Default is most recent available year.{p_end}
     {synopt:{opt data:set(#)}}ACS 1, 3, or 5-year estimates. Default is "1".{p_end}
-    {synopt:{opt pr:oduct(string)}}Product type of table (e.g., detailed table, subject table). Default is "DT".{p_end}
-    {synopt:{opt geo:graphy(string)}}Geography to download. Default is "state."{p_end}
+    {synopt:{opth geo:graphy(string)}}Geography to download. Default is "state."{p_end}
     {synopt:{opt br:owse}}Open data browser after execution of command.{p_end}
     {synopt:{opt clear}}Replace data in memory with retrieved results.{p_end}
     {synopt:{opth geoids(numlist)}}GEOIDs of geography to download. Default is usually all.{p_end}
-    {synopt:{opt key(string)}}Census key to access API.{p_end}
+    {synopt:{opth key(string)}}Census key to access API.{p_end}
 
 {syntab:Options}
     {synopt:{opth st:atefips(numlist)}}Two-digit state FIPS code of state(s) for which to download data. Default is usually all.{p_end}
-    {synopt:{opt co:untyfips(#)}}Three-digit county FIPS code(s) of county/counties for which to download data.{p_end}
+    {synopt:{opt co:untyfips(#)}}Three-digit county FIPS code of county for which to download data if geography is "block".{p_end}
 	{synopt:{opt geocomp:onent(string)}}Geographic component code(s) for which to download data.{p_end}
-    {synopt:{opth save:as(filename)}}File name to save downloaded data (in .dta format).{p_end}
-    {synopt:{opt path(string)}}Path where to store downloaded information.{p_end}
-    {synopt:{opt ex:portexcel}}Export data in .xlsx format.{p_end}
+    {synopt:{opth save:as(filename)}}File name to save downloaded data (no file extension).{p_end}
+    {synopt:{opt ex:portexcel}}Export data in .xlsx format. Must also specify saveas.{p_end}
     {synopt:{opt nol:abel}}Do not retrieve labels associated with estimate IDs.{p_end}
     {synopt:{opt noerr:or}}Do not retrieve margins of errors associated with estimates.{p_end}
+	{synopt:{opth cache:path(string)}}Path where to cache API data dictionaries.{p_end}
     
 {syntab: Catalog options}
     {synopt:{opth t:able(string)}}Search for all estimate IDs within a specific Census table.{p_end}
-    {synopt:{opth search(string)}}Search for estimate IDs whose labels contain search term.{p_end}
+	{synopt:{opth pr:oduct(string)}}Search for all estimate IDs within tables of a specific Product type (e.g., detailed table, subject table). Default is "DT".{p_end}
+    {synopt:{opth search(string)}}Search for estimate IDs whose labels contain a search term, such as "poverty" or "65 years and older".{p_end}
 
 
 {marker description}{...}
@@ -142,11 +142,11 @@ retrieving relevants estimates in two ways.
 {pstd}
 First, {cmd:getcensus catalog} is a utility program that will help users search
 the API's dictionary to identify the table or estimate IDs they need to pass to
-the main program to get desired results. For example 
-{cmd: getcensus catalog, product(ST) table(S1701)} will return all estimate IDs
+the main program to get desired results. For example, 
+{cmd: getcensus catalog, table(S1701)} will return all estimate IDs
 that come from Census table S1701. Users can then view the data in browser to 
 identify the specific estimate IDs they want, which they can then pass to the 
-main program. E.g., {cmd: getcensus S1701_C02_001, product(ST)}.
+main program. E.g., {cmd: getcensus S1701_C02_001}. 
 
 {pstd}
 Second, users can pass a keyword to {cmd: getcensus}. The keywords are shortcuts 
@@ -172,6 +172,8 @@ Below is a full list of the keywords this program accepts (Click on
 {synopt:{space 4}{opt pop}}Population, overall and by sex, age, and race ({stata getcensus pop, clear:click to run}){p_end}
 {synopt:{space 4}{opt pov}}Poverty, overall and by sex, age, and race ({stata getcensus pov, clear:click to run}){p_end}
 {synopt:{space 4}{opt povrate}}Poverty rate, overall and by sex, age, and race ({stata getcensus povrate, clear:click to run}){p_end}
+{synopt:{space 4}{opt povratio}}Population by ratio of income to poverty level ({stata getcensus povratio, clear:click to run}){p_end}
+{synopt:{space 4}{opt povratio_char}}Characteristics of the population at specified poverty levels ({stata getcensus povratio_char, clear:click to run}){p_end}
 {synopt:{space 4}{opt medinc}}Median household income, overall and by race of householder ({stata getcensus medinc, clear:click to run}){p_end}
 {synopt:{space 4}{opt snap}}SNAP participation overall and by poverty status, income, disability status, family composition, and family work effort ({stata getcensus snap, clear:click to run}){p_end}
 {synopt:{space 4}{opt medicaid}}Medicaid participants, by age ({stata getcensus medicaid, clear:click to run}){p_end}
@@ -193,7 +195,7 @@ Below is a full list of the keywords this program accepts (Click on
 {dlgtab:Main}
 
 {phang}
-{opth years(numlist)}       Year or list of years to return. Default is most current
+{opth year:s(numlist)}      Year or list of years to return. Default is most current
                             year. Range of years may be separated with "-" or "/". 
                             API cannot access years before and including 2009 (except
                             5-year data are available for 2009). Data
@@ -206,34 +208,12 @@ Below is a full list of the keywords this program accepts (Click on
                             1-, 3-, or 5-year ACS estimates. Default is {bf:1}.
                             
 {phang}
-{opt path(string)}          File path where to save results or, if running
-                            {cmd:getcensus catalog}, the API's dictionary. The 
-                            default path will be in your home directory. To avoid
-                            passing your desired path each time, add 
-                            {bf:global getcensuspath "YOUR_PATH"} to your
-                            profile.do.
-
-{phang}
-{opt pr:oduct(string)}      Two-letter acronym representing product type of table.
-                            For example, Table B19013 is a detailed table. This 
-                            program will figure out the relevant product type
-                            for the table or estimate ID you pass. It is only
-                            necessary to pass a product when you pass a search
-                            term to {cmd:getcensus catalog} so that the program
-                            searches the correct dictionary (each product type 
-                            has its own dictionary).
-
-{marker product}{...}
-{synoptset 30}{...}
-{synopt:{space 4}{it:product}}Definition{p_end}
-{space 4}{synoptline}
-{synopt:{space 4}{opt DT}} Detailed table ({browse "https://api.census.gov/data/2017/acs/acs1/variables.html":dictionary}){p_end}
-{synopt:{space 4}{opt ST}} Subject table ({browse "https://api.census.gov/data/2017/acs/acs1/subject/variables.html":dictionary}){p_end}
-{synopt:{space 4}{opt DP}} Data profile ({browse "https://api.census.gov/data/2017/acs/acs1/profile/variables.html":dictionary}){p_end}
-{synopt:{space 4}{opt CP}} Comparison profile ({browse "https://api.census.gov/data/2017/acs/acs1/cprofile/variables.html":dictionary}){p_end}
-
-{space 4}{synoptline}
-{p2colreset}{...}
+{opth cache:path(string)}   The program automatically caches API data dictionaries 
+							for future retreival. By default, these files are
+							saved in application support ("~AppData/Local/" on
+							Windows and "~/Library/Application Support" on Macs). 
+							To save these files elsewhere, pass your desired 
+							location to cachepath.
 
 {phang}
 {opt br:owse}               Open data browser after execution of command.
@@ -246,15 +226,15 @@ Below is a full list of the keywords this program accepts (Click on
 {dlgtab:Options}
 
 {phang}
-{opt key(string)}           To access the API, you must acquire a key from Census: 
+{opth key(string)}          To access the API, you must acquire a key from Census. 
                             To acquire, register
                             {browse "https://api.census.gov/data/key_signup.html":here}. 
                             To avoid passing the key each time, add 
                             {bf:global censuskey "YOUR_KEY"} to your profile.do.
 
 {phang}
-{opt geo:graphy(string)}    Level of geography to return. Default is "state". Partial list  below.
-                            For more details, see {browse "https://api.census.gov/data/2017/acs/acs1/geography.html":here}.
+{opth geo:graphy(string)}   Level of geography to return. Default is "state".
+							Partial list  below. For more details, see {browse "https://api.census.gov/data/2017/acs/acs1/geography.html":here}.
 							To look up state FIPS codes and GEOIDs, see 
 							{browse "https://www.census.gov/geographies/reference-files/2017/demo/popest/2017-fips.html":here}.
 
@@ -269,7 +249,7 @@ Below is a full list of the keywords this program accepts (Click on
 {synopt:{space 4}{opt county}} County {p_end}
 {synopt:{space 4}{opt county subdivision}} County Subdivision. Only available for 5-year data. Must pass single state FIPS.{p_end}
 {synopt:{space 4}{opt cd}} Congressional District {p_end}
-{synopt:{space 4}{opt metro}} All metropolitan and micropolitan areas. Can optionally pass state FIPS.{p_end}
+{synopt:{space 4}{opt metro}} All metropolitan and micropolitan areas. Can also pass single state FIPS to retreive data for the portion of each metro/micro area that are wihtin the state.{p_end}
 {synopt:{space 4}{opt tract}} Census tracts. Only available for 5-year data. Must pass single state FIPS.{p_end}
 {synopt:{space 4}{opt block}} Census block groups. Only available for 5-year data. Must pass single state FIPS and single county FIPS.{p_end}
 {synopt:{space 4}{opt sch}} Unified school districts. Must pass single state FIPS. {p_end}
@@ -292,9 +272,10 @@ Below is a full list of the keywords this program accepts (Click on
                             explicitly select all with "*".
                             
 {phang}
-{opt co:untyfips(#)}        Three digit FIPS code(s) of single county) for 
-                            which to return data. Only passed if geography is 
-                            "block".
+{opt co:untyfips(#)} 		Three digit FIPS code of single county for 
+                            which to return data if geography is "block". To 
+							return data for selected county/counties if geography
+							is "county", use the geoid option.
 
 {phang}
 {opth geocomp:onent(string)}	Geographic component code(s) for which to 
@@ -306,16 +287,23 @@ Below is a full list of the keywords this program accepts (Click on
 								and valid geographies {browse "https://api.census.gov/data/2016/acs/acs5/profile/variables/GEOCOMP.json":here}.
 
 {phang}
-{opth save:as(filename)}     Will save in Stata's native format ({bf:.dta}).
+{opth save:as(filename)}    Results will be saved to the current working directory
+							in Stata's native format, .dta. E.g. if saveas is
+							"my_data", results will be saved as "my_data.dta".
+							Do not specify a file extension. 
 
 {phang}
-{opt ex:portexcel}          Will export table in .xlsx format based on name passed
-                            in {bf:saveas}.
+{opt ex:portexcel}          Will export table in .xlsx format to the current 
+							working directory. Must also specify saveas. E.g.
+							if saveas is "my_data" and exportexcel is specified,
+							results will be saved as "my_data.xlsx".
 
 {phang}
 {opt nol:abel}              Will not retrieve labels associated with estimate IDs.
                             If you do not specify this option, program will either 
-                            label variable or save label as note.
+                            label variable or, if the label is too long to be
+							saved as a variable label, save as the label as a 
+							variable note.
                             
 {phang}
 {opt noerr:or}              Will not retrieve margins of error (MOEs) associated
@@ -326,15 +314,32 @@ Below is a full list of the keywords this program accepts (Click on
 {dlgtab:Catalog options}
 
 {phang}
-{opt search(string)}        Searches the estimate labels using the API's dictionary.
-                            Returns a variable "searchmatch" that is equal to "1"
-                            if an estimate label contains the search term.
+{opth search(string)}        Returns the API data dictionary entries of estimates
+							whose labels contain the search term, such as 
+							"poverty" or "65 years and older".
 
 {phang}
-{opt t:able(string)}        Returns all estimate IDs and labels associated with
-                            a single table (e.g., B19013). If table is not a
-                            detailed table, pass the relevant product type
-                            (see "product" above).
+{opth pr:oduct(string)}      Returns the API data dictionary entries of estimates
+							within tables of a specific Product type, as 
+							specified with a two-letter acronym, e.g. "DT" for 
+							detailed table. Defaults to "DT".
+							
+{marker product}{...}
+{synoptset 30}{...}
+{synopt:{space 4}{it:product}}Definition{p_end}
+{space 4}{synoptline}
+{synopt:{space 4}{opt DT}} Detailed table ({browse "https://api.census.gov/data/2018/acs/acs1/variables.html":dictionary}){p_end}
+{synopt:{space 4}{opt ST}} Subject table ({browse "https://api.census.gov/data/2018/acs/acs1/subject/variables.html":dictionary}){p_end}
+{synopt:{space 4}{opt DP}} Data profile ({browse "https://api.census.gov/data/2018/acs/acs1/profile/variables.html":dictionary}){p_end}
+{synopt:{space 4}{opt CP}} Comparison profile ({browse "https://api.census.gov/data/2018/acs/acs1/cprofile/variables.html":dictionary}){p_end}
+
+{space 4}{synoptline}
+{p2colreset}{...}
+
+{phang}
+{opth t:able(string)}        Returns all estimate IDs and labels associated with
+                            a single table (e.g., B19013). If both table and
+							product are specified, product will be ignored.
 
 {marker examples}{...}
 {title:Examples}
@@ -349,7 +354,7 @@ Below is a full list of the keywords this program accepts (Click on
         ({stata getcensus B17001, clear:click to run}){p_end}
     
     {pmore}. {bf:getcensus} medinc, years(2014 - 2016) clear
-        // various estimates related to median household income, 2014-2016
+        // various estimates related to median household income (see Keyword section above), 2014-2016
         ({stata getcensus medinc, years(2014 - 2016) clear:click to run})
     {p_end}
     
@@ -358,14 +363,14 @@ Below is a full list of the keywords this program accepts (Click on
         ({stata getcensus B17001_001 B19013_001, geo(county) clear:click to run})
     {p_end}
     
-    {pmore}. {bf:getcensus} B17001_001 B19013_001, geo(state) geoids(01 02)years(2014/2016) clear
+    {pmore}. {bf:getcensus} B17001_001 B19013_001, geo(state) geoids(01 02) years(2014/2016) clear
         // restricted to two states; alternative way of specifying years
         ({stata getcensus B17001_001 B19013_001, geo(state) geoids(01 02) years(2014/2016) clear:click to run})
     {p_end}
     
-    {pmore}. {bf:getcensus} B17001_001 B19013_001, dataset(5) geo(tract) states(01) clear
+    {pmore}. {bf:getcensus} B17001_001 B19013_001, dataset(5) geo(tract) statefips(01) clear
         // five-year estimates at the tract-level in a single state
-        ({stata getcensus B17001_001 B19013_001, dataset(5) geo(tract) states(01) clear:click to run})
+        ({stata getcensus B17001_001 B19013_001, dataset(5) geo(tract) statefips(01) clear:click to run})
     {p_end}
     
     {pmore}. {bf:getcensus} B19013_001, geo(metro) clear
@@ -374,7 +379,7 @@ Below is a full list of the keywords this program accepts (Click on
     {p_end}
     
     {pmore}. {bf:getcensus} B19013, data(5) geo(metro) geoids(12260) st(13) clear
-        // all estimates from a single table, choose portion of metro area that falls within a single state
+        // all estimates from a single table, portion of metro/micro area that falls within the state
         ({stata getcensus B19013, data(5) geo(metro) geoids(12260) st(13) clear:click to run})
     {p_end}
 	
@@ -385,7 +390,7 @@ Below is a full list of the keywords this program accepts (Click on
     
 {dlgtab:Catalog }
     {pmore}. {bf:getcensus catalog}, clear
-        // loads full dictionary for detailed tables
+        // loads full API data dictionary for detailed tables
         ({stata getcensus catalog, clear:click to run})
     {p_end}
     
@@ -400,7 +405,7 @@ Below is a full list of the keywords this program accepts (Click on
     {p_end}
     
     {pmore}. {bf:getcensus catalog}, search(median income) clear
-        // searches detailed tables dictionary for labels that include words from search
+        // searches detailed tables dictionary for estimate whose labels include "median income"
         ({stata getcensus catalog, search(median income) clear:click to run})
     {p_end}
     
