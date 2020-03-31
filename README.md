@@ -156,7 +156,4 @@ If you've thoroughly read the [help file](#help-file) and are still having troub
 
 # Contributors
 
-`getcensus` is maintained by [Claire Zippel](https://www.cbpp.org/claire-zippel) and [Matt Saenz](https://www.cbpp.org/matt-saenz). The program was created by [Raheem Chaudhry](https://github.com/raheem03) and [Vincent Palacios](https://github.com/vincentpalacios).  
-
-
-[![HitCount](http://hits.dwyl.io/CenterOnBudget/getcensus.svg)](http://hits.dwyl.io/CenterOnBudget/getcensus)
+`getcensus` is maintained by [Claire Zippel](https://www.cbpp.org/claire-zippel) and [Matt Saenz](https://www.cbpp.org/matt-saenz). The program was created by [Raheem Chaudhry](https://github.com/raheem03) and [Vincent Palacios](https://github.com/vincentpalacios). 
