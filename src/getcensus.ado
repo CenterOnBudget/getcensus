@@ -834,17 +834,19 @@ foreach var of varlist _all {
 	// Works for detailed, subject, and collapsed tables
 	if ustrregexm("`var'", "[0-9]m$") == 1 {
 		local est_var = ustrregexra("`var'", "(?<=[0-9])m$", "e")
-		local est_var_label : var label `est_var'
-		local moe_var_label = ustrregexra("`est_var_label'", "^Estimate", "MOE")
-		label var `var' "`moe_var_label'"
+		notes _fetch est_var_note : `est_var' 1
+		local moe_var_note = ustrregexra("`est_var_note'", "^Estimate", "MOE")
+		quietly label var `var' "`moe_var_note'"
+		quietly note `var': `moe_var_note'
 	}
 	
 	// Needed for data profiles, which also contain "pe" and "pm"
 	if ustrregexm("`var'", "[0-9]pm$") == 1 {
 		local est_var = ustrregexra("`var'", "(?<=[0-9])pm$", "pe")
-		local est_var_label : var label `est_var'
-		local moe_var_label = ustrregexra("`est_var_label'", "^Percent Estimate", "Percent MOE")
-		label var `var' "`moe_var_label'"
+		notes _fetch est_var_note : `est_var' 1
+		local moe_var_note = ustrregexra("`est_var_note'", "^Percent Estimate", "Percent MOE")
+		quietly label var `var' "`moe_var_note'"
+		quietly note `var': `moe_var_note'
 	}
 }
 
