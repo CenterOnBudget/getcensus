@@ -836,6 +836,28 @@ order `order'
 qui cap tostring state, format(%02.0f) replace
 qui cap tostring county, format(%03.0f) replace
 
+** Add labels to MOE vars
+foreach var of varlist _all {
+	
+	// Works for detailed, subject, and collapsed tables
+	if ustrregexm("`var'", "[0-9]m$") == 1 {
+		local est_var = ustrregexra("`var'", "(?<=[0-9])m$", "e")
+		notes _fetch est_var_note : `est_var' 1
+		local moe_var_note = ustrregexra("`est_var_note'", "^Estimate", "MOE")
+		quietly label var `var' "`moe_var_note'"
+		quietly note `var': `moe_var_note'
+	}
+	
+	// Needed for data profiles, which also contain "pe" and "pm"
+	if ustrregexm("`var'", "[0-9]pm$") == 1 {
+		local est_var = ustrregexra("`var'", "(?<=[0-9])pm$", "pe")
+		notes _fetch est_var_note : `est_var' 1
+		local moe_var_note = ustrregexra("`est_var_note'", "^Percent Estimate", "Percent MOE")
+		quietly label var `var' "`moe_var_note'"
+		quietly note `var': `moe_var_note'
+	}
+}
+
 ** Export using putexcel (so that we can export variable names)
 if "`exportexcel'" != "" {
     qui ds
@@ -867,7 +889,7 @@ if "`saveas'" != "" {
 	dis as yellow `"Results saved as `dest_dir'/`saveas'.dta."'
     if "`exportexcel'" != "" {
         qui export excel using "`saveas'.xlsx", cell(A2) sheetmodify firstrow(var)
-		dis as yellow `"Results saved as `dest_dir'`saveas'.xlsx."'
+		dis as yellow `"Results saved as `dest_dir'/`saveas'.xlsx."'
     }
 }
 
