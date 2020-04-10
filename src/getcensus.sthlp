@@ -1,10 +1,12 @@
 {smcl}
-{* *! version 0.1.1  2019-12-XX}{...}
+
 {viewerjumpto "Syntax" "getcensus##syntax"}{...}
 {viewerjumpto "Description" "getcensus##description"}{...}
 {viewerjumpto "Options for getcensus" "getcensus##options"}{...}
 {viewerjumpto "Options for getcensus catalog" "getcensus##catalog_options"}{...}
 {viewerjumpto "Examples" "getcensus##examples"}{...}
+{viewerjumpto "Website" "getcensus##website"}{...}
+{viewerjumpto "Authors" "getcensus##authors"}{...}
 {title:Title}
 
 {p2colset 5 20 22 2}{...}
@@ -419,6 +421,13 @@ Below is a full list of the keywords this program accepts (Click on
         ({stata getcensus catalog, search(median income) product(ST) clear:click to run})
     {p_end}
 
+	
+{marker website}{...}
+{title:Website}
+
+{browse "https://github.com/CenterOnBudget/getcensus":Visit the getcensus GitHub page}
+
+	
 {marker authors}{...}
 {title:Authors}
 

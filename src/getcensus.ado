@@ -18,7 +18,7 @@ need some help writing Stata commands
 
 * DEFINE -------------------------------------------------------------------- */
 
-//* for debugging
+/* for debugging
 cap program drop getcensus
 cap program drop getcensus_catalog
 cap program drop getcensus_help

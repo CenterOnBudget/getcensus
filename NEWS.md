@@ -1,6 +1,24 @@
+# 1.0.0
+
+__Main program__
+
+  - Add geographic component (e.g. metro/non-metro) option ([#11](https://github.com/CenterOnBudget/getcensus/issues/11))
+  - Label margin of error variables ([#12](https://github.com/CenterOnBudget/getcensus/issues/12))
+  - Clarify handling of mixed-up `geoid` and `statefips` options ([#18](https://github.com/CenterOnBudget/getcensus/issues/18))
+  - New keywords to easily retrieve poverty ratio tables ([#21](https://github.com/CenterOnBudget/getcensus/issues/21))
+  - Label variables using data dictionary for most recent data year requested by user ([#24](https://github.com/CenterOnBudget/getcensus/issues/24))
+
+__Help file__
+
+  - Clarify useage of `product` option ([#14](https://github.com/CenterOnBudget/getcensus/issues/14))
+  - Correct description of `cache` option and rename to `cachepath`
+  - Several typo fixes and minor edits
+  - Add link to GitHub page
+  
 # 0.1.2
 
 __Main program__
+
   - Fix issue [#13](https://github.com/CenterOnBudget/getcensus/issues/13) 
   - When `saveas` option used, new message tells users the path to the saved files. ([#15](https://github.com/CenterOnBudget/getcensus/issues/15))
 
