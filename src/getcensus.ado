@@ -130,43 +130,52 @@ foreach year in `years' {
 
 * ERROR HANDLING ---------------------------------------------------------------
 
-if (`c(changed)' | `c(N)' | `c(k)') & "`clear'" == "" & "`estimates'" != ""{
-    dis as err "no; data in memory would be lost"
-    exit
+if (`c(changed)' | `c(N)' | `c(k)') & "`clear'" == "" & "`estimates'" != "" {
+	display as error "no; dataset in memory has changed since last saved"
+    exit 4
 }
 
-foreach year in `years' {
-    if (`year' < 2010 & "`dataset'" == "1") {
-        dis as yellow "As of last update to getcensus, Census' API only provided data for 2010 and onward for 1-year data."
-        // exit
-    }
+capture noisily {
+	foreach year in `years' {
+		if `dataset' == 1 {
+			if `year' < 2005 {
+				display as error "1-year ACS estimates are only available for 2005 and later."
+				exit 1
+				continue, break
+			}
+			if `year' > `lastacs1yr' {
+				display as error "As of last update for getcensus, 1-year ACS estimates for `year' had not been released."
+				exit 1
+				continue, break
+			}	
+		}
+		if `dataset' == 5 {
+			if `year' < 2009 {
+				display as error "5-year ACS estimates are only available for 2009 and later."
+				exit 1
+				continue, break
+			}
+			if `year' > `lastacs5yr' {
+				display as error "As of last update for getcensus, 5-year ACS estimates for `year' had not been released."
+				exit 1
+				continue, break
+			}
+		}
+		if `dataset' == 3 & !inlist(`year', 2012, 2013) {
+			display as error "3-year ACS estimates are only available for 2012 and 2013."
+			exit 1
+			continue, break
+		}
+	}
 }
 
-foreach year in `years' {
-    if `year' > `lastacs1yr' {
-        dis as yellow "As of last update for getcensus, data for `year' had not been released."
-        // exit
-    }
-}
-
-
-foreach year in `years' {
-    if !inlist(`year', 2012, 2013) & "`dataset'" == "3" {
-        dis as yellow "3-year data only available for 2012 and 2013."
-        // exit
-    }
-}
-
-foreach year in `years' {
-    if `year' > `lastacs5yr' & "`dataset'" == "5" {
-        dis as yellow "As of last update for getcensus, 5-year data for `year' had not been released."
-        // exit
-    }
+if _rc != 0 {
+	exit
 }
 
 if !inlist(`dataset', 1, 3, 5) {
-    dis as yellow "Census only produces 1-, 3-, or 5-year estimates."
-    // exit
+    display as error "Census only produces 1-, 3-, or 5-year ACS estimates."
+	exit
 }
 
 * SWITCHES ---------------------------------------------------------------------
@@ -244,6 +253,10 @@ program define getcensus_help
     
     dis as text ""
     dis as text "Which year do you want data for?"
+	dis "{stata global years 2005:2005} (1-year data only)"
+	dis "{stata global years 2006:2006} (1-year data only)"
+	dis "{stata global years 2007:2007} (1-year data only)"
+	dis "{stata global years 2008:2008} (1-year data only)"
     dis "{stata global years 2009:2009}"
     dis "{stata global years 2010:2010}"
     dis "{stata global years 2011:2011}"
@@ -451,7 +464,7 @@ local kids_pov_parents_nativity "B05010"
 ** Create "estimates" based on expanding local if not from table
 local prepackaged ""
 foreach estimate in `estimates' {
-    if !ustrregexm("`estimates'", "^(B|C|DP|S)(?=\d)", 1) {
+    if !ustrregexm("`estimates'", "^(B|C|CP|DP|S)(?=\d)", 1) {
         local prepackaged "`prepackaged' ``estimate''"
     }
     else {
@@ -495,21 +508,24 @@ if strpos("`estimates'", "S") == 1 {
     local productdir "/subject"
 }
 
-if "`dataset'" == "5" {
-    foreach year in `years' {
-        if "`product'" == "DT" & `year' < 2010 {
-            dis as yellow "As of last update to getcensus, Census' API only provided data for 2010 and onward for 5-year data for product type DT (estimate IDs -- but not table IDs -- work for 2009."
-        }
-        else if "`product'" == "ST" & `year' < 2012 {
-            dis as yellow "As of last update to getcensus, Census' API only provided data for 2012 and onward for 5-year data for product type ST."
-        }
-        else if "`product'" == "CP" & `year' < 2015 {
-            dis as yellow "As of last update to getcensus, Census' API only provided data for 2015 and onward for 5-year data for product type CP."
-        }
-        else if "`product'" == "DP" & `year' < 2014 {
-            dis as yellow "As of last update to getcensus, Census' API only provided data for 2014 and onward for 5-year data for product type DP."
-        }
-    }
+capture noisily {
+	foreach year in `years' {
+		if `year' < 2010 {
+			if "`product'" == "CP" {
+				display as error "Comparison profiles (table and estimate IDs starting with 'CP') are only available for 2010 and later."
+				exit 1
+				continue, break
+			}
+			if "`product'" == "ST" {
+				display as error "Subject tables (table and estimate IDs starting with 'CP') are only available for 2010 and later."
+				exit 1
+				continue, break
+			}
+		}
+	}
+}
+if _rc != 0 {
+	exit
 }
 
 local api_estimateslist ""
@@ -749,7 +765,6 @@ foreach year in `years' {
     
     // okay, so here's a problem -- if the estimate is wrong, no error. just doesn't execute
     local apiroot "acs/acs"
-    if "`year'" == "2009" local apiroot "acs"
     
     if "`geography'" != "state" & "`statefips'" != "*" {
         if "`geography'" == "metropolitan%20statistical%20area/micropolitan%20statistical%20area" {
@@ -817,7 +832,7 @@ if "`nolabel'" == "" {
         local year `recentyear'
 		local url_acs_table_changes "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html"
 		local click_acs_table_changes "{browse "`url_acs_table_changes'":ACS Table & Geography Changes}"
-		display as yellow `"Using data dictionary for `year'. If you requested data for multiple years,"'
+		display as yellow "Variables labeled using data dictionary for `year'. If you requested data for multiple years,"
 		display as yellow `"check the `click_acs_table_changes' on the Census Bureau website."'
         local product = subinstr("`productdir'", "/", "", .)
         qui cap confirm file "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta"
