@@ -517,7 +517,7 @@ capture noisily {
 				continue, break
 			}
 			if "`product'" == "ST" {
-				display as error "Subject tables (table and estimate IDs starting with 'CP') are only available for 2010 and later."
+				display as error "Subject tables (table and estimate IDs starting with 'S') are only available for 2010 and later."
 				exit 1
 				continue, break
 			}
