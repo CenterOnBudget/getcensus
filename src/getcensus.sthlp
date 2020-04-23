@@ -199,9 +199,7 @@ Below is a full list of the keywords this program accepts (Click on
 {phang}
 {opth year:s(numlist)}      Year or list of years to return. Default is most current
                             year. Range of years may be separated with "-" or "/". 
-                            API cannot access years before and including 2009 (except
-                            5-year data are available for 2009). Data
-                            for preceding calendar year are available starting
+							Data for preceding calendar year are available starting
                             mid-September (e.g., data for 2016 are available
                             starting mid-September 2017).
 
