@@ -191,7 +191,10 @@ else if "`estimates'" == "point_and_click" {
     macro drop geography
 }
 else {
-	getcensus_main `estimates', years(`years') dataset(`dataset') product(`product') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') geocomponent(`geocomponent') key(`key') saveas(`saveas') cachepath(`cachepath') `nolabel' `noerror' `exportexcel' `browse' `clear' recentyear(`recentyear')
+    if "`product'" != "" | "`search'" != "" | "`table'" != "" | {
+        display as error "The arguments 'product', 'search', and 'table' are only used by 'getcensus catalog'. They will be disregarded."
+    }
+	getcensus_main `estimates', years(`years') dataset(`dataset') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') geocomponent(`geocomponent') key(`key') saveas(`saveas') cachepath(`cachepath') `nolabel' `noerror' `exportexcel' `browse' `clear' recentyear(`recentyear')
 
 }
 
@@ -382,7 +385,7 @@ end
 
 program define getcensus_main
 
-syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) GEOIDs(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) CACHEpath(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear recentyear(string)]
+syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) GEOIDs(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) CACHEpath(string) NOLabel NOERRor EXportexcel BRowse clear recentyear(string)]
 
 
 * PRE-PACKAGED ESTIMATES -------------------------------------------------------
@@ -451,7 +454,7 @@ local kids_pov_parents_nativity "B05010"
 ** Create "estimates" based on expanding local if not from table
 local prepackaged ""
 foreach estimate in `estimates' {
-    if !ustrregexm("`estimates'", "^(B|C|DP|S)(?=\d)", 1) {
+    if !ustrregexm("`estimates'", "^(B|C|DP|CP|S)(?=\d)", 1) {
         local prepackaged "`prepackaged' ``estimate''"
     }
     else {
@@ -470,30 +473,41 @@ if "`clear'" != "" {
     clear
 }
 
+}
+
 ** Product
-if "`estimates'" != "" & "`product'" != "" {
-    dis "Program will derive product from 'estimates' and ignore 'product'"
+
+local product_dt 0
+local product_cp 0
+local product_dp 0
+local product_st 0
+
+if ustrregexm("`estimates'", "(B)|(C(?!P))") {
+	local product "DT"
+	local productdir ""
+	local product_dt  1
+}
+if ustrregexm("`estimates'", "CP") {
+	local product "CP"
+	local productdir "/cprofile"
+	local product_cp  1
+}
+if ustrregexm("`estimates'", "DP") {
+	local product "DP"
+	local productdir "/profile"
+	local product_dp 1
+}
+if ustrregexm("`estimates'", "S") {
+	local product "ST"
+	local productdir "/subject"
+	local product_st 1
 }
 
-if (ustrregexm("`estimates'", "(^B)|(^C(?!P))")) == 1 {
-    local product "DT"
-    local productdir ""
+if (`product_dt' + `product_cp' + `product_dp' + `product_st') != 1 {
+	display as error "All estimates must come from the same product."
+	exit 
 }
 
-if strpos("`estimates'", "CP") == 1 {
-    local product "CP"
-    local productdir "/cprofile"
-}
-
-if strpos("`estimates'", "DP") == 1 {
-    local product "DP"
-    local productdir "/profile"
-}
-
-if strpos("`estimates'", "S") == 1 {
-    local product "ST"
-    local productdir "/subject"
-}
 
 if "`dataset'" == "5" {
     foreach year in `years' {
@@ -514,16 +528,9 @@ if "`dataset'" == "5" {
 
 local api_estimateslist ""
 
-foreach estimate in `estimates' {
-    ** Estimates must all be of the same type
-    if ("`product'" != "DT" & strpos("`product'", substr("`estimate'", 1, 1)) != 1) | ///
-	("`product'" == "DT" & !(ustrregexm("`estimate'", "(^B)|(^C(?!P))"))) {
-        dis as err "`estimate' is not from product `product'. All estimates must come from same product."
-        exit
-    }
-    
+foreach estimate in `estimates' {    
     ** Create estimate ID list (ignore if passing group)
-    if strpos("`estimates'", "_")!=0 {
+    if strpos("`estimates'", "_") != 0 {
     ** Add estimates and MOEs for all products except comparison profiles
         if "`noerror'" == "" & "`product'" != "CP" {
             local api_estimateslist "`api_estimateslist'`estimate'E,`estimate'M,"
@@ -707,21 +714,10 @@ if "`statefips'" == "*" & inlist("`geography'", "tract", "block group", "county 
 
 local geography = subinstr("`geography'", " ", "%20", .)
 
-** Product
-if strpos("`product'", " ") != 0 {
-    dis as err "Can only pass one product type (dt, dp, cp, st) at a time"
-    exit
-}
-
 ** Export
 if "`exportexcel'"!="" & "`saveas'"=="" {
     dis as err "If you specify the 'exportexcel' option, must pass filename to 'saveas'."
     exit
-}
-
-** Table and search
-if "`search'" != "" | "`table'" != "" {
-    dis "Search and table options only used when searching catalog of estimate IDs."
 }
 
 ** Varnames
