@@ -486,8 +486,6 @@ if "`clear'" != "" {
     clear
 }
 
-}
-
 ** Product
 
 local product_dt 0
