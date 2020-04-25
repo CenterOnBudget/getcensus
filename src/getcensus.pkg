@@ -1,9 +1,6 @@
-v 1.0.0
-d getcensus. Loads data from the American Community Survey into memory.
-d Program by Vincent Palacios, Raheem Chaudhry.
-d Package takes arguments and passes them to Census' API, which returns 
-d structured data, which this program parses and loads into memory.
-d Distribution-Date: 20200410
+v 1.1.0
+d getcensus. Load data from the American Community Survey into memory.
+d Distribution-Date: 20200424
 
 f getcensus.ado
 f getcensus.sthlp

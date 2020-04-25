@@ -1,3 +1,11 @@
+# 1.1.0
+
+__Main program__
+
+  - Add explicit support for data years 2005-2009
+  - Improved and stricter handling of errors when user passes unsupported year-datset or year-product combinations
+  - Some cleanup related to deprecation of `product` option
+
 # 1.0.0
 
 __Main program__
@@ -10,7 +18,7 @@ __Main program__
 
 __Help file__
 
-  - Clarify useage of `product` option ([#14](https://github.com/CenterOnBudget/getcensus/issues/14))
+  - Clarify usage of `product` option ([#14](https://github.com/CenterOnBudget/getcensus/issues/14))
   - Correct description of `cache` option and rename to `cachepath`
   - Several typo fixes and minor edits
   - Add link to GitHub page
