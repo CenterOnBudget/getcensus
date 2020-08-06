@@ -493,7 +493,7 @@ local product_cp 0
 local product_dp 0
 local product_st 0
 
-if ustrregexm("`estimates'", "(B)|(C(?!P))") {
+if ustrregexm("`estimates'", "((B)|(C(?!P)))\d{5}") {
 	local product "DT"
 	local productdir ""
 	local product_dt  1

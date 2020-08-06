@@ -1,6 +1,6 @@
-v 1.1.0
+v 1.1.1
 d getcensus. Load data from the American Community Survey into memory.
-d Distribution-Date: 20200424
+d Distribution-Date: 20200806
 
 f getcensus.ado
 f getcensus.sthlp
