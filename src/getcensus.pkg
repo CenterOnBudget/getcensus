@@ -1,6 +1,12 @@
-v 1.1.1
+v 2.0.0
 d getcensus. Load data from the American Community Survey into memory.
-d Distribution-Date: 20200806
+d Distribution-Date: 20200930
 
 f getcensus.ado
 f getcensus.sthlp
+
+f _getcensus_catalog.ado
+f _getcensus_expand_keyword.ado
+f _getcensus_parse_geography.ado
+
+F _getcensus_geo_args.dta
