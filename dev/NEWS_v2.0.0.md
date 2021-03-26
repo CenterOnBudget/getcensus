@@ -3,19 +3,17 @@
 ### Enhancements
 
 - Support for 12 additional geographic areas: alaska native regional corporation, american indian area/alaska native area/hawaiian home land, combined statistical area, state legislative district (lower chamber), state legislative district (upper chamber), new england city and town area, combined new england city and town area, urban area, school district (elementary), school district (secondary), public use microdata area, and zip code tabulation area. Users may specify the full name or an abbreviation to `geography()`.
-- The name each variable's table is saved as a variable note. Different tables have different universes which are described in the table name rather than the variable names, and it is important for users to be aware of the universe for a given estimate, especially as users may be retrieving variables from multiple tables. (These notes may not appear in all years and product types, as occasionally this field is missing from the API data dictionaries.)
+- The name of each variable's table is saved as a variable note. Different tables have different universes which are described in the table name rather than the variable names, and it is important for users to be aware of the universe for a given estimate, especially as users may be retrieving variables from multiple tables. (These notes may not appear in all years and product types, as occasionally this field is missing from the API data dictionaries.)
 
 
 ### Breaking changes
 
-- `product()` must be specified with `getcensus catalog`.
 - In `geography()`, "bg" replaces "block" to refer to the Census geography "block group". "Block" is a distinct Census geography for which ACS estimates are not available (decennial census only).
-- `table()` may no longer be abbreviated to `t()`.
 
 
 ### Non-breaking changes
 
-- `sample()` replaces `dataset()` as it is more consistent with ACS terminology. The `dataset()` option is retained for compatibility; if specified, its contents are copied into `sample()`.
+- `sample()` replaces `dataset()` as it is more consistent with ACS terminology. Also, in the future `getcensus` may support other Census datasets, such as the decennial census and population estimates, so we'd like to preserve the `dataset()` option for future development. For now, the `dataset()` option is retained for compatibility; if specified, its contents are copied into `sample()`.
 - Both a Stata file and an Excel file are saved by default when `saveas()` is specified; the `exportexcel` option is ignored.
 - When one or more variable labels have been truncated, a single message is displayed rather than a message for each truncated label.
 

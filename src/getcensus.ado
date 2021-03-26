@@ -1,5 +1,5 @@
 
-*/
+**/
 run "_getcensus_expand_keyword.ado"
 run "_getcensus_catalog.ado"
 run "_getcensus_parse_geography.ado"
@@ -11,18 +11,18 @@ capture program drop getcensus
 program define getcensus
 
 	syntax anything(name=estimates), 									///
-		   [YEARs(string) sample(integer 1)]							///
+		   [YEARs(string) SAMPle(integer 1)]							///
 		   [GEOgraphy(string) STatefips(string) COuntyfips(string)]		///
 		   [GEOIDs(string) GEOCOMPonent(string)]						///
 		   [NOLabel NOERRor]											///
 		   [clear SAVEas(string) replace BRowse]						///
-		   [PRODuct(string) table(string) search(string)]				///
+		   [PRoduct(string) Table(string) search(string)]				///
 		   [key(string) CACHEpath(string)]								///
-		   [exportexcel DATAset(integer 0)] // for compatibility
+		   [EXportexcel DATAset(integer 0)] // for compatibility
 
 	// defaults
 	if "`years'" == "" {
-		local years 2018
+		local years 2019
 	}
 
 	// prelim checks and parsing  ---------------------------------------------------------
@@ -35,7 +35,7 @@ program define getcensus
 	// install dependency
 	capture which jsonio
 	if _rc != 0 {
-		display as result "To use getcensus, the jsonio package must be installed. Type -yes- to install this package (any other key will exit)" _request(_install)
+		display as result "To use {bf:getcensus}, the {bf:jsonio} package must be installed. Type -yes- to install this package (any other key will exit)" _request(_install)
 		if "`install'" == "yes" {
 			ssc install jsonio
 		}
@@ -51,7 +51,7 @@ program define getcensus
 	
 	// check sample is valid
 	if !inlist(`sample', 1, 3, 5) {
-		display as error "The Census Bureau only produces 1-, 3-, and 5-year ACS estimates."
+		display as error "{bf:sample()} must be 1, 3, or 5."
 		exit
 	}
 
@@ -72,13 +72,13 @@ program define getcensus
 	// check min year is available for given sample
 	local min_avail_year = cond(`sample' == 1, 2005, 2009)
 	if `min_year' < `min_avail_year' {
-		display as error "`sample'-year ACS estimates are only available for `min_avail_year' and later."
+		display as error "`sample'-year ACS estimates are available for `min_avail_year' and later."
 		exit
 	}
 	if `sample' == 3 {
 		capture numlist "`years'", range(>=2012 <=2013)
 		if _rc != 0 {
-			display as error "3-year ACS estimates are only available for 2012 and 2013."
+			display as error "3-year ACS estimates are available for 2012 and 2013."
 			exit
 		}
 	}
@@ -117,13 +117,29 @@ program define getcensus
 		
 		// search only the most recent year specified
 		if wordcount("`years") > 1 {
-			display as result "Catalog searches only one year at a time. Using most recent year in list, `max_year'."
+			display as result "{bf:getcensus catalog} searches only one year at a time. Using most recent year in {bf:years()}, `max_year'."
 		}
 
-		// check product is specified
-		if "`product'" == "" {
-			display as error "Must specify a product to search the catalog."
+		// check product or table is specified
+		if "`product'" == "" & "`table'" == "" {
+			display as error "Either {bf:product()} or {bf:table()} must be specified with {bf:getcensus catalog}."
 			exit 0
+		}
+		
+		if "`table'" != "" {
+			if wordcount("`table'") != 1 {
+				display as error "Only one table ID at a time is allowed in {bf:table()}."
+				exit 198
+			}
+			if ustrregexm("`table'", "_") {
+				display as error "{bf:table()} must be a table ID, not an estimate ID."
+				exit 198
+			}
+			// find product of specified table
+			local product = cond(ustrregexm("`table'", "^S"), "ST",				///
+								cond(ustrregexm("`table'", "^DP"), "DP",		///
+									cond(ustrregexm("`table'", "^CP"), "CP", 	///
+										"DT")))
 		}
 		
 		// run getcensus_catalog
@@ -166,7 +182,7 @@ program define getcensus
 	}
 	
 	if inlist("`is_table'", "", "0") & inlist("`is_estimate'", "", "0") {
-		display as error "Something went wrong. Please check that you have inputted a valid table ID, estimate ID(s), or keyword."
+		display as error "Something went wrong. Please check that you have requested a valid table ID, estimate ID(s), or keyword."
 		exit
 	}
 	
@@ -174,7 +190,7 @@ program define getcensus
 	// confirm table id not mixed with estimate(s)
 	if `is_table'  {
 		if `is_estimate' {
-			display as error "Unable to combine table with estimate(s) or a keyword."
+			display as error "Either estimate(s) or a table can be requested at a time, not both."
 			if `is_keyword' {
 				display as error "Note: Some keywords are shortcuts for a table and some are shortcuts for estimates."
 			}
@@ -252,7 +268,7 @@ program define getcensus
 	// parse geography name
 	_getcensus_parse_geography `geography', cachepath("`cachepath'")
 	if `s(geo_valid)' == 0 {
-		display as error "Invalid or unsupported geography."
+		display as error "Invalid or unsupported {bf:geography()}."
 		exit
 	}
 	local geography "`s(geography)'"
@@ -278,7 +294,7 @@ program define getcensus
 	if "`geography'" == "state" {
 		// check if statefips conflicts with geoids
 		if (("`statefips'" != "*") & ("`geoids'" != "*")) & ("`statefips'" != "`geoids'") {
-			display as error "If geography is state, state code(s) can be specified in statefips or geoids, but not both."
+			display as error "With {bf:geography({it:state})}, state code(s) may be specified in either {bf:statefips()} or {bf:geoids()}, but not both."
 			exit
 		}
 		// switch statefips and geoids if needed
@@ -289,24 +305,24 @@ program define getcensus
 	}
 	if inlist("`geography'", "us", "region", "division", "zcta") & 			///
 	   ("`statefips'" != "*") {
-		display as error "statefips cannot be specified when geography is `geo_full_name'."
+		display as error "{bf:statefips()} cannot be specified with {bf:geography({it:`geo_full_name'})}."
 		exit
 	}
 	if inlist("`geography'", "cousub", "tract", "bg", "sch", "sche", "schs", 	///
 			  "slupper", "sllower") &											///
 	   (("`statefips'" == "*") | (wordcount("`statefips'") > 1)) {
-		display as error "A single state code must be specified in statefips when geography is `geo_full_name'."
+		display as error "A single state code must be specified in {bf:statefips()} with {bf:geography({it:`geo_full_name'})}."
 		exit
 	}
 
 	// check geography is available for sample
 	if `sample' != 5 {
 		if "`geography'" == "metro" & "`statefips'" != "*" {
-			display as error "`sample'-year ACS estimates are not available for geography `geo_full_name' within state(s)."
+			display as error "`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography within state(s)."
 			exit
 		}
 		if inlist("`geography'", "zcta", "cousub", "tract", "bg") {
-			display as error "`sample'-year ACS estimates are not available for geography `geo_full_name'."
+			display as error "`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography."
 			exit
 		}
 	}
@@ -314,11 +330,11 @@ program define getcensus
 	// check countyfips
 	if "`countyfips'" != "" {
 		if !inlist("`geography'", "county", "cousub", "tract", "bg"){
-			display as error "countyfips may not be specified when geography is `geo_full_name'."
+			display as error "{bf:countyfips()} may not be specified with {bf:geography({it:`geo_full_name'})}."
 			exit
 		}
 		if "`geography'" == "bg" & wordcount("`n_countyfips'") > 1 {
-				display as error "Only one county code may be specified in countyfips when geography is `geo_full_name."
+				display as error "Only a single county code is allowed in {bf:countyfips()} with {bf:geography({it:`geo_full_name'})}."
 				exit
 		}
 		// switch countyfips and geoids if needed
@@ -328,7 +344,7 @@ program define getcensus
 		}
 	}
 	if  "`countyfips'" == "" & "`geography'" == "bg" {
-		display as error "Must specify countyfips if geography is `geo_full_name'."
+		display as error "{bf:countyfips()} must be specified with {bf:geography({it:`geo_full_name'})}."
 		exit
 	}
 
@@ -340,18 +356,18 @@ program define getcensus
 			if !(inlist("`g'", "00", "C0", "C1", "C2", "E0", "E1", "E2", "G0") |		///
 				 inlist("`g'", "H0", "01", "43", "89", "90", "91", "92", "93", "94") |	///
 				 inlist("`g'", "95", "A0")) {
-				display as error "Invalid geocomponent `g'."
+				display as error "Invalid {bf:geocomponent()} {it:`g'}."
 				exit
 			}
 			if inlist("`g'", "89", "90", "91", "92", "93", "94", "95") & 	///
 			   "`geography'" != "us" {
-				display as error "Geography must be us if geocomponent is `g'."
+				display as error "with {bf:geocomponent({it:`g'})}, only allowed {bf:geography()} is {it:us} ."
 				exit
 			}
 			if (inlist("`g'", "C0", "C1", "C2", "E0", "E1", "E2", "G0", "H0") |		///
 				inlist("`g'" "01", "43", "A0")) & 									///
 			   !inlist("`geography'", "us", "state", "region", "division") {
-				display as error "Geography must be us, state, region, or division if geocomponent is `g'."
+				display as error "with {bf:geocomponent({it:`g'})}, only allowed {bf:geography()} are {it:us}, {it:region}, {it:division} or {it:state} ."
 				exit
 			}
 		}
@@ -362,11 +378,11 @@ program define getcensus
 
 	// check API key is supplied
 	if "`key'" != "" {
-		display as result "To avoid needing to specify your API key, store it in a global named 'censuskey' in your profile.do. See the {help getcensus:help file} for instructions."
+		display as result "To avoid needing to specify {bf:key()}, store your API key in a global macro named {it:censuskey} in your profile.do. See the {help getcensus:help file} for instructions."
 	}
 	if "`key'" == "" {
 		if "$censuskey" == "" {
-			display as error `"You must provide an API key to the key argument or have defined a global named "censuskey" that contains your API key. To acquire an API key, register {browse "https://api.census.gov/data/key_signup.html":here}."'
+			display as error `"You must provide an API key to {bf:key()} or have defined a global macro named {it:censuskey} that contains your API key. To acquire an API key, register {browse "https://api.census.gov/data/key_signup.html":here}."'
 		}
 		if "$censuskey" != "" {
 			local key "$censuskey"
@@ -566,7 +582,7 @@ program define getcensus
 		}
 		// vars_truncated is a c_local from the catalog program
 		if "`vars_truncated'" == "1" {		
-			display as result "One or more variable labels truncated. See variable {help notes} for full descriptions."
+			display as result "One or more variable labels were truncated. See the variable {help notes} for full descriptions."
 		}
 	}
 	
