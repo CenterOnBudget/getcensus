@@ -9,7 +9,9 @@ program define _getcensus_parse_geography, sclass
 	
 	preserve
 
-	sysuse "_getcensus_geo_args.dta", clear
+	* prior to release: un-comment line 13, remove line 14
+	* sysuse "_getcensus_geo_args.dta", clear
+	use "_getcensus_geo_args.dta", clear
 
 	quietly levelsof geo_names, local(geo_names)
 	quietly levelsof geo_abbrvs, local(geo_abbrvs)
@@ -36,7 +38,7 @@ program define _getcensus_parse_geography, sclass
 		local geo_abbrv "`geography'"
 	}
 	
-	quietly levelsof geo_orders if geo_names == "`geo_name'", local(geo_order)
+	quietly levelsof geo_order if geo_names == "`geo_name'", local(geo_order)
 	local geo_order `geo_order'
 	
 	restore

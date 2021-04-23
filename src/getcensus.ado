@@ -1,10 +1,14 @@
 
+* for testing; remove prior to release
 **/
+cd "${ghpath}/getcensus/src"
+capture program drop getcensus
+capture program drop _getcensus_expand_keyword
+capture program drop _getcensus_catalog
+capture program drop _getcensus_parse_geography
 run "_getcensus_expand_keyword.ado"
 run "_getcensus_catalog.ado"
 run "_getcensus_parse_geography.ado"
-capture program drop getcensus
-
 **/
 
 
@@ -100,6 +104,7 @@ program define getcensus
 
 	// set cache location ---------------------------------------------------------
 
+	* prior to release: change from getcensus/dev to getcensus/
 	if "`cachepath'" == "" {
 		local cachepath = cond("`c(os)'" == "Windows", 							///
 							   "~/AppData/Local/getcensus/dev",					///
