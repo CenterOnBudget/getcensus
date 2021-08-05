@@ -45,6 +45,9 @@ program define _getcensus_parse_geography, sclass
 	
 	local geo_valid = `is_full' | `is_abbrv'
 	
+	// use full rather than abbreviation for county
+	local geo_abbrv = cond(`"`geo_abbrv'"' == "co", "county", `"`geo_abbrv'"')
+	
 	sreturn local geo_valid = `geo_valid'
 	sreturn local geo_full_name = `"`geo_name'"'
 	sreturn local geography = `"`geo_abbrv'"'

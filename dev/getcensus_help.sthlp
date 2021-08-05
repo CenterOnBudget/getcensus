@@ -61,7 +61,7 @@ Search the API data dictionary
 {p_end}
 {synopt:{opt st:atefips(string)}}state FIPS codes of states to retrieve; default is usually all.
 {p_end}
-{synopt:{opt cou:ntyfips(string)}}county FIPS codes of counties to retrieve; default is usually all.
+{synopt:{opt co:untyfips(string)}}county FIPS codes of counties to retrieve; default is usually all.
 {p_end}
 {synopt:{opt geocomp:onents(string)}}geographic component codes of geographies to retrieve.
 {p_end}
@@ -202,7 +202,7 @@ A list of geographies supported by {bf:getcensus} can be found below. For some g
 {col 8}region
 {col 8}division
 {col 8}state
-{col 8}county{col 53}cou{col 68}statefips, countyfips
+{col 8}county{col 53}co{col 68}statefips, countyfips
 {col 5}*{col 8}county subdivision{col 53}cousub{col 68}{bf:statefips}, countyfips
 {col 5}*{col 8}tract{col 68}{bf:statefips}, countyfips
 {col 5}*{col 8}block group{col 53}bg{col 68}{bf:statefips}, {bf:countyfips}
