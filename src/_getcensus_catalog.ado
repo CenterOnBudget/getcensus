@@ -40,6 +40,9 @@ program define _getcensus_catalog
 	}
 	
 	if `create_cache' {
+		
+		display as result "Loading data dictionary. This may take a few moments."
+		display as result "Data dictionary will be cached for faster future access."
 	    
 	    
 	// determine API phrase for product ---------------------------------------
@@ -61,6 +64,8 @@ program define _getcensus_catalog
 	// import and parse dictionary json -------------------------------------------
 
 	preserve
+	
+	quietly {
 	
 	// load, clean, and reshape 
 	clear
@@ -108,7 +113,10 @@ program define _getcensus_catalog
 	rename (table concept variable label) 						///
 		   (table_id table_name estimate_id estimate_descrip)
 	compress
-
+	// remove variable labels (remnants of reshape)
+	foreach v of varlist _all {
+		label variable `v'
+	}
 	save "`cached_dict_dta'", replace
 	use `temp_dict', clear
 
@@ -160,36 +168,47 @@ program define _getcensus_catalog
 	restore
 	
 	}
+	}
 
 	// load filtered dataset --------------------------------------------------
 	
 	// if subroutine not called from within main program
 
 	if "`load'" != "" {
+		
 		use "`cached_dict_dta'", clear
 
 		if "`table'" != "" {
-			keep if ustrregexm(table,  "`table'", 1)
+			quietly keep if ustrregexm(table_id,  "`table'", 1)
 			display as result `"Searched for table "`table'"."'
+			if _N == 0 {
+				display as result "No results. Check that your table ID is valid and available for the year requested."
+				clear
+			}
 		}
 
 		if "`search'" != "" {
-			keep if ustrregexm(estimate_descrip, "`search'", 1) | 			///
-					ustrregexm(table_name, "`search'", 1) |					///
-					ustrregexm(table_id, "`search'", 1) |					///
-					ustrregexm(estimate_id, "`search'", 1)
+			quietly keep if ustrregexm(estimate_descrip, "`search'", 1) | 	///
+						    ustrregexm(table_name, "`search'", 1) |			///
+							ustrregexm(table_id, "`search'", 1) |			///
+							ustrregexm(estimate_id, "`search'", 1)
 					
 			display as result `"Searched for variable and table names containing "`search'"."'
+			if _N == 0 {
+				display as result "No results. Check for typos in your search term, or try a less specific search term."
+				clear
+			}
 		}
-
+		
 		if "`table'" == "" & "`search'" == "" {
 			display as result `"Searched for all tables of product type "`product'"."'
 		}
 		
-		`browse'
+		if _N > 0 {
+			`browse'
+		}
 	}
 
 end
-
 
 
