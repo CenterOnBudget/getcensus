@@ -13,13 +13,13 @@ program define _getcensus_catalog
 	// check product is valid
 	local product = strupper("`product'")
 	if !inlist("`product'", "DT", "ST", "DP", "CP") {
-		display as error "Invalid product. Product must be one of DT, ST, DP, or CP."
+		display as error "{p}Invalid product. Product must be one of DT, ST, DP, or CP."
 		exit
 	}
 
 	// check product is available for year
 	if inlist("`product'", "ST", "CP") & `year' < 2010 {
-		display as error "Product `product' only available for 2010 and later."
+		display as error "{p}Product `product' only available for 2010 and later."
 		exit 
 	}	
 
@@ -41,8 +41,7 @@ program define _getcensus_catalog
 	
 	if `create_cache' {
 		
-		display as result "Loading data dictionary. This may take a few moments."
-		display as result "Data dictionary will be cached for faster future access."
+		display as result "{p}{it:Loading data dictionary. This may take a few moments. Data dictionary will be cached for faster future access.}"
 	    
 	    
 	// determine API phrase for product ---------------------------------------
@@ -182,7 +181,7 @@ program define _getcensus_catalog
 			quietly keep if ustrregexm(table_id,  "`table'", 1)
 			display as result `"Searched for table "`table'"."'
 			if _N == 0 {
-				display as result "No results. Check that your table ID is valid and available for the year requested."
+				display as result "{p}No results. Check that your table ID is valid and available for the year requested."
 				clear
 			}
 		}
@@ -195,13 +194,13 @@ program define _getcensus_catalog
 					
 			display as result `"Searched for variable and table names containing "`search'"."'
 			if _N == 0 {
-				display as result "No results. Check for typos in your search term, or try a less specific search term."
+				display as result "{p}No results. Check for typos in your search term, or try a less specific search term."
 				clear
 			}
 		}
 		
 		if "`table'" == "" & "`search'" == "" {
-			display as result `"Searched for all tables of product type "`product'"."'
+			display as result `"{p}Searched for all tables of product type "`product'"."'
 		}
 		
 		if _N > 0 {
