@@ -481,7 +481,9 @@ program define getcensus
 		}
 		
 		// make API call
-		capture noisily import delimited "`api_url'", stringcols(_all) clear
+		capture noisily {
+			import delimited "`api_url'", stringcols(_all) varnames(1) stripquotes(yes) clear
+		}
 		if _rc != 0 | c(N) == 0 {
 			display as error "The Census API did not return data for `year'. Check that your table or estimate IDs are valid, that your API key is valid, and that you are connected to the internet."
 			local see_message = cond(`show_link', 									///
@@ -514,7 +516,6 @@ program define getcensus
 		// remove JSON stuff
 		ds year, not
 		foreach var of varlist `r(varlist)' {
-			 replace `var' = subinstr(`var', `"""', "", .)
 			 replace `var' = ustrregexra(`var', "(\])|(\[)|(null)", "")
 		}
 		
