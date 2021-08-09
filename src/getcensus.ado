@@ -313,8 +313,8 @@ program define getcensus
 		display as error "{bf:statefips()} cannot be specified with {bf:geography({it:`geo_full_name'})}."
 		exit
 	}
-	if inlist("`geography'", "cousub", "tract", "bg", "sch", "sche", "schs", 	///
-			  "slupper", "sllower") &											///
+	if inlist("`geography'", "cousub", "tract", "bg", "elsd", "scsd", "unsd", 	///
+			  "sldu", "sldl") &											///
 	   (("`statefips'" == "*") | (wordcount("`statefips'") > 1)) {
 		display as error "A single state code must be specified in {bf:statefips()} with {bf:geography({it:`geo_full_name'})}."
 		exit
@@ -326,7 +326,7 @@ program define getcensus
 			display as error "`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography within state(s)."
 			exit
 		}
-		if inlist("`geography'", "zcta", "cousub", "tract", "bg") {
+		if inlist("`geography'", "sldu", "sldl", "zcta", "cousub", "tract", "bg") {
 			display as error "`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography."
 			exit
 		}

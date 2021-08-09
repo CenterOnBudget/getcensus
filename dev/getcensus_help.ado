@@ -197,16 +197,16 @@ A list of geographies supported by __getcensus__ can be found below. For some ge
 {col 5}*{col 8}block group{col 53}bg{col 68}{bf:statefips}, {bf:countyfips}
 {col 8}place{col 53}statefips
 {col 5}*{col 8}zip code tabulation area{col 53}zcta
-{col 5}*{col 8}state legislative district (upper chamber){col 53}slupper{col 68}{bf:statefips}
-{col 5}*{col 8}state legislative district (lower chamber){col 53}sllower{col 68}{bf:statefips}
+{col 5}*{col 8}state legislative district (upper chamber){col 53}sldu{col 68}{bf:statefips}
+{col 5}*{col 8}state legislative district (lower chamber){col 53}sldl{col 68}{bf:statefips}
 {col 8}congressional district{col 53}cd{col 68}statefips
-{col 8}school district (elementary){col 53}sche{col 68}{bf:statefips}
-{col 8}school district (secondary){col 53}schs{col 68}{bf:statefips}
-{col 8}school district (unified){col 53}sch{col 68}{bf:statefips}
+{col 8}school district (elementary){col 53}elsd{col 68}{bf:statefips}
+{col 8}school district (secondary){col 53}scsd{col 68}{bf:statefips}
+{col 8}school district (unified){col 53}unsd{col 68}{bf:statefips}
 {col 8}public use microdata area{col 53}puma{col 68}statefips
-{col 8}alaska native regional corporation{col 53}ancsa{col 68}statefips
+{col 8}alaska native regional corporation{col 53}anrc{col 68}statefips
 {col 8}american indian area/alaska native area/
-{col 10}hawaiian home land{col 53}aiananhhl
+{col 10}hawaiian home land{col 53}aiannh
 {col 8}metropolitan statistical area/ 
 {col 10}micropolitan statistical area{col 53}metro
 {col 8}combined statistical area{col 53}cbsa
