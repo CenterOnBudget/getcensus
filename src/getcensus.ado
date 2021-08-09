@@ -398,11 +398,11 @@ program define getcensus
 	if `is_estimate' {
 		local variables ""
 		foreach item of local estimates {
-			local variables = "`variables'" + 										///
-							  "`item'E " + 											///
-							  cond((("`noerror'" == "") | ("`product'" != "CP")), 	///
-								   "`item'M ", 										///
-								   "")
+			if "`noerror'" == "" & "`product'" != "CP" &	///
+			   !ustrregexm("`item'", "^B(98|99)") {
+				local moe "`item'M "
+			}
+			local variables = "`variables'" + "`item'E " + "`moe'"
 		}
 	}
 
@@ -549,7 +549,7 @@ program define getcensus
 		}
 		
 		// remove MOEs (present by default if a table is requested) if noerror
-		if "`noerror'" != "" {
+		if `is_table' & "`noerror'" != "" {
 			drop *_*m
 		}
 	}
