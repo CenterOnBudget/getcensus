@@ -293,6 +293,18 @@ program define getcensus
 	if "`countyfips'" == "*" {
 		local countyfips ""
 	}
+	
+	// check geography is available for sample
+	if `sample' != 5 {
+		if "`geography'" == "metro" & "`statefips'" != "*" {
+			display as error "{p}`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography within state(s)."
+			exit
+		}
+		if inlist("`geography'", "sldu", "sldl", "zcta", "cousub", "tract", "bg") {
+			display as error "{p}`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography."
+			exit
+		}
+	}
 
 	// check statefips
 	if "`geography'" == "state" {
@@ -307,7 +319,7 @@ program define getcensus
 		   local statefips "*"
 		}
 	}
-	if inlist("`geography'", "us", "region", "division", "zcta") & 			///
+	if inlist("`geography'", "us", "region", "division", "cbsa", "necta", "cnecta", "aiannh") &	///
 	   ("`statefips'" != "*") {
 		display as error "{p}{bf:statefips()} cannot be specified with {bf:geography({it:`geo_full_name'})}."
 		exit 198
@@ -319,36 +331,16 @@ program define getcensus
 		exit 198
 	}
 
-	// check geography is available for sample
-	if `sample' != 5 {
-		if "`geography'" == "metro" & "`statefips'" != "*" {
-			display as error "{p}`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography within state(s)."
-			exit
-		}
-		if inlist("`geography'", "sldu", "sldl", "zcta", "cousub", "tract", "bg") {
-			display as error "{p}`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography."
-			exit
-		}
-	}
-
 	// check countyfips
-	if "`countyfips'" != "" {
-		if !inlist("`geography'", "county", "cousub", "tract", "bg"){
+	if "`countyfips'" != "" & !inlist("`geography'", "cousub", "tract", "bg"){
 			display as error "{p}{bf:countyfips()} may not be specified with {bf:geography({it:`geo_full_name'})}."
+			if "`geography'" == "county" {
+				display as error "{p}County GEOIDs may be specified in {bf:geoids()}."
+			}
 			exit 198
-		}
-		if "`geography'" == "bg" & wordcount("`n_countyfips'") > 1 {
-				display as error "{p}Only a single county code is allowed in {bf:countyfips()} with {bf:geography({it:`geo_full_name'})}."
-				exit 198
-		}
-		// switch countyfips and geoids if needed
-		if "`geography'" == "county" {
-			local geoids "`countyfips'"
-			local countyfips ""
-		}
 	}
-	if  "`countyfips'" == "" & "`geography'" == "bg" {
-		display as error "{p}{bf:countyfips()} must be specified with {bf:geography({it:`geo_full_name'})}."
+	if wordcount("`countyfips'") != 1 & "`geography'" == "bg" {
+		display as error "{p}A single county code must be specified in {bf:countyfips()} with {bf:geography({it:`geo_full_name'})}"
 		exit 198
 	}
 
@@ -432,7 +424,7 @@ program define getcensus
 	local geoids_list = ustrregexra("`geoids'", " ", ",")
 	local countyfips_list = ustrregexra("`countyfips'", " ", ",")
 
-	local county_predicate = cond("`countyfips'" != "", " county:`countyfips'", "")
+	local county_predicate = cond("`countyfips'" != "", " county:`countyfips_list'", "")
 	local state_predicate = cond("`statefips'" != "*", "&in=state:`statefips_list'", "")
 
 	local geocomp_list ""
