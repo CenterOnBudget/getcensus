@@ -118,7 +118,7 @@ If you are new to American Community Survey data, the handbook "Understanding an
 {opt sample(integer)} specifies the sample to retrieve: 1 for one-year estimates, 3 for three-year estimates (2012-2013 only), or 5 for five-year estimates. Default is 1. One-year estimates are only available for geographic areas with more than 65,000 residents; see  {browse "https://www.census.gov/programs-surveys/acs/guidance/estimates.html":this page} on the Census Bureau website.
 
 {phang}
-{opt geography(string)} specifies the geographic unit for which to retrieve data. Default is {opt geography(state)}. See the {help getcensus##geographies:Supported Geographies} section of this help file. 
+{opt geography(string)} specifies the geographic unit for which to retrieve data. Default is {opt geography(state)}. See {help getcensus##geographies:Supported Geographies}. 
 
 {phang}
 {opt key(string)} specifies your Census Bureau API key. To avoid specifying {bf:key()} each time {bf:getcensus} is used, store your API key in a global {help macro} named {it:censuskey} in your profile.do. Learn about where to find your profile.do  {browse "https://www.stata.com/support/faqs/programming/profile-do-file/":here}. If you do not have an API key, you may acquire one  {browse "https://api.census.gov/data/key_signup.html":here}. 
@@ -155,7 +155,7 @@ If you are new to American Community Survey data, the handbook "Understanding an
 {opt countyfips(string)} FIPS codes of counties to retrieve. A listing of county FIPS codes by year can be found  {browse "https://www.census.gov/geographies/reference-files.2019.html":here} on the Census Bureau website. Note that county FIPS codes may change between years; see  {browse "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html":ACS Table & Geography Changes} on the Census Bureau website. 
 
 {phang}
-{opt geocomponents(string)} Geographic compoment codes of the geographic components to retrieve. Geographic components are division of a geographic unit by certain criteria, such as rural/urban and in metropolitan statistical area/not in metropolitan statistical area. {bf:getcensus} does not support all geographic components available on the Census Bureau API; see the {help getcensus##geocomp:Supported Geographies} section of this help file.
+{opt geocomponents(string)} Geographic compoment codes of the geographic components to retrieve. Geographic components are division of a geographic unit by certain criteria, such as rural/urban and in metropolitan statistical area/not in metropolitan statistical area. {bf:getcensus} does not support all geographic components available on the Census Bureau API; see {help getcensus##geocomp:Supported Geographies}.
 
 {marker options_catalog}{...}
 {dlgtab:Catalog options}
@@ -201,13 +201,13 @@ A list of geographies supported by {bf:getcensus} can be found below. For some g
 {col 8}us
 {col 8}region
 {col 8}division
-{col 8}state
-{col 8}county{col 53}co{col 68}statefips, countyfips
+{col 8}state{col 68}statefips
+{col 8}county{col 53}co{col 68}statefips
 {col 5}*{col 8}county subdivision{col 53}cousub{col 68}{bf:statefips}, countyfips
 {col 5}*{col 8}tract{col 68}{bf:statefips}, countyfips
 {col 5}*{col 8}block group{col 53}bg{col 68}{bf:statefips}, {bf:countyfips}
-{col 8}place{col 53}statefips
-{col 5}*{col 8}zip code tabulation area{col 53}zcta
+{col 8}place{col 68}statefips
+{col 5}*{col 8}zip code tabulation area{col 53}zcta{col 68}statefips
 {col 5}*{col 8}state legislative district (upper chamber){col 53}sldu{col 68}{bf:statefips}
 {col 5}*{col 8}state legislative district (lower chamber){col 53}sldl{col 68}{bf:statefips}
 {col 8}congressional district{col 53}cd{col 68}statefips
@@ -219,14 +219,16 @@ A list of geographies supported by {bf:getcensus} can be found below. For some g
 {col 8}american indian area/alaska native area/
 {col 10}hawaiian home land{col 53}aiannh
 {col 8}metropolitan statistical area/ 
-{col 10}micropolitan statistical area{col 53}metro
+{col 10}micropolitan statistical area{col 53}metro{col 68}statefips{c 42}{c 42}
 {col 8}combined statistical area{col 53}cbsa
 {col 8}new england city and town area{col 53}necta
 {col 8}combined new england city and town area{col 53}cnecta
 {col 8}urban area{col 53}urban
     {hline 85}
-    {it:* indicates a geography for which only 5-year estimates are available.}
+    {it:*  only 5-year estimates are available for this geography.}
+    {it:{c 42}{c 42} only 5-year estimates are available when {bf:statefips()} is specified with this geography.}
 
+	
 {marker geocomp}{...}
 {dlgtab:Geographic components}
 
@@ -238,6 +240,7 @@ An example: {bf:getcensus [estimate IDs], geography(state) geocomponents(H0 C0)}
 
 {col 8}Available with {bf:geography()} {it:us}, {it:region}, {it:division}, or {it:state}
 {space 5}{hline 80}
+{col 8}00{col 13}Total
 {col 8}H0{col 13}Not in metropolitan statistical area
 {col 8}C0{col 13}In metropolitan statistical area
 {col 8}C1{col 13}In metropolitan statistical area: in principal city
@@ -270,9 +273,7 @@ Users may use a keyword to retrieve a curated set of estimates.
 
 {synopt:{it:Keyword}}Description{p_end}
 {synoptline}
-{synopt:{bf:pop}}Population for whom poverty status is determined, overall and by sex, age, and race{p_end}
-{synopt:{bf:pov}}Poverty, overall and by sex, age, and race{p_end}
-{synopt:{bf:povrate}}Poverty rate, overall and by sex, age, and race{p_end}
+{synopt:{bf:pov}}Number and percent of the population in poverty, overall and by various demographic characteristics{p_end}
 {synopt:{bf:povratio}}Population by ratio of income to poverty level{p_end}
 {synopt:{bf:povratio_char}}Characteristics of the population at specified poverty levels{p_end}
 {synopt:{bf:medinc}}Median household income, overall and by race of householder{p_end}
