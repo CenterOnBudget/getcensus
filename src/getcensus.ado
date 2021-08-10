@@ -242,9 +242,11 @@ program define getcensus
 		}
 
 		// confirm no suffix on estimates
-		if ustrregexm("`estimates'", "\d(E|M)") {
-			display as error "{p}Do not include 'E' or 'M' at the end of estimate IDs.{p_end}"
-			exit 198
+		foreach est of local estimates {
+			if ustrregexm("`est'", "(E|M)$") {
+				display as error "{p}Do not include 'E' or 'M' at the end of estimate IDs.{p_end}"
+				exit 198
+			}
 		}
 		
 		// confirm within API limit
