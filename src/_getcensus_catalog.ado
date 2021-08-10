@@ -14,7 +14,7 @@ program define _getcensus_catalog
 	local product = strupper("`product'")
 	if !inlist("`product'", "DT", "ST", "DP", "CP") {
 		display as error "{p}Invalid product. Product must be one of DT, ST, DP, or CP."
-		exit
+		exit 198
 	}
 
 	// check product is available for year

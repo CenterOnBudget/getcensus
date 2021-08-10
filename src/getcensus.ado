@@ -32,8 +32,7 @@ program define getcensus
 	// prelim checks and parsing  ---------------------------------------------------------
 	
 	if c(N) != 0 & c(changed) != 0 & "`clear'" == "" {
-	    display as error "no; dataset in memory has changed since last saved"
-		exit 4
+		error 4
 	}
 	
 	// install dependency
@@ -56,7 +55,7 @@ program define getcensus
 	// check sample is valid
 	if !inlist(`sample', 1, 3, 5) {
 		display as error "{p}{bf:sample()} must be 1, 3, or 5."
-		exit
+		exit 198
 	}
 
 	// parse years
@@ -199,11 +198,11 @@ program define getcensus
 			if `is_keyword' {
 				display as error "{p}Note: Some keywords are shortcuts for a table and some are shortcuts for estimates."
 			}
-			exit
+			exit 198
 		}
 		if wordcount("`estimates'") > 1 {
 			display as error "{p}Only one table ID at a time is allowed."
-			exit
+			exit 198
 		}
 	}
 
@@ -235,7 +234,7 @@ program define getcensus
 			if `is_keyword' {
 				display as error "{p}Note: If you inputting both a keyword and an estimate(s), the keyword may be a shortcut to estimates from a different product as your estimate(s)."
 			}
-			exit 
+			exit 198
 		}
 		if `n_products' == 0 | "`product'" == "" {
 			display as error "{p}Something went wrong. Please check that you have inputted a valid table ID, estimate ID(s), or keyword."
@@ -245,7 +244,7 @@ program define getcensus
 		// confirm no suffix on estimates
 		if ustrregexm("`estimates'", "\d(E|M)") {
 			display as error "{p}Do not include 'E' or 'M' at the end of estimate IDs."
-			exit
+			exit 198
 		}
 		
 		// confirm within API limit
@@ -274,7 +273,7 @@ program define getcensus
 	_getcensus_parse_geography `geography', cachepath("`cachepath'")
 	if `s(geo_valid)' == 0 {
 		display as error "{p}Invalid or unsupported {bf:geography()}."
-		exit
+		exit 198
 	}
 	local geography "`s(geography)'"
 	local geo_full_name "`s(geo_full_name)'"
@@ -300,7 +299,7 @@ program define getcensus
 		// check if statefips conflicts with geoids
 		if (("`statefips'" != "*") & ("`geoids'" != "*")) & ("`statefips'" != "`geoids'") {
 			display as error "{p}With {bf:geography({it:state})}, state code(s) may be specified in either {bf:statefips()} or {bf:geoids()}, but not both."
-			exit
+			exit 184
 		}
 		// switch statefips and geoids if needed
 		if "`statefips'" != "*" & "`geoids'" == "*" {
@@ -311,13 +310,13 @@ program define getcensus
 	if inlist("`geography'", "us", "region", "division", "zcta") & 			///
 	   ("`statefips'" != "*") {
 		display as error "{p}{bf:statefips()} cannot be specified with {bf:geography({it:`geo_full_name'})}."
-		exit
+		exit 198
 	}
 	if inlist("`geography'", "cousub", "tract", "bg", "elsd", "scsd", "unsd", 	///
 			  "sldu", "sldl") &											///
 	   (("`statefips'" == "*") | (wordcount("`statefips'") > 1)) {
 		display as error "{p}A single state code must be specified in {bf:statefips()} with {bf:geography({it:`geo_full_name'})}."
-		exit
+		exit 198
 	}
 
 	// check geography is available for sample
@@ -336,11 +335,11 @@ program define getcensus
 	if "`countyfips'" != "" {
 		if !inlist("`geography'", "county", "cousub", "tract", "bg"){
 			display as error "{p}{bf:countyfips()} may not be specified with {bf:geography({it:`geo_full_name'})}."
-			exit
+			exit 198
 		}
 		if "`geography'" == "bg" & wordcount("`n_countyfips'") > 1 {
 				display as error "{p}Only a single county code is allowed in {bf:countyfips()} with {bf:geography({it:`geo_full_name'})}."
-				exit
+				exit 198
 		}
 		// switch countyfips and geoids if needed
 		if "`geography'" == "county" {
@@ -350,7 +349,7 @@ program define getcensus
 	}
 	if  "`countyfips'" == "" & "`geography'" == "bg" {
 		display as error "{p}{bf:countyfips()} must be specified with {bf:geography({it:`geo_full_name'})}."
-		exit
+		exit 198
 	}
 
 	// check geocomponent and geography combo
@@ -362,18 +361,18 @@ program define getcensus
 				 inlist("`g'", "H0", "01", "43", "89", "90", "91", "92", "93", "94") |	///
 				 inlist("`g'", "95", "A0")) {
 				display as error "{p}Invalid {bf:geocomponent()} {it:`g'}."
-				exit
+				exit 198
 			}
 			if inlist("`g'", "89", "90", "91", "92", "93", "94", "95") & 	///
 			   "`geography'" != "us" {
 				display as error "{p}ith {bf:geocomponent({it:`g'})}, only allowed {bf:geography()} is {it:us} ."
-				exit
+				exit 198
 			}
 			if (inlist("`g'", "C0", "C1", "C2", "E0", "E1", "E2", "G0", "H0") |		///
 				inlist("`g'" "01", "43", "A0")) & 									///
 			   !inlist("`geography'", "us", "state", "region", "division") {
 				display as error "{p}with {bf:geocomponent({it:`g'})}, only allowed {bf:geography()} are {it:us}, {it:region}, {it:division} or {it:state} ."
-				exit
+				exit 198
 			}
 		}
 	}
@@ -388,6 +387,7 @@ program define getcensus
 	if "`key'" == "" {
 		if "$censuskey" == "" {
 			display as error `"{p}You must provide an API key to {bf:key()} or have defined a global macro named {it:censuskey} that contains your API key. To acquire an API key, register {browse "https://api.census.gov/data/key_signup.html":here}."'
+			exit
 		}
 		if "$censuskey" != "" {
 			local key "$censuskey"
