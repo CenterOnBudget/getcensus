@@ -74,16 +74,16 @@ program define getcensus
 
 	// check min year is available for given sample
 	local min_avail_year = cond(`sample' == 1, 2005, 2009)
-	if `min_year' < `min_avail_year' {
-		display as error "{p}`sample'-year ACS estimates are available for `min_avail_year' and later.{p_end}"
-		exit
-	}
 	if `sample' == 3 {
 		capture numlist "`years'", range(>=2012 <=2013)
 		if _rc != 0 {
 			display as error "{p}3-year ACS estimates are available for 2012 and 2013.{p_end}"
 			exit
 		}
+	}
+	if `min_year' < `min_avail_year' {
+		display as error "{p}`sample'-year ACS estimates are available for `min_avail_year' and later.{p_end}"
+		exit
 	}
 
 	// check max year is available for given sample
@@ -270,6 +270,9 @@ program define getcensus
 	if "`geography'" == "" {
 		local geography "state"
 	}
+	
+	// lowercase before parsing
+	local geography = ustrlower("`geography'")
 
 	// parse geography name
 	_getcensus_parse_geography `geography', cachepath("`cachepath'")
