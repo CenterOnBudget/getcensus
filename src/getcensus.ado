@@ -270,7 +270,10 @@ program define getcensus
 	if "`geography'" == "" {
 		local geography "state"
 	}
-
+	
+	// lowercase geography before parsing 
+	local geography = strlower("`geography'")
+	
 	// parse geography name
 	_getcensus_parse_geography `geography', cachepath("`cachepath'")
 	if `s(geo_valid)' == 0 {
