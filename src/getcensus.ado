@@ -523,7 +523,7 @@ program define getcensus
 		// replace annotation values with missing 
 		ds, has(type numeric)
 		foreach var of varlist `r(varlist)' {
-			 replace `var' = . if inlist(`var', -222222222, -666666666)
+			 replace `var' = . if `var' <= -222222222
 		}
 		
 		// put year and geo vars first, and sort
