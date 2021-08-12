@@ -13,13 +13,13 @@ program define _getcensus_catalog
 	// check product is valid
 	local product = strupper("`product'")
 	if !inlist("`product'", "DT", "ST", "DP", "CP") {
-		display as error "Invalid product. Product must be one of DT, ST, DP, or CP."
-		exit
+		display as error "{p}Invalid product. Product must be one of DT, ST, DP, or CP.{p_end}"
+		exit 198
 	}
 
 	// check product is available for year
 	if inlist("`product'", "ST", "CP") & `year' < 2010 {
-		display as error "Product `product' only available for 2010 and later."
+		display as error "{p}Product `product' only available for 2010 and later.{p_end}"
 		exit 
 	}	
 
@@ -40,6 +40,8 @@ program define _getcensus_catalog
 	}
 	
 	if `create_cache' {
+		
+		display as result "{p}{it:Loading data dictionary. This may take a few moments. Data dictionary will be cached for faster future access.}{p_end}"
 	    
 	    
 	// determine API phrase for product ---------------------------------------
@@ -61,6 +63,8 @@ program define _getcensus_catalog
 	// import and parse dictionary json -------------------------------------------
 
 	preserve
+	
+	quietly {
 	
 	// load, clean, and reshape 
 	clear
@@ -108,7 +112,10 @@ program define _getcensus_catalog
 	rename (table concept variable label) 						///
 		   (table_id table_name estimate_id estimate_descrip)
 	compress
-
+	// remove variable labels (remnants of reshape)
+	foreach v of varlist _all {
+		label variable `v'
+	}
 	save "`cached_dict_dta'", replace
 	use `temp_dict', clear
 
@@ -160,36 +167,47 @@ program define _getcensus_catalog
 	restore
 	
 	}
+	}
 
 	// load filtered dataset --------------------------------------------------
 	
 	// if subroutine not called from within main program
 
 	if "`load'" != "" {
+		
 		use "`cached_dict_dta'", clear
 
 		if "`table'" != "" {
-			keep if ustrregexm(table,  "`table'", 1)
+			quietly keep if ustrregexm(table_id,  "`table'", 1)
 			display as result `"Searched for table "`table'"."'
+			if _N == 0 {
+				display as result "{p}No results. Check that your table ID is valid and available for the year requested.{p_end}"
+				clear
+			}
 		}
 
 		if "`search'" != "" {
-			keep if ustrregexm(estimate_descrip, "`search'", 1) | 			///
-					ustrregexm(table_name, "`search'", 1) |					///
-					ustrregexm(table_id, "`search'", 1) |					///
-					ustrregexm(estimate_id, "`search'", 1)
+			quietly keep if ustrregexm(estimate_descrip, "`search'", 1) | 	///
+						    ustrregexm(table_name, "`search'", 1) |			///
+							ustrregexm(table_id, "`search'", 1) |			///
+							ustrregexm(estimate_id, "`search'", 1)
 					
 			display as result `"Searched for variable and table names containing "`search'"."'
-		}
-
-		if "`table'" == "" & "`search'" == "" {
-			display as result `"Searched for all tables of product type "`product'"."'
+			if _N == 0 {
+				display as result "{p}No results. Check for typos in your search term, or try a less specific search term.{p_end}"
+				clear
+			}
 		}
 		
-		`browse'
+		if "`table'" == "" & "`search'" == "" {
+			display as result `"{p}Searched for all tables of product type "`product'".{p_end}"'
+		}
+		
+		if _N > 0 {
+			`browse'
+		}
 	}
 
 end
-
 
 
