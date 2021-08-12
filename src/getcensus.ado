@@ -136,7 +136,7 @@ program define getcensus
 				exit 198
 			}
 			if ustrregexm("`table'", "_") {
-				display as error "{p}{bf:table()} must be a table ID, not an estimate ID.{p_end}"
+				display as error "{p}{bf:table()} must be a table ID, not a variable ID.{p_end}"
 				exit 198
 			}
 			// find product of specified table
@@ -186,7 +186,7 @@ program define getcensus
 	}
 	
 	if inlist("`is_table'", "", "0") & inlist("`is_estimate'", "", "0") {
-		display as error "{p}Something went wrong. Please check that you have requested a valid table ID, estimate ID(s), or keyword.{p_end}"
+		display as error "{p}Something went wrong. Please check that you have requested a valid table ID, variable IDs, or keyword.{p_end}"
 		exit
 	}
 	
@@ -194,9 +194,9 @@ program define getcensus
 	// confirm table id not mixed with estimate(s)
 	if `is_table'  {
 		if `is_estimate' {
-			display as error "{p}Either estimate(s) or a table can be requested at a time, not both.{p_end}"
+			display as error "{p}Either variables or a table can be requested at a time, not both.{p_end}"
 			if `is_keyword' {
-				display as error "{p}Note: Some keywords are shortcuts for a table and some are shortcuts for estimates.{p_end}"
+				display as error "{p}Note: Some keywords are shortcuts for a table and some are shortcuts for variables.{p_end}"
 			}
 			exit 198
 		}
@@ -230,21 +230,21 @@ program define getcensus
 		// check all estimates from same product
 		local n_products = (`product_dt' + `product_st' + `product_dp' + `product_cp')
 		if `n_products' > 1 {
-			display as error "{p}All estimates must come from the same product.{p_end}"
+			display as error "{p}All variables must come from the same product.{p_end}"
 			if `is_keyword' {
-				display as error "{p}Note: If you inputting both a keyword and an estimate(s), the keyword may be a shortcut to estimates from a different product as your estimate(s).{p_end}"
+				display as error "{p}Note: If you inputting both a keyword and variables, the keyword may be a shortcut to variables from a different product as your variables.{p_end}"
 			}
 			exit 198
 		}
 		if `n_products' == 0 | "`product'" == "" {
-			display as error "{p}Something went wrong. Please check that you have inputted a valid table ID, estimate ID(s), or keyword.{p_end}"
+			display as error "{p}Something went wrong. Please check that you have inputted a valid table ID, variables, or keyword.{p_end}"
 			exit
 		}
 
 		// confirm no suffix on estimates
 		foreach est of local estimates {
 			if ustrregexm("`est'", "(E|M)$") {
-				display as error "{p}Do not include 'E' or 'M' at the end of estimate IDs.{p_end}"
+				display as error "{p}Do not include 'E' or 'M' at the end of variable IDs.{p_end}"
 				exit 198
 			}
 		}
@@ -252,7 +252,7 @@ program define getcensus
 		// confirm within API limit
 		local max_estimates = cond("`noerror'" == "" & "`product'" != "CP", 25, 50)
 		if wordcount("`n_estimates'") > `max_estimates' {
-			display as error "{p}Too many estimates requested. Up to 50 estimates and/or margins of error can be included in a single API query.{p_end}"
+			display as error "{p}Too many variables requested. Up to 50 estimates and/or margins of error can be included in a single API query.{p_end}"
 			exit
 		}
 	}
@@ -482,7 +482,7 @@ program define getcensus
 			import delimited "`api_url'", stringcols(_all) varnames(1) stripquotes(yes) clear
 		}
 		if _rc != 0 | c(N) == 0 {
-			display as error "{p}The Census API did not return data for `year'. Check that your table or estimate IDs are valid, that your API key is valid, and that you are connected to the internet.{p_end}"
+			display as error "{p}The Census API did not return data for `year'. Check that your table or variable IDs are valid, that your API key is valid, and that you are connected to the internet.{p_end}"
 			local see_message = cond(`show_link', 									///
 									 `"click {browse "`api_url'":here}"',			///
 									 "copy the URL above into a web browser")

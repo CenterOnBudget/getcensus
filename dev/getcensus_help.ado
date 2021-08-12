@@ -22,7 +22,7 @@ Syntax
 
 Retrieve estimates
 
-> __getcensus__ _estimate IDs, table ID, or keyword_ [, _options_]
+> __getcensus__ _variable IDs, table ID, or keyword_ [, _options_]
 
 Search the API data dictionary
 
@@ -83,13 +83,13 @@ Description
 
 __getcensus__ loads American Community Survey (ACS) estimates from the U.S. Census Bureau API into memory. 
 
-To retrieve estimates, users may specify one or more estimate IDs, a single table ID, or a {help getcensus##keywords:keyword}. 
+To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a {help getcensus##keywords:keyword}. 
 
-The Census Bureau publishes thousands of tables of ACS data. Each table has a unique table ID. Each data point within a table is called an estimate, and each estimate has a unique estimate ID. For instance, table S1701, "Poverty status in the past 12 months" contains the estimated number of people in poverty. The estimate ID for this data point is S1701_C02_001. By default, __getcensus__ retrieves both estimates and their margins of error, so users should not suffix estimate IDs with "E" (for estimate) or "M" (for margin of error).
+The Census Bureau publishes thousands of tables of ACS data. Each table has a unique table ID. Each data point within a table is called a variable, and each variable has a unique variable ID. For instance, table S1701, "Poverty status in the past 12 months" contains the estimated number of people in poverty. The variable ID for this data point is S1701_C02_001. By default, __getcensus__ retrieves both estimates and their margins of error, so users should not suffix variable IDs with "E" (for estimate) or "M" (for margin of error).
 
-In a dataset retrieved by __getcensus__, the variable names are the estimate IDs. Variable labels contain the estimate's description and a variable note contains the name of the estimate's table. If the option {opt nolabel} is specified, this metadata will not be included.
+In a dataset retrieved by __getcensus__, the variable names are the ACS variable IDs. Variable labels contain the ACS variable's description and a variable note contains the name of the ACS variable's table. If the option {opt nolabel} is specified, this metadata will not be included.
 
-Users rarely know offhand the estimate ID or table ID of the data points they would like to retrieve. __getcensus catalog__ allows users to access the API data dictionaries. For instance, __getcensus catalog, product(DT)__ will load into memory a dataset containing, for every estimate in the detailed tables ("DT"): the estimate ID, the estimate's description, and the name of the estimate's table. 
+Users rarely know offhand the variable ID or table ID of the data points they would like to retrieve. __getcensus catalog__ allows users to access the API data dictionaries. For instance, __getcensus catalog, product(DT)__ will load into memory a dataset containing, for every variable in the detailed tables ("DT"): the variable ID, the variable's description, and the name of the variable's table. 
 
 If you are new to American Community Survey data, the handbook "Understanding and Using American Community Survey Data: What All Data Users Need to Know" is the best place to start. It is available on the Census Bureau website [here](https://www.census.gov/programs-surveys/acs/guidance/handbooks/general.html).
 
@@ -152,7 +152,7 @@ __browse__ opens retrieved data in the Data Editor after __getcensus__ completes
 {dlgtab:Catalog options}
 
 {phang}
-{opt product(string)} will load the API data dictionary for estimates in tables of a given product type, as specified with a two-letter abbreviation. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. Either __product()__ or __table()__ must be specified with __getcensus catalog__. If both are specified, __product()__ is ignored.
+{opt product(string)} will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. Either __product()__ or __table()__ must be specified with __getcensus catalog__. If both are specified, __product()__ is ignored.
 
 {col 12}{it:product}{col 22}{it:Description}
 {space 8}{hline 85}
@@ -165,7 +165,7 @@ __browse__ opens retrieved data in the Data Editor after __getcensus__ completes
 {opt table(string)} will load the API data dictionary for a given table. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. Either __product()__ or __table()__ must be specified with __getcensus catalog__. If both are specified, __product()__ is ignored.
 
 {phang}
-{opt search(string)} will load the API data dictionary for estimates whose descriptions match a given search term, such as "children", "poverty", or "veteran". 
+{opt search(string)} will load the API data dictionary for variables whose descriptions match a given search term, such as "children", "poverty", or "veteran". 
 {p_end}
 
 
@@ -223,7 +223,7 @@ A list of geographies supported by __getcensus__ can be found below. For some ge
 
 Geographic components are division of a geographic unit by certain criteria. __getcensus__ does not support all geographic components available on the Census Bureau API.
 
-An example: {bf:getcensus [estimate IDs], geography(state) geocomponents(H0 C0)} will return two observations for each state: one for the portion of the state not in a metropolitan statistical area (geocomponent "H0"), and one for the portion of the state in a metropolitan statistical area (geocomponent "C0").
+An example: {bf:getcensus [variable IDs], geography(state) geocomponents(H0 C0)} will return two observations for each state: one for the portion of the state not in a metropolitan statistical area (geocomponent "H0"), and one for the portion of the state in a metropolitan statistical area (geocomponent "C0").
 
 {col 8}Available with __geography()__ _us_, _region_, _division_, or _state_
 {space 5}{hline 80}
@@ -255,7 +255,7 @@ An example: {bf:getcensus [estimate IDs], geography(state) geocomponents(H0 C0)}
 Keywords
 --------
 
-Users may use a keyword to retrieve a curated set of estimates. 
+Users may use a keyword to retrieve a curated set of variables. 
 
 {synopt:{it:Keyword}}Description{p_end}
 {synoptline}

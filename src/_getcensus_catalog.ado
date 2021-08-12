@@ -110,7 +110,7 @@ program define _getcensus_catalog
 	replace variable = ustrregexra(variable, "E$", "")
 	order table concept variable label 
 	rename (table concept variable label) 						///
-		   (table_id table_name estimate_id estimate_descrip)
+		   (table_id table_name variable_id variable_descrip)
 	compress
 	// remove variable labels (remnants of reshape)
 	foreach v of varlist _all {
@@ -187,12 +187,12 @@ program define _getcensus_catalog
 		}
 
 		if "`search'" != "" {
-			quietly keep if ustrregexm(estimate_descrip, "`search'", 1) | 	///
+			quietly keep if ustrregexm(variable_descrip, "`search'", 1) | 	///
 						    ustrregexm(table_name, "`search'", 1) |			///
 							ustrregexm(table_id, "`search'", 1) |			///
-							ustrregexm(estimate_id, "`search'", 1)
+							ustrregexm(variable_id, "`search'", 1)
 					
-			display as result `"Searched for variable and table names containing "`search'"."'
+			display as result `"Searched for variables and tables matching "`search'"."'
 			if _N == 0 {
 				display as result "{p}No results. Check for typos in your search term, or try a less specific search term.{p_end}"
 				clear
