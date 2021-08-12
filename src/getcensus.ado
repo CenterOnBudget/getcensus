@@ -74,17 +74,18 @@ program define getcensus
 	}
 
 	// check min year is available for given sample
-	local min_avail_year = cond(`sample' == 1, 2005, 2009)
-	if `min_year' < `min_avail_year' {
-		display as error "`sample'-year ACS estimates are available for `min_avail_year' and later."
-		exit
-	}
 	if `sample' == 3 {
 		capture numlist "`years'", range(>=2012 <=2013)
 		if _rc != 0 {
 			display as error "3-year ACS estimates are available for 2012 and 2013."
 			exit
 		}
+	}
+	
+	local min_avail_year = cond(`sample' == 1, 2005, 2009)
+	if `min_year' < `min_avail_year' {
+		display as error "`sample'-year ACS estimates are available for `min_avail_year' and later."
+		exit
 	}
 
 	// check max year is available for given sample
