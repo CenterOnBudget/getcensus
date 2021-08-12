@@ -17,7 +17,7 @@ program define getcensus
 	syntax anything(name=estimates), 									///
 		   [YEARs(string) SAMPle(integer 1)]							///
 		   [GEOgraphy(string) STatefips(string) COuntyfips(string)]		///
-		   [GEOIDs(string) GEOCOMPonent(string)]						///
+		   [GEOIDs(string) GEOCOMPonents(string)]						///
 		   [NOLabel NOERRor]											///
 		   [clear SAVEas(string) replace BRowse]						///
 		   [PRoduct(string) Table(string) search(string)]				///
@@ -350,25 +350,25 @@ program define getcensus
 	}
 
 	// check geocomponent and geography combo
-	if "`geocomponent'" != "" {
+	if "`geocomponents'" != "" {
 		local geo_order "`geo_order' geocomp"	// add geocomponent to geo_order
-		local geocomponent = strupper("`geocomponent'")
-		foreach g in `geocomponent' {
+		local geocomponents = strupper("`geocomponents'")
+		foreach g in `geocomponents' {
 			if !(inlist("`g'", "00", "C0", "C1", "C2", "E0", "E1", "E2", "G0") |		///
 				 inlist("`g'", "H0", "01", "43", "89", "90", "91", "92", "93", "94") |	///
 				 inlist("`g'", "95", "A0")) {
-				display as error "{p}Invalid {bf:geocomponent()} {it:`g'}.{p_end}"
+				display as error "{p}Invalid {bf:geocomponents()} {it:`g'}.{p_end}"
 				exit 198
 			}
 			if inlist("`g'", "89", "90", "91", "92", "93", "94", "95") & 	///
 			   "`geography'" != "us" {
-				display as error "{p}with {bf:geocomponent({it:`g'})}, only allowed {bf:geography()} is {it:us}.{p_end}"
+				display as error "{p}with {bf:geocomponents({it:`g'})}, only allowed {bf:geography()} is {it:us}.{p_end}"
 				exit 198
 			}
 			if (inlist("`g'", "C0", "C1", "C2", "E0", "E1", "E2", "G0", "H0") |		///
 				inlist("`g'" "01", "43", "A0")) & 									///
 			   !inlist("`geography'", "us", "state", "region", "division") {
-				display as error "{p}with {bf:geocomponent({it:`g'})}, only allowed {bf:geography()} are {it:us}, {it:region}, {it:division} or {it:state}.{p_end}"
+				display as error "{p}with {bf:geocomponents({it:`g'})}, only allowed {bf:geography()} are {it:us}, {it:region}, {it:division} or {it:state}.{p_end}"
 				exit 198
 			}
 		}
@@ -433,8 +433,8 @@ program define getcensus
 	local state_predicate = cond("`statefips'" != "*", "&in=state:`statefips_list'", "")
 
 	local geocomp_list ""
-	if "`geocomponent'" != "" {
-		foreach g of local geocomponent {
+	if "`geocomponents'" != "" {
+		foreach g of local geocomponents {
 			local g = "&GEOCOMP=`g'"
 			local geocomp_list = "`geocomp_list'" + "`g'"
 		}
@@ -557,6 +557,7 @@ program define getcensus
 		local product_lower = strlower("`product'")
 		capture confirm file "`cachepath'/acs_dict_`max_year'_`sample'yr_`product_lower'_do.dta"
 		if _rc != 0 & "`nolabel'" == "" {
+			display as result "{p}{it:Loading data dictionary. This may take a few moments. Data dictionary will be cached for faster future access.}{p_end}"
 		    quietly _getcensus_catalog, year(`max_year') sample(`sample') 					///
 										product("`product'") cachepath("`cachepath'")
 		}
