@@ -335,6 +335,12 @@ program define getcensus
 		display as error "{p}A single state code must be specified in {bf:statefips()} with {bf:geography({it:`geo_full_name'})}.{p_end}"
 		exit 198
 	}
+	// statefips is sometimes required when geoid is specified
+	if inlist("`geography'", "county", "zcta", "cd") & 				///
+	   ("`statefips'" == "*") & ("`geoids'" != "*") {
+		display as error "{p}When {bf:geoids()} is specified with {bf:geography({it:`geo_full_name'})}, {bf:statefips()} must also be specified.{p_end}"
+		exit 198
+	}
 
 	// check countyfips
 	if "`countyfips'" != "" & !inlist("`geography'", "cousub", "tract", "bg"){
