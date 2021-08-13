@@ -371,6 +371,17 @@ program define getcensus
 				display as error "{p}with {bf:geocomponents({it:`g'})}, only allowed {bf:geography()} are {it:us}, {it:region}, {it:division} or {it:state}.{p_end}"
 				exit 198
 			}
+			// check sample is available for geocomponent
+			if `sample' != 5 {
+				if inlist("`g'", "90", "95" ) {
+					display as error "{p}`sample'-year ACS estimates are not available for {bf:geocomponents({it:`g'})}.{p_end}"
+				exit 198
+				}
+				if `sample' == 1 & "`g'" == "92" {
+					display as error "{p}`sample'-year ACS estimates are not available for {bf:geocomponents({it:`g'})}.{p_end}"
+				exit 198
+				}
+			}
 		}
 	}
 
