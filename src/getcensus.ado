@@ -479,26 +479,46 @@ program define getcensus
 		local api_url_key "&key=`key'"
 		local api_url "`api_url_base'`api_url_get'`api_url_geo'`api_url_key'"
 		
-		// display url
-		local show_link = strlen("`api_url'") < 255
-		if `show_link' {
-			display as result `"{browse "`api_url'": Link to data for `year'}"'
-		}
-		if !`show_link' {
-			display as result "Link to data for `year':" _newline as text _skip(2) "`api_url'"
-		}
+		// for messages, whether to display link to API call or text of call
+		local show_link = ustrlen("`api_url'") < 255
 		
 		// make API call
 		capture noisily {
 			import delimited "`api_url'", stringcols(_all) varnames(1) stripquotes(yes) clear
 		}
+		
+		// if unsuccessful, list possible reasons and provide link to API call
+		// so users can view error there
 		if _rc != 0 | c(N) == 0 {
-			display as error "{p}The Census API did not return data for `year'. Check that your table or variable IDs are valid, that your API key is valid, and that you are connected to the internet.{p_end}"
+			display as error "{p}The Census Bureau API did not return data for `year'.{p_end}"
+			display as error "{p}This may have happened because:{p_end}" 
+			display as error "{phang}{c 149}  Table ID or variable IDs are invalid or are not available for the requested year.{p_end}" 
+			if "`geoids'" != "*" {
+				display as error "{phang}{c 149}  GEOIDs are invalid, or are not available for the requested sample and/or year.{p_end}"
+			}
+			if "`geocomponents'" != "" {
+				display as error "{phang}{c 149}  Geographic components are not available for the requested sample and/or year, or could not be combined with (if specified) the requested state FIPS codes or GEOIDs.{p_end}"
+			}
+			display as error "{phang}{c 149}  API key is invalid.{p_end}"
+			display as error "{phang}{c 149}  Problems with your internet connection.{p_end}"
 			local see_message = cond(`show_link', 									///
 									 `"click {browse "`api_url'":here}"',			///
 									 "copy the URL above into a web browser")
 			display as error `"{p}To see the error message returned by the Census Bureau API, `see_message'.{p_end}"'
+			if "`geoids'" != "*" & `sample' != 5 {
+				display as error "{p}{it:(If there is no error message, this may be because the request was valid, but no data was returned because `sample'-year estimates are not published for the requested GEOIDs.)}{p_end}"
+			}
 			exit
+		}
+		
+		// display link to data if successful call
+		else {
+			if `show_link' {
+				display as result `"{browse "`api_url'": Link to data for `year'}"'
+			}
+			if !`show_link' {
+				display as result "Link to data for `year':" _newline as text _skip(2) "`api_url'"
+			}
 		}
 		
 		// add year variable
