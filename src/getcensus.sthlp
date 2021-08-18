@@ -57,11 +57,11 @@ Search the API data dictionary
 {p_end}
 
 {syntab:Geography options}
-{synopt:{opt geoid:s(string)}}GEOIDs of geographies to retrieve; default is usually all.
-{p_end}
 {synopt:{opt st:atefips(string)}}state FIPS codes of states to retrieve; default is usually all.
 {p_end}
 {synopt:{opt co:untyfips(string)}}county FIPS codes of counties to retrieve; default is usually all.
+{p_end}
+{synopt:{opt geoid:s(string)}}GEOIDs of geographies to retrieve; default is usually all.
 {p_end}
 {synopt:{opt geocomp:onents(string)}}geographic component codes of geographies to retrieve.
 {p_end}
@@ -121,7 +121,7 @@ If you are new to American Community Survey data, the handbook "Understanding an
 {opt geography(string)} specifies the geographic unit for which to retrieve data. Default is {opt geography(state)}. See {help getcensus##geographies:Supported Geographies}. 
 
 {phang}
-{opt key(string)} specifies your Census Bureau API key. To avoid specifying {bf:key()} each time {bf:getcensus} is used, store your API key in a global {help macro} named {it:censuskey} in your profile.do. Learn about where to find your profile.do  {browse "https://www.stata.com/support/faqs/programming/profile-do-file/":here}. If you do not have an API key, you may acquire one  {browse "https://api.census.gov/data/key_signup.html":here}. 
+{opt key(string)} specifies your Census Bureau API key. If you do not have an API key, you may acquire one  {browse "https://api.census.gov/data/key_signup.html":here}. To avoid specifying {bf:key()} each time {bf:getcensus} is used, store your API key in a global {help macro} named {it:censuskey} in your profile.do. Learn about where to find your profile.do  {browse "https://www.stata.com/support/faqs/programming/profile-do-file/":here}. If you are unfamiliar with global macros, simply type {it:global censuskey "your-api-key-here"} into your profile.do. 
 
 {phang}
 {bf:nolabel} specifies that retrieved data should not be labeled with associated metadata from the API data dictionary.
@@ -146,16 +146,16 @@ If you are new to American Community Survey data, the handbook "Understanding an
 {dlgtab:Geography options}
 
 {phang}
-{opt geoids(string)} GEOID(s) of geographies to retrieve. Default is usually all. GEOIDs are numeric codes that uniquely identify all geographic areas for which the Census Bureau tabulates data; see  {browse "https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html":Understanding Geographic Identifiers} on the Census Bureau website. Note that GEOIDs and geography definitions may change between years; see  {browse "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html":ACS Table & Geography Changes} on the Census Bureau website. {bf:getcensus} supports most, but not all, geographies supported by the ACS API; see {help getcensus##geographies:Supported Geographies}.
+{opt statefips(string)} Two-digit FIPS codes of state(s) to retrieve. Default is usually all. A listing of state FIPS codes can be found  {browse "https://www.nrcs.usda.gov/wps/portal/nrcs/detail/?cid=nrcs143_013696":here}. 
 
 {phang}
-{opt statefips(string)} FIPS codes of state(s) to retrieve. Default is usually all. A listing of state FIPS codes can be found  {browse "https://www.nrcs.usda.gov/wps/portal/nrcs/detail/?cid=nrcs143_013696":here}. 
+{opt countyfips(string)} Three-digit FIPS codes of counties to retrieve. A listing of county FIPS codes by year can be found  {browse "https://www.census.gov/geographies/reference-files.2019.html":here} on the Census Bureau website. Note that county FIPS codes may change between years; see  {browse "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html":ACS Table & Geography Changes} on the Census Bureau website. 
 
 {phang}
-{opt countyfips(string)} FIPS codes of counties to retrieve. A listing of county FIPS codes by year can be found  {browse "https://www.census.gov/geographies/reference-files.2019.html":here} on the Census Bureau website. Note that county FIPS codes may change between years; see  {browse "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html":ACS Table & Geography Changes} on the Census Bureau website. 
+{opt geoids(string)} GEOID(s) of geographies to retrieve. Default is usually all. GEOIDs are numeric codes that uniquely identify all geographic areas for which the Census Bureau tabulates data; see  {browse "https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html":Understanding Geographic Identifiers} on the Census Bureau website. Many geography types have GEOIDs that are made up of several components. Only the last component should be specified in {bf:geoid()}. The state code component of the GEOID should be specified in {bf:statefips()}. If the GEOID includes a county code, it should be specified in {bf:countyfips()}. See {help getcensus##examples:Examples}. Note that GEOIDs and geography definitions may change between years; see  {browse "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html":ACS Table & Geography Changes} on the Census Bureau website. {bf:getcensus} supports most, but not all, geographies supported by the ACS API; see {help getcensus##geographies:Supported Geographies}.
 
 {phang}
-{opt geocomponents(string)} Geographic compoment codes of the geographic components to retrieve. Geographic components are division of a geographic unit by certain criteria, such as rural/urban and in metropolitan statistical area/not in metropolitan statistical area. {bf:getcensus} does not support all geographic components available on the Census Bureau API; see {help getcensus##geocomp:Supported Geographies}.
+{opt geocomponents(string)} Geographic component codes of the geographic components to retrieve. Geographic components are division of a geographic unit by certain criteria, such as rural, urban,  in metropolitan statistical area, and not in metropolitan statistical area. {bf:getcensus} does not support all geographic components available on the Census Bureau API; see {help getcensus##geocomp:Supported Geographies}.
 
 {marker options_catalog}{...}
 {dlgtab:Catalog options}
@@ -174,7 +174,7 @@ If you are new to American Community Survey data, the handbook "Understanding an
 {opt table(string)} will load the API data dictionary for a given table. For information about ACS tables and product types, see  {browse "https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html":this page} on the Census Bureau website. Either {bf:product()} or {bf:table()} must be specified with {bf:getcensus catalog}. If both are specified, {bf:product()} is ignored.
 
 {phang}
-{opt search(string)} will load the API data dictionary for variables whose descriptions match a given search term, such as "children", "poverty", or "veteran". 
+{opt search(string)} will load the API data dictionary for variables whose descriptions match a given search term, such as "children", "poverty", or "veteran". A regular expression may be specified to {bf:search()}.
 {p_end}
 
 
@@ -218,8 +218,8 @@ A list of geographies supported by {bf:getcensus} can be found below. For some g
 {col 8}alaska native regional corporation{col 53}anrc{col 68}statefips
 {col 8}american indian area/alaska native area/
 {col 10}hawaiian home land{col 53}aiannh
-{col 8}metropolitan statistical area/ 
-{col 10}micropolitan statistical area{col 53}metro{col 68}statefips{c 42}{c 42}
+{col 5}{c 42}{c 42}{col 8}metropolitan statistical area/ 
+{col 10}micropolitan statistical area{col 53}metro{col 68}statefips
 {col 8}combined statistical area{col 53}cbsa
 {col 8}new england city and town area{col 53}necta
 {col 8}combined new england city and town area{col 53}cnecta
@@ -228,7 +228,7 @@ A list of geographies supported by {bf:getcensus} can be found below. For some g
     {it:*  only 5-year estimates are available for this geography.}
     {it:{c 42}{c 42} only 5-year estimates are available when {bf:statefips()} is specified with this geography.}
 
-	
+
 {marker geocomp}{...}
 {dlgtab:Geographic components}
 
@@ -236,7 +236,7 @@ A list of geographies supported by {bf:getcensus} can be found below. For some g
 Geographic components are division of a geographic unit by certain criteria. {bf:getcensus} does not support all geographic components available on the Census Bureau API.
 
 {p 4 4 2}
-An example: {bf:getcensus [variable IDs], geography(state) geocomponents(H0 C0)} will return two observations for each state: one for the portion of the state not in a metropolitan statistical area (geocomponent "H0"), and one for the portion of the state in a metropolitan statistical area (geocomponent "C0").
+An example: {bf:getcensus [variable IDs], geography(state) geocomponents(H0 C0)} will return two observations for each state: one for the portion of the state not in a metropolitan statistical area ("H0"), and one for the portion of the state in a metropolitan statistical area ("C0").
 
 {col 8}Available with {bf:geography()} {it:us}, {it:region}, {it:division}, or {it:state}
 {space 5}{hline 80}
@@ -256,13 +256,15 @@ An example: {bf:getcensus [variable IDs], geography(state) geocomponents(H0 C0)}
 {col 8}Available with {opt geography(us)} only
 {space 5}{hline 80}
 {col 8}89{col 13}American Indian Reservation and Trust Land: Federal
-{col 8}90{col 13}American Indian Reservation and Trust Land: State
+{col 5}*{col 8}90{col 13}American Indian Reservation and Trust Land: State
 {col 8}91{col 13}Oklahoma Tribal Statistical Area
-{col 8}92{col 13}Tribal Designated Statistical Area
+{col 5}{c 42}{c 42}{col 8}92{col 13}Tribal Designated Statistical Area
 {col 8}93{col 13}Alaska Native Village Statistical Area
 {col 8}94{col 13}State Designated Tribal Statistical Area
-{col 8}95{col 13}Hawaiian Home Land
+{col 5}*{col 8}95{col 13}Hawaiian Home Land
 
+    {it:*  only 5-year estimates are available for this geographic component.}
+    {it:{c 42}{c 42} 1-year estimates are not available for this geographic component.}
 
 {marker keywords}{...}
 
@@ -283,32 +285,111 @@ Users may use a keyword to retrieve a curated set of variables.
 {synopt:{bf:costburden_renters}}Detailed renter housing cost burden*{p_end}
 {synopt:{bf:costburden_owners}}Detailed homeowner housing cost burden{p_end}
 {synopt:{bf:opt tenure_inc}}Median household income and poverty status of families, by housing tenure{p_end}
-{synopt:{bf:kids_nativity}}Nativity of children, by age and parent{c 39}s natvity{p_end}
+{synopt:{bf:kids_nativity}}Nativity of children, by age and parent{c 39}s nativity{p_end}
 {synopt:{bf:kids_pov_parents_nativity}}Children by poverty status and parent{c 39}s nativity {p_end}
 {synoptline}
 
 {p 4 4 2}
-{it:* When using the data retrieved by keyword {bf:costburden_renters} to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the number of renters(B25070_001). This step is not necessary when using the data returned by keyword {bf:housing_overview}; the total in this table{c 39}s section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed.}
+{it:* When using the data retrieved by keyword {bf:costburden_renters} to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the number of renters (B25070_001). This step is not necessary when using the data returned by keyword {bf:housing_overview}; the total in this table{c 39}s section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed.}
 
 
 {marker examples}{...}
 
 {title:Example(s)}
 
+{p}{it:Variables, tables, and keywords}{p_end}
 
+{p 4 4 2}
+	Single table    {break}
+		{bf:. getcensus S2701}
+
+{p 4 4 2}
+	Single variable    {break}
+		{bf:. getcensus B19013_001}
+
+{p 4 4 2}
+	Multiple variables from a single table    {break}
+		{bf:. getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057}
+
+{p 4 4 2}
+	Multiple variables from more than one table    {break}
+		{bf:. getcensus S1701_C03_001 S2701_C05_001}
+
+{p 4 4 2}
+	Keyword    {break}
+		{bf:. getcensus medinc}
+
+{p}{it:Years and samples}{p_end}
+
+{p 4 4 2}
+	Single year (default is most recent available)    {break}
+		{bf:. getcensus B19013, year(2010)}
+
+{p 4 4 2}
+	Multiple years    {break}
+		{bf:. getcensus B19013, years(2018/2019)}    {break}
+		{bf:. getcensus B19013, years(2010 2015 2019)}
+
+{p 4 4 2}
+	Samples (default is 1)    {break}
+		{bf:. getcensus B19013, sample(5)}    {break}
+		{bf:. getcensus B19013, sample(3) year(2013)}
+
+{p}{it:Geographies}{p_end}
+
+{p 4 4 2}
+	Types (default is state)    {break}
+		{bf:. getcensus B19013, geography(us)}    {break}
+		{bf:. getcensus B19013, geography(county)}    {break}
+		{bf:. getcensus B19013, sample(5) geography(sldu) statefips(26)}
+
+{p 4 4 2}
+	Within a state or set of states    {break}
+		{bf:. getcensus B19013, statefips(11)}    {break}
+		{bf:. getcensus B19013, geography(county) statefips(04)}    {break}
+		{bf:. getcensus B19013, geography(congressional district) statefips(24 51)}    {break}
+		{bf:. getcensus B19013, sample(5) geography(metro) statefips(06)}
+
+{p 4 4 2}
+	With specific GEOIDs    {break}
+		{bf:. getcensus B19013_001, geography(metro) geoids(47900)}    {break}
+		{bf:. getcensus B19013_001, geography(county) statefips(24) geoids(005 510)}    {break}
+		{bf:. getcensus B19013_001, geography(place) statefips(48) geoids(35000)}    {break}
+		{bf:. getcensus B19013_001, sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)}
+
+{p 4 4 2}
+	Geographic components    {break}
+		{bf:. getcensus B19013, geocomponents(H0)}    {break}
+		{bf:. getcensus B19013, geocomponents(01 43) statefips(13)}    {break}
+		{bf:. getcensus B19013, sample(5) geography(us) geocomponents(92)}
+
+{p}{it:Catalog}{p_end}
+
+{p 4 4 2}
+	All variables from detailed tables    {break}
+		{bf:. getcensus catalog, product(DP)}
+
+{p 4 4 2}
+	Variables from a single table    {break}
+		{bf:. getcensus catalog, table(S0901) product(ST)}
+
+{p 4 4 2}
+	Variables matching a search term    {break}
+		{bf:. getcensus catalog, search(children) product(DT)}
 
 
 
 {title:Website}
 
 {p 4 4 2}
-{browse "http://www.github.com/CenterOnBudget/cbppstatautils":github.com/CenterOnBudget/getcensus}
+{browse "http://www.github.com/CenterOnBudget/getcensus":github.com/CenterOnBudget/getcensus}
 
 
 
 {title:Authors}
 
 {p 4 4 2}
-{bf:getcensus} is developed and maintained by Claire Zippel and Matt Saenz,  {browse "http://www.cbpp.org":Center on Budget and Policy Priorities}. It was originally created by Raheem Chaudhry and Vincent Palacios. 
+{bf:getcensus} is a project of the  {browse "http://www.cbpp.org":Center on Budget and Policy Priorities}, a nonpartisan research and policy institute. It is developed and maintained by Claire Zippel and Matt Saenz. It was created by Raheem Chaudhry and Vincent Palacios.
+
 
 

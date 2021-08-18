@@ -32,6 +32,7 @@
 -   In the help file and error messages, data points are now referred to as "variables" rather than estimates. This is more consistent with the Census Bureau's own API documentation and [user guide](https://www.census.gov/data/developers/guidance/api-user-guide.html), and matches the terminology of the [tidycensus](https://walker-data.com/tidycensus/) R package. It also avoids confusion ("1-year estimates", "estimate" versus "margin of error").
 -   Both a Stata file and an Excel file are saved by default when `saveas()` is specified; the `exportexcel` option is ignored.
 -   When one or more variable labels have been truncated, a single message is displayed rather than a message for each truncated label.
+-   getcensus now more thoroughly checks the availability and validity of users' requests before sending them to the API. This means users can expect more (informative) error messages from getcensus, and fewer failed API calls.
 -   A rewritten help file provides more information on supported geographies and geographic components, includes more links to Census Bureau resources, and is more cleanly organized.
 
 **Under the hood**
