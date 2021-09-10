@@ -14,7 +14,7 @@ run "_getcensus_parse_geography.ado"
 
 program define getcensus
 
-	syntax anything(name=estimates), 									///
+	syntax [anything(name=estimates)], 									///
 		   [YEARs(string) SAMPle(integer 1)]							///
 		   [GEOgraphy(string) STatefips(string) COuntyfips(string)]		///
 		   [GEOIDs(string) GEOCOMPonents(string)]						///
@@ -24,6 +24,12 @@ program define getcensus
 		   [key(string) CACHEpath(string)]								///
 		   [EXportexcel DATAset(integer 0)] // for compatibility
 
+	// open dialog box if no estimates provided
+	if "`estimates'" == "" {
+		db getcensus
+		exit
+	}
+	
 	// defaults
 	if "`years'" == "" {
 		local years 2019
@@ -358,34 +364,36 @@ program define getcensus
 	// check geocomponent and geography combo
 	if "`geocomponents'" != "" {
 		local geo_order "`geo_order' geocomp"	// add geocomponent to geo_order
-		local geocomponents = strupper("`geocomponents'")
+		local geocomponents = ustrupper("`geocomponents'")
 		foreach g in `geocomponents' {
+			// check if supported
 			if !(inlist("`g'", "00", "C0", "C1", "C2", "E0", "E1", "E2", "G0") |		///
 				 inlist("`g'", "H0", "01", "43", "89", "90", "91", "92", "93", "94") |	///
 				 inlist("`g'", "95", "A0")) {
 				display as error "{p}Invalid {bf:geocomponents()} {it:`g'}.{p_end}"
 				exit 198
 			}
+			// check geocomponent and geography combination
 			if inlist("`g'", "89", "90", "91", "92", "93", "94", "95") & 	///
 			   "`geography'" != "us" {
-				display as error "{p}with {bf:geocomponents({it:`g'})}, only allowed {bf:geography()} is {it:us}.{p_end}"
+				display as error "{p}With {bf:geocomponents({it:`g'})}, only allowed {bf:geography()} is {it:us}.{p_end}"
 				exit 198
 			}
 			if (inlist("`g'", "C0", "C1", "C2", "E0", "E1", "E2", "G0", "H0") |		///
 				inlist("`g'" "01", "43", "A0")) & 									///
 			   !inlist("`geography'", "us", "state", "region", "division") {
-				display as error "{p}with {bf:geocomponents({it:`g'})}, only allowed {bf:geography()} are {it:us}, {it:region}, {it:division} or {it:state}.{p_end}"
+				display as error "{p}With {bf:geocomponents({it:`g'})}, only allowed {bf:geography()} are {it:us}, {it:region}, {it:division} or {it:state}.{p_end}"
 				exit 198
 			}
 			// check sample is available for geocomponent
 			if `sample' != 5 {
 				if inlist("`g'", "90", "95" ) {
 					display as error "{p}`sample'-year ACS estimates are not available for {bf:geocomponents({it:`g'})}.{p_end}"
-				exit 198
+					exit 198
 				}
 				if `sample' == 1 & "`g'" == "92" {
 					display as error "{p}`sample'-year ACS estimates are not available for {bf:geocomponents({it:`g'})}.{p_end}"
-				exit 198
+					exit 198
 				}
 			}
 		}

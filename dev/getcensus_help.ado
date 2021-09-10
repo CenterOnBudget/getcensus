@@ -83,7 +83,7 @@ Description
 
 __getcensus__ loads American Community Survey (ACS) estimates from the U.S. Census Bureau API into memory. 
 
-To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a {help getcensus##keywords:keyword}. 
+To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a {help getcensus##keywords:keyword}. If a list of variable IDs is specified, the variables must come from tables that share the same product type (Data Profile, Subject Table, Comparison Profile, or Detailed Table).
 
 The Census Bureau publishes thousands of tables of ACS data. Each table has a unique table ID. Each data point within a table is called a variable, and each variable has a unique variable ID. For instance, table S1701, "Poverty status in the past 12 months" contains the estimated number of people in poverty. The variable ID for this data point is S1701_C02_001. By default, __getcensus__ retrieves both estimates and their margins of error, so users should not suffix variable IDs with "E" (for estimate) or "M" (for margin of error).
 

@@ -1,0 +1,368 @@
+VERSION 16.0
+
+POSITION . . 440 460
+
+
+// Lists ----------------------------------------------------------------------
+
+LIST geo_list
+BEGIN
+  us
+  region
+  division
+  state
+  county
+  county subdivision
+  tract
+  block group
+  place
+  zip code tabulation area
+  state legislative district (upper chamber)
+  state legislative district (lower chamber)
+  congressional district
+  school district (elementary)
+  school district (secondary)
+  school district (unified)
+  public use microdata area
+  alaska native regional corporation
+  american indian area/alaska native area/hawaiian home land
+  metropolitan statistical area/micropolitan statistical area
+  combined statistical area
+  new england city and town area
+  combined new england city and town area
+  urban area
+END
+
+LIST prod_list
+BEGIN
+  Data profile
+  Subject table
+  Comparison profile
+  Detailed table
+END
+
+LIST search_list
+BEGIN
+  Table ID
+  Search term
+END
+
+
+// Main tab -------------------------------------------------------------------
+
+DIALOG main, label("getcensus") tabtitle("Retrieve data")
+BEGIN
+   TEXT      tx_vars    10	  10   420  .,  label("Table ID, variable ID(s), or keyword*")
+   EDIT      ed_vars    @	  +20  420  .,  label("Table ID, variable ID(s), or keyword")
+   TEXT      tx_yr      10	  +30  190  .,  label("Year(s)")
+   EDIT      ed_yr	    @	  +20  190  .,  default("2019") option(years) onchange(program validate)
+   TEXT      tx_samp	+210  -20  200  .,  label("Sample")
+   RADIO     rb_samp1   @	  +20  200  .,  first label("1") onclickon("program validate")
+   RADIO     rb_samp3   +50	  @    @    .,  middle label("3") onclickon("program validate")
+   RADIO     rb_samp5   +50	  @    @    .,  last label("5") onclickon("program validate")
+   TEXT      tx_geo     10	  +30  420  .,  label("Geography")
+   COMBOBOX  cb_geo     @	  +20  @    .,  dropdownlist contents(geo_list) default(state) option(geography) onselchange(program validate)
+   TEXT      tx_st      10	  +30  190  .,  label("State code(s)")
+   EDIT      ed_st      @	  +20  190  .,  label("State code(s)") option(statefips) onchange(program validate)
+   TEXT      tx_co      +210  -20  200  .,  label("County code(s)")
+   EDIT      ed_co	    @	  +20  200  .,  label("County code(s)") option(countyfips)
+   TEXT      tx_geoid   10	  +20  190  .,  label("GEOID(s)")
+   EDIT      ed_geoid   @	  +20  190  .,  option(geoids)
+   TEXT      tx_geocomp +210  -20  200  .,  label("Geographic component(s)")
+   EDIT      ed_geocomp @	  +20  200  .,  option(geocomponents)
+   CHECKBOX  ck_noerr   10	  +35  420  .,  label("Do not retreive margins of error") option(noerror)
+   CHECKBOX  ck_nolab   @	  +20  420  .,  label("Do not label retrieved data with metadatata from the API data dictionary") option(nolabel)
+   CHECKBOX  ck_browse  @	  +20  420  .,  label("Browse the retrieved data in the Data Editor") option(browse)
+   CHECKBOX  ck_save	10	  +20  420  .,  label("Save results as:") onclickon(program validate) onclickoff(program validate)
+   EDIT      ed_save	+15	  +20  405  .,  option(saveas)
+   CHECKBOX  ck_replace @	  +25  405  .,  label("Replace the existing files") option(replace)
+   TEXT      tx_key     10	  +25  420  .,  label("API key")
+   EDIT      ed_key	    @	  +20  420  .,  password option(key)
+   TEXT      tx_req	    10	  +30  410  .,  label("* indicates a required field")
+END	
+
+
+// Catalog tab ----------------------------------------------------------------
+
+DIALOG sub, tabtitle("Search for variables")
+BEGIN
+  CHECKBOX  ck_catalog 10    10   420  .,  label("Load or search the API data dictionary") onclickon(program validate_sub) onclickoff(program validate_sub)
+  TEXT      tx_yr      10    +30  190  .,  label("Year") 
+  SPINNER   sp_yr      @     +20  190  .,  default(2019) min(2005) max(2019) option(years) onchange(program validate_sub)
+  TEXT      tx_samp    +210  -20  200  .,  label("Sample")
+  RADIO     rb_samp1   @     +20  200  .,  first label("1") onclickon(program validate_sub)
+  RADIO     rb_samp3   +50   @    @    .,  middle label("3") onclickon(program validate_sub)
+  RADIO     rb_samp5   +50   @    @    .,  last label("5") onclickon(program validate_sub)
+  TEXT      tx_prod    10    +30  420  .,  label("Product")
+  COMBOBOX  cb_prod    @     +20  @    .,  dropdownlist contents(prod_list) default("Detailed table") option(product) onselchange(program validate_sub)
+  TEXT      tx_search  10    +30  190  .,  label("Search for:")
+  COMBOBOX  cb_search  @     +20  190  .,  dropdownlist contents(search_list) onselchange(program validate_sub)
+  EDIT      ed_search  +200  @    220  .,  onchange(program validate_sub)
+  CHECKBOX  ck_browse  10	 +35  420  .,  option(browse) label("Browse the retrieved data in the Data Editor")
+END
+
+OK ok1,      label("OK")
+CANCEL can1, label("Cancel")
+SUBMIT sub1, label("Submit")
+HELP hlp1,   view("help getcensus")
+RESET res1
+COPY copy1
+
+
+
+// Validate main tab ----------------------------------------------------------
+
+PROGRAM validate
+BEGIN
+
+  // enable/disable statefips and countyfips, or mark as required -----
+  
+  if main.cb_geo.iseq("us") |        ///
+     main.cb_geo.iseq("region") |    ///
+     main.cb_geo.iseq("division") |  ///
+     main.cb_geo.iseq("american indian area/alaska native area/hawaiian home land") | ///
+     main.cb_geo.iseq("combined statistical area") |            ///
+     main.cb_geo.contains("new england city and town area") |   ///
+     main.cb_geo.iseq("urban area") {
+    call main.ed_st.disable
+    call main.ed_co.disable
+  }
+  if main.cb_geo.iseq("state") |     ///
+     main.cb_geo.iseq("county") |    ///
+     main.cb_geo.iseq("place") |    ///
+     main.cb_geo.iseq("zip code tabulation area") |            ///
+     main.cb_geo.contains("state legislative district") |      ///
+     main.cb_geo.contains("school district") |                 ///
+     main.cb_geo.iseq("congressional district") |              ///
+     main.cb_geo.iseq("public use microdata area") |           ///
+     main.cb_geo.iseq("alaska native regional corporation") |  ///
+     main.cb_geo.iseq("metropolitan statistical area/micropolitan statistical area") {
+    call main.ed_st.enable
+    call main.ed_co.disable
+  }
+  if main.cb_geo.iseq("county subdivision") |   ///
+     main.cb_geo.iseq("tract") |                ///
+     main.cb_geo.iseq("block group") {
+    call main.ed_st.enable
+    call main.ed_co.enable
+  }
+  if main.cb_geo.iseq("county subdivision") |   ///
+     main.cb_geo.iseq("tract") |                ///
+     main.cb_geo.iseq("block group") |          ///
+     main.cb_geo.contains("state legislative district") |   ///
+     main.cb_geo.contains("school district") {
+      call main.tx_st.setlabel "State Code(s)*" 
+  } 
+  else {
+    call main.tx_st.setlabel "State Code(s)"
+  }
+  if main.cb_geo.iseq("block group"){
+    call main.tx_co.setlabel "County Code(s)*"
+  }
+  else {
+    call main.tx_co.setlabel "County Code(s)"
+  }
+
+  // disable sample if not available for geography -----
+  
+  if main.cb_geo.iseq("county subdivision") |   ///
+     main.cb_geo.iseq("tract") |                ///
+     main.cb_geo.iseq("block group") |          ///
+     main.cb_geo.iseq("zip code tabulation area") |        ///
+     main.cb_geo.contains("state legislative district") |  ///
+     (main.cb_geo.iseq("metropolitan statistical area/micropolitan statistical area") & main.ed_st) {
+    call main.rb_samp1.disable
+    call main.rb_samp3.disable
+  }
+  else {
+    call main.rb_samp1.enable
+    call main.rb_samp3.enable
+  }
+  
+  // disable geocomponent if not available for geography -----
+  
+  if main.cb_geo.iseq("us") |         ///
+     main.cb_geo.iseq("region") |     ///
+     main.cb_geo.iseq("division") |   ///
+     main.cb_geo.iseq("state") {
+    call main.ed_geocomp.enable
+  }
+  else {
+    call main.ed_geocomp.disable
+  }
+
+  // disable sample if not available for year -----
+
+  if main.ed_yr.isNumlistInRange(2012, 2013) {
+    call main.rb_samp3.enable
+  }
+  else {
+    call main.rb_samp3.disable
+  }
+  if main.ed_yr.isNumlistGE(2009) {
+    call main.rb_samp5.enable
+  }
+  else {
+    call main.rb_samp5.disable
+  }
+
+  // saveas enable/disable -----
+
+  if main.ck_save {
+    call main.ed_save.enable
+    call main.ck_replace.enable
+  }
+  else {
+    call main.ed_save.disable
+    call main.ck_replace.disable
+  }
+
+END
+
+
+// Validate catalog tab -------------------------------------------------------
+
+PROGRAM validate_sub
+BEGIN
+
+  // enable/disable entire tab -----
+  
+  if !sub.ck_catalog {
+    call sub.sp_yr.disable
+    call sub.rb_samp1.disable
+    call sub.rb_samp3.disable
+    call sub.rb_samp5.disable
+    call sub.cb_prod.disable
+    call sub.cb_search.disable
+    call sub.ed_search.disable
+    call sub.ck_browse.disable
+  	
+  } 
+  else {
+    call sub.sp_yr.enable
+    call sub.rb_samp1.enable
+    call sub.rb_samp3.enable
+    call sub.rb_samp5.enable
+    call sub.cb_prod.enable
+    call sub.cb_search.enable
+    call sub.ed_search.enable
+    call sub.ck_browse.enable
+  }
+  
+  // disable sample if not available for year -----
+  
+  if sub.sp_yr.isNumlistInRange(2012, 2013) {
+    call sub.rb_samp3.enable
+  }
+  else {
+    call sub.rb_samp3.disable
+  }
+  if sub.sp_yr.isge(2009) {
+  	call sub.rb_samp5.enable
+  }
+  else {
+  	call sub.rb_samp5.disable
+  }
+  
+END
+
+
+
+// Command --------------------------------------------------------------------
+
+PROGRAM command
+BEGIN
+
+  if !sub.ck_catalog {
+    
+    put "getcensus "
+    require main.ed_vars
+    put main.ed_vars
+    put " , "
+    put "years(" main.ed_yr ") "
+    // TODO change to sample() 
+    if main.rb_samp1 {
+      put "dataset(1) "
+    }
+    if main.rb_samp3 {
+      put "dataset(3) "
+    }
+    if main.rb_samp5 {
+      put "dataset(5) "
+    }
+    put "geography(" main.cb_geo ") "
+    if main.cb_geo.iseq("county subdivision") |   ///
+       main.cb_geo.iseq("tract") |                ///
+       main.cb_geo.iseq("block group") |          ///
+       main.cb_geo.contains("state legislative district") | ///
+       main.cb_geo.contains("school district") {
+      require main.ed_st
+    }
+    if main.cb_geo.iseq("block group") {
+      require main.ed_co
+    }
+    if main.ed_st {
+      put "statefips(" main.ed_st ") "
+    }
+    if main.ed.co {
+      put "countyfips(" main.ed_co ") "
+    }
+    if main.ed.geoid {
+      put "geoids(" main.ed_geoid ") "
+    }
+    if main.ed_geocomp {
+      put "geocomponents(" main.ed_geocomp ") "
+    }
+    if main.ed_save {
+      put "saveas(" main.ed_save ") "
+    }
+    if main.ed_key {
+      put "key(" main.ed_key ") "
+    }
+    option main.ck_noerr
+    option main.ck_nolab
+    option main.ck_replace
+    option main.ck_browse
+    
+  }
+  
+  if sub.ck_catalog {
+    put "getcensus catalog "
+    put " , "
+    put "years(" sub.sp_yr ") "
+    // TODO change to sample() 
+    if sub.rb_samp1 {
+      put "dataset(1) "
+    }
+    if sub.rb_samp3 {
+      put "dataset(3) "
+    }
+    if sub.rb_samp5 {
+      put "dataset(5) "
+    }
+    if sub.cb_prod.iseq("`"Data profile"'") {
+      put "product(DP) "
+    }
+    if sub.cb_prod.iseq("`"Subject table"'") {
+      put "product(ST) "
+    }
+    if sub.cb_prod.iseq("`"Comparison profile"'") {
+      put "product(CP) "
+    }
+    if sub.cb_prod.iseq("`"Detailed table"'") {
+      put "product(DT) "
+    }
+    if sub.ed_search {
+      if sub.cb_search.iseq("`"Table ID"'") {
+        put "table(" sub.ed_search ") "
+      } 
+      if sub.cb_search.iseq("`"Search term"'") {
+        put "search(" sub.ed_search ") "
+      }
+    }
+    option sub.ck_browse
+
+  }
+    
+END
+

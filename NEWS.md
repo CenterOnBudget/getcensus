@@ -24,20 +24,21 @@
 
 -   In `geography()`, "bg" replaces "block" to refer to the "block group" geography. "Block" is a distinct census geography for which ACS estimates are not available.
 -   In `geography()`, "unsd" replaces "sch" to refer to the "unified school district" geography. With the addition of elementary and secondary school district as supported geographies (see above), "sch" is too ambiguous.
--   Interactive (point-and-click) mode has been removed from the program.
 
 **Other changes**
 
 -   `sample()` replaces `dataset()`, as it is more consistent with ACS terminology. Also, in the future `getcensus` may support other Census datasets, such as the decennial census and population estimates, so we'd like to preserve the `dataset()` option for future development. For now, the `dataset()` option is retained for compatibility; if specified, its contents are copied into `sample()`.
--   In the help file and error messages, data points are now referred to as "variables" rather than estimates. This is more consistent with the Census Bureau's own API documentation and [user guide](https://www.census.gov/data/developers/guidance/api-user-guide.html), and matches the terminology of the [tidycensus](https://walker-data.com/tidycensus/) R package. It also avoids confusion ("1-year estimates", "estimate" versus "margin of error").
 -   Both a Stata file and an Excel file are saved by default when `saveas()` is specified; the `exportexcel` option is ignored.
 -   When one or more variable labels have been truncated, a single message is displayed rather than a message for each truncated label.
+-   When `getcensus` is called without arguments, a dialog box opens. The dialog box provides access to all getcensus functionality. This replaces the limited getcensus "interactive mode", which operated through the Results window. Users may also call the getcensus dialog box from the Stata command line by typing `db getcensus`.
 -   getcensus now more thoroughly checks the availability and validity of users' requests before sending them to the API. This means users can expect more (informative) error messages from getcensus, and fewer failed API calls.
+-   In the help file and error messages, data points are now referred to as "variables" rather than estimates. This is more consistent with the Census Bureau's own API documentation and [user guide](https://www.census.gov/data/developers/guidance/api-user-guide.html), and matches the terminology of the [tidycensus](https://walker-data.com/tidycensus/) R package. It also avoids confusion ("1-year estimates", "estimate" versus "margin of error").
 -   A rewritten help file provides more information on supported geographies and geographic components, includes more links to Census Bureau resources, and is more cleanly organized.
+
 
 **Under the hood**
 
-getcensus version 2.0.0 is a full refactor of the program. Contributors should review `dev/README.md`.
+getcensus version 2.0.0 is a full refactor of the program. Contributors should review [dev/README.md](https://github.com/CenterOnBudget/getcensus/blob/version-2/dev/README.md).
 
 # 1.1.0
 
