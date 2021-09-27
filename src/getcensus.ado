@@ -22,7 +22,7 @@ program define getcensus
 		   [clear SAVEas(string) replace BRowse]						///
 		   [PRoduct(string) Table(string) search(string)]				///
 		   [key(string) CACHEpath(string)]								///
-		   [EXportexcel DATAset(integer 0)] // for compatibility
+		   [EXportexcel DATAset(integer 0)] // for backwards-compatibility
 
 	// open dialog box if no estimates provided
 	if "`estimates'" == "" {
@@ -34,8 +34,9 @@ program define getcensus
 	if "`years'" == "" {
 		local years 2019
 	}
+	
 
-	// prelim checks and parsing  ---------------------------------------------------------
+	// prelim checks and parsing  ---------------------------------------------
 	
 	if c(N) != 0 & c(changed) != 0 & "`clear'" == "" {
 		error 4
@@ -68,6 +69,11 @@ program define getcensus
 	local years = ustrregexra("`years'", "-", "/")
 	numlist "`years'",  sort
 	local years = "`r(numlist)'"
+	// special handling for 2020
+	if `sample' == 1 & ustrregexm("`years'", "2020") {
+	    display as error `"{p}Standard 1-year ACS estimates for 2020 will not be released. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases/2020.html":2020 ACS Data Release} page on the Census Bureau website.{p_end}"'
+		exit 
+	}
 	if wordcount("`years'") > 1 {
 		local years_list = ustrregexra("`years'", " ", ",")
 		local max_year = max(`years_list')
@@ -107,7 +113,7 @@ program define getcensus
 	}
 
 
-	// set cache location ---------------------------------------------------------
+	// set cache location -----------------------------------------------------
 
 	* prior to release: change from getcensus/dev to getcensus/
 	if "`cachepath'" == "" {
@@ -162,7 +168,7 @@ program define getcensus
 	}
 
 
-	// main only ------------------------------------------------------------------
+	// main only --------------------------------------------------------------
 
 	// determine if includes keyword, and if so, expand
 	foreach item of local estimates {
@@ -257,7 +263,7 @@ program define getcensus
 		
 		// confirm within API limit
 		local max_estimates = cond("`noerror'" == "" & "`product'" != "CP", 25, 50)
-		if wordcount("`n_estimates'") > `max_estimates' {
+		if wordcount("`estimates'") > `max_estimates' {
 			display as error "{p}Too many variables requested. Up to 50 estimates and/or margins of error can be included in a single API query.{p_end}"
 			exit
 		}
@@ -270,7 +276,7 @@ program define getcensus
 	}
 	
 
-	// geography ------------------------------------------------------------------
+	// geography --------------------------------------------------------------
 
 	// default geography
 	if "`geography'" == "" {
@@ -400,7 +406,7 @@ program define getcensus
 	}
 
 
-	// prep for API call ----------------------------------------------------------
+	// prep for API call ------------------------------------------------------
 
 	// check API key is supplied
 	if "`key'" != "" {
@@ -448,7 +454,7 @@ program define getcensus
 	}
 
 
-	// compose geography predicate(s) ---------------------------------------------
+	// compose geography predicate(s) -----------------------------------------
 
 	local statefips_list = ustrregexra("`statefips'", " ", ",")
 	local geoids_list = ustrregexra("`geoids'", " ", ",")
@@ -479,7 +485,7 @@ program define getcensus
 	local geo_predicate = ustrregexra("`geo_predicate'", " ", "%20", 1)
 
 
-	// make API calls -------------------------------------------------------------
+	// make API calls ---------------------------------------------------------
 
 	clear
 	tempfile temp_data
@@ -515,10 +521,17 @@ program define getcensus
 			}
 			display as error "{phang}{c 149}  API key is invalid.{p_end}"
 			display as error "{phang}{c 149}  Problems with your internet connection.{p_end}"
-			local see_message = cond(`show_link', 									///
-									 `"click {browse "`api_url'":here}"',			///
-									 "copy the URL above into a web browser")
-			display as error `"{p}To see the error message returned by the Census Bureau API, `see_message'.{p_end}"'
+			if `show_link' {
+				display as error `"{p}To see the error message returned by the Census Bureau API, click {browse "`api_url'":here}.{p_end}"'
+			}
+			if !`show_link' {
+				display as error "{p}To see the error message returned by the Census Bureau API, copy the URL below into a web browser.{p_end}"
+				local n_lines = ceil(ustrlen("`api_url'") / 80)
+				forvalues n = 1/`n_lines' {
+					local line : piece `n' 80 of "`api_url'"
+					display as text "`line'"
+				}
+			}
 			if "`geoids'" != "*" & `sample' != 5 {
 				display as error "{p}{it:(If there is no error message, this may be because the request was valid, but no data was returned because `sample'-year estimates are not published for the requested GEOIDs.)}{p_end}"
 			}
@@ -531,7 +544,12 @@ program define getcensus
 				display as result `"{browse "`api_url'": Link to data for `year'}"'
 			}
 			if !`show_link' {
-				display as result "Link to data for `year':" _newline as text _skip(2) "`api_url'"
+				display as result "Link to data for `year':"
+				local n_lines = ceil(ustrlen("`api_url'") / 80)
+				forvalues n = 1/`n_lines' {
+					local line : piece `n' 80 of "`api_url'"
+					display as text "`line'"
+				}
 			}
 		}
 		
