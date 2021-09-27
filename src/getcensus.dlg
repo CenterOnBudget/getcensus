@@ -1,6 +1,6 @@
 VERSION 16.0
 
-POSITION . . 440 460
+POSITION . . 440 480
 
 
 // Lists ----------------------------------------------------------------------
@@ -33,77 +33,159 @@ BEGIN
   urban area
 END
 
-LIST keyword_list
-BEGIN
-	Poverty status by age, race, education, and work experience
-	Poverty ratio
-	Characteristics of people by poverty ratio
-	Median household income, overall and by race
-	Characteristics of households receiving SNAP
-	Medicaid coverage by age
-	Poverty and median income by tenure
-	Housing characteristics, including housing cost burden
-	Detailed renter housing cost burden
-	Detailed homeowner housing cost burden
-	Nativity of children by nativity of parents
-	Poverty ratio of children by nativity of parents
-END
-
-// not used
-LIST prod_list
-BEGIN
-  Data profile
-  Subject table
-  Comparison profile
-  Detailed table
-END
-// not used
-LIST search_list
-BEGIN
-  Table ID
-  Search term
-END
-
 
 // Main tab -------------------------------------------------------------------
 
 DIALOG main, label("getcensus")
 BEGIN
-   TEXT      tx_vars    10	  10   420  .,  label("Table ID, variable ID(s), or keyword*")
-   EDIT      ed_vars    @	  +20  420  .,  label("Table ID, variable ID(s), or keyword")
-   TEXT      tx_yr      10	  +30  190  .,  label("Year(s)")
-   EDIT      ed_yr	    @	  +20  190  .,  default("2019") option(years) onchange(program validate)
-   TEXT      tx_samp	+210  -20  200  .,  label("Sample")
-   RADIO     rb_samp1   @	  +20  200  .,  first label("1") onclickon(program validate)
-   RADIO     rb_samp3   +50	  @    @    .,  middle label("3") onclickon(program validate)
-   RADIO     rb_samp5   +50	  @    @    .,  last label("5") onclickon(program validate)
-   TEXT      tx_geo     10	  +30  420  .,  label("Geography")
-   COMBOBOX  cb_geo     @	  +20  @    .,  dropdownlist contents(geo_list) default(state) option(geography) onselchange(program validate)
-   TEXT      tx_st      10	  +30  190  .,  label("State code(s)")
-   EDIT      ed_st      @	  +20  190  .,  label("State code(s)") option(statefips)
-   TEXT      tx_co      +210  -20  200  .,  label("County code(s)")
-   EDIT      ed_co	    @	  +20  200  .,  label("County code(s)") option(countyfips)
-   TEXT      tx_geoid   10	  +20  190  .,  label("GEOID(s)")
-   EDIT      ed_geoid   @	  +20  190  .,  option(geoids)
-   TEXT      tx_geocomp +210  -20  200  .,  label("Geographic component(s)")
-   EDIT      ed_geocomp @	  +20  200  .,  option(geocomponents)
-   CHECKBOX  ck_noerr   10	  +35  420  .,  label("Do not retreive margins of error") option(noerror)
-   CHECKBOX  ck_nolab   @	  +20  420  .,  label("Do not label retrieved data with metadatata from the API data dictionary") option(nolabel)
-   CHECKBOX  ck_browse  @	  +20  420  .,  label("Browse the retrieved data in the Data Editor") option(browse)
-   CHECKBOX  ck_save	10	  +20  420  .,  label("Save results as:") onclickon(program validate) onclickoff(program validate)
-   EDIT      ed_save	+15	  +20  405  .,  option(saveas)
-   CHECKBOX  ck_replace @	  +25  405  .,  label("Replace the existing files") option(replace)
-   TEXT      tx_key     10	  +25  420  .,  label("API key")
-   EDIT      ed_key	    @	  +20  420  .,  password option(key)
-   TEXT      tx_req	    10	  +30  410  .,  label("* indicates a required field")
+  TEXT      tx_vars     10    10   420  .,      ///
+                label("Table ID, variable ID(s), or keyword*")
+  EDIT      ed_vars     @     +20  305  .,      ///
+                label("Table ID, variable ID(s), or keyword")
+  BUTTON    bu_keyword  +310  @    110  .,      ///
+                label("Browse keywords...")     ///
+                onpush(program child)
+  TEXT      tx_yr       10    +30  190  .,      ///
+                label("Year(s)")
+  EDIT      ed_yr       @     +20  190  .,      ///
+                default("2019")                 ///
+                option(years)                   ///
+                onchange(program validate)
+  TEXT      tx_samp     +220  -20  200  .,      ///
+                label("Sample")
+  RADIO     rb_samp1    @     +20  200  .,      ///
+                first                           ///
+                label("1")                  ///
+                option(sample(1))               ///
+                onclickon(program validate)
+  RADIO     rb_samp3    +50   @    @    .,      ///
+                middle                          ///
+                label("3")                      ///
+                option(sample(3))               ///
+                onclickon(program validate)
+  RADIO     rb_samp5    +50   @    @    .,      ///
+                last                            ///
+                label("5")                      ///
+                option(sample(5))               ///
+                onclickon(program validate)
+  GROUPBOX  gb_geo      10    +35  420  140,    ///
+                label("Geography")
+  COMBOBOX  cb_geo      +10   +25  400  .,      ///
+                dropdownlist                    ///
+                contents(geo_list)              ///
+                default(state)                  ///
+                option(geography)               ///
+                onselchange(program validate)
+  TEXT      tx_st       @     +25  190  .,      ///
+                label("State code(s)")
+  EDIT      ed_st       @     +20  190  .,      ///
+                label("State code(s)")          ///
+                option(statefips)               ///
+                onchange(program validate)
+  TEXT      tx_co       +210  -20  190  .,      ///
+                label("County code(s)")
+  EDIT      ed_co	      @     +20  190  .,      ///
+                label("County code(s)")         ///
+                option(countyfips)
+  TEXT      tx_geoid    20    +20  190  .,      ///
+                label("GEOID(s)")
+  EDIT      ed_geoid    @     +20  190  .,      ///
+                option(geoids)
+  TEXT      tx_geocomp  +210  -20  190  .,      ///
+                label("Geographic component(s)")
+  EDIT      ed_geocomp  @     +20  190  .,      ///
+                option(geocomponents)
+  GROUPBOX  gb_opt      10    +40  420  145,    ///
+                label("Options")
+  CHECKBOX  ck_noerr    +10   +20  400  .,      ///
+                label("Do not retreive margins of error")   ///
+                option(noerror)
+  CHECKBOX  ck_nolab    @     +20  400  .,      ///
+                label("Do not label retrieved data with metadatata from the API data dictionary")   ///
+                option(nolabel)
+  CHECKBOX  ck_browse   @     +20  400  .,      ///
+                label("Browse the retrieved data in the Data Editor")   ///
+                option(browse)
+  CHECKBOX  ck_save     @     +20  400  .,      ///
+                label("Save results")           ///
+                onclickon(program validate)     ///
+                onclickoff(program validate)
+  FILE      fi_save     +15   +20  385  .,      ///
+                save                            ///
+                label("Browse...")              ///
+                option(saveas)
+  CHECKBOX  ck_replace  @     +20  385  .,      ///
+                label("Replace the existing files")   ///
+                option(replace)
+  TEXT      tx_key      10    +30  400  .,      ///
+                label("API key")
+  EDIT      ed_key      @     +20  420  .,      ///
+                password                        ///
+                option(key)
+  TEXT      tx_req      10    +25  410  .,      ///
+                label("* indicates a required field")
 END	
 
-OK ok1,      label("OK")
-CANCEL can1, label("Cancel")
-SUBMIT sub1, label("Submit")
-HELP hlp1,   view("help getcensus")
-RESET res1
-COPY copy1
+
+// Buttons --------------------------------------------------------------------
+
+OK      ok1,  label("OK")
+CANCEL  can1, label("Cancel")
+SUBMIT  sub1, label("Submit")
+HELP    hlp1, view("help getcensus")
+RESET   res1
+COPY    copy1
+
+
+// Child window ---------------------------------------------------------------
+
+PROGRAM child
+BEGIN
+  call create STRING keyword
+  call create CHILD _getcensus_browse_keywords AS browse_keywords
+  call browse_keywords.setExitString keyword
+  call browse_keywords.setExitAction "program copy_keyword"
+END	
+
+PROGRAM copy_keyword
+BEGIN
+  if keyword.iseq("pov") {
+    call main.ed_vars.setvalue "pov"
+  }
+  if keyword.iseq("povratio") {
+    call main.ed_vars.setvalue "povratio"
+  }
+  if keyword.iseq("povratio_char") {
+    call main.ed_vars.setvalue "povratio_char"
+  }
+  if keyword.iseq("medinc") {
+    call main.ed_vars.setvalue "medinc"
+  }
+  if keyword.iseq("snap") {
+    call main.ed_vars.setvalue "snap"
+  } 
+  if keyword.iseq("medicaid") {
+    call main.ed_vars.setvalue "medicaid"
+  }
+  if keyword.iseq("housing_overview") {
+    call main.ed_vars.setvalue "housing_overview"
+  }
+  if keyword.iseq("costburden_renters") {
+    call main.ed_vars.setvalue "costburden_renters"
+  }
+  if keyword.iseq("costburden_owners") {
+    call main.ed_vars.setvalue "costburden_owners"
+  }
+  if keyword.iseq("tenure_inc") {
+    call main.ed_vars.setvalue "tenure_inc"
+  }
+  if keyword.iseq("kids_nativity") {
+    call main.ed_vars.setvalue "kids_nativity"
+  }
+  if keyword.iseq("kids_pov_parents_nativity") {
+    call main.ed_vars.setvalue "kids_pov_parents_nativity"
+  }
+END
 
 
 // Validate main tab ----------------------------------------------------------
@@ -205,16 +287,15 @@ BEGIN
   // saveas enable/disable -----
 
   if main.ck_save {
-    call main.ed_save.enable
+    call main.fi_save.enable
     call main.ck_replace.enable
   }
   else {
-    call main.ed_save.disable
+    call main.fi_save.disable
     call main.ck_replace.disable
   }
 
 END
-
 
 
 // Command --------------------------------------------------------------------
@@ -222,44 +303,49 @@ END
 PROGRAM command
 BEGIN
 
-    put "getcensus "
-    require main.ed_vars
-    put main.ed_vars
-    put ", "
-    
-	optionarg main.ed_yr
-	
-    if main.rb_samp1 {
-      put "sample(1) "
-    }
-    if main.rb_samp3 {
-      put "sample(3) "
-    }
-    if main.rb_samp5 {
-      put "sample(5) "
-    }
-	
-	if main.cb_geo.iseq("county subdivision") |   ///
+  put "getcensus "
+  
+  require main.ed_vars
+  put main.ed_vars
+  
+  put ", "
+  optionarg main.ed_yr
+  
+  option radio(main rb_samp1 rb_samp3 rb_samp5)
+  
+  if main.cb_geo.iseq("county subdivision") |     ///
        main.cb_geo.iseq("tract") |                ///
        main.cb_geo.iseq("block group") |          ///
        main.cb_geo.contains("state legislative district") | ///
        main.cb_geo.contains("school district") {
       require main.ed_st
-    }
-	if main.cb_geo.iseq("block group") {
+  }
+  if main.cb_geo.iseq("block group") {
       require main.ed_co
-    }
-	
-    optionarg main.cb_geo
-	optionarg main.ed_st
-	optionarg main.ed_co
-	optionarg main.ed_geoid
-	optionarg main.ed_geocomp
-	
-	option main.ck_noerr
-	option main.ck_nolab
-	optionarg main.ed_save
-	option main.ck_replace
+  }
+  
+  optionarg main.cb_geo
+  optionarg main.ed_st
+  optionarg main.ed_co
+  optionarg main.ed_geoid
+  optionarg main.ed_geocomp
+  
+  option main.ck_noerr
+  option main.ck_nolab
+  option main.ck_browse
+  optionarg main.fi_save
+  option main.ck_replace
+  
+  call create STRING n
+  call n.setvalue c(N)
+  call create STRING changed
+  call changed.setvalue c(changed)
+  if n.isneq(0) & changed.iseq(1) {
+    stopbox rusure "Data in memory has changed since last save."  ///
+                   "Continuing will clear data in memory. Do you want to continue?"
+  }
+  put " clear "
 
 END
+
 
