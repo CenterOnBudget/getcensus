@@ -23,7 +23,18 @@
 **Breaking changes**
 
 -   In `geography()`, "bg" replaces "block" to refer to the "block group" geography. "Block" is a distinct census geography for which ACS estimates are not available.
+
 -   In `geography()`, "unsd" replaces "sch" to refer to the "unified school district" geography. With the addition of elementary and secondary school district as supported geographies (see above), "sch" is too ambiguous.
+
+-   Keywords:
+
+    -   **pop** has been removed.
+
+    -   **pov** and **povrate** have been combined into **pov**.
+
+    -   **snap** now includes variables on the percent of SNAP-participating households with a person aged 60 or older. The variable ID for median income among SNAP-participating households has been corrected.
+
+    -   **medicaid** now includes the percent, as well as the number, of individuals covered by Medicaid or other means-tested coverage (overall and by age group).
 
 **Other changes**
 
@@ -34,7 +45,6 @@
 -   getcensus now more thoroughly checks the availability and validity of users' requests before sending them to the API. This means users can expect more (informative) error messages from getcensus, and fewer failed API calls.
 -   In the help file and error messages, data points are now referred to as "variables" rather than estimates. This is more consistent with the Census Bureau's own API documentation and [user guide](https://www.census.gov/data/developers/guidance/api-user-guide.html), and matches the terminology of the [tidycensus](https://walker-data.com/tidycensus/) R package. It also avoids confusion ("1-year estimates", "estimate" versus "margin of error").
 -   A rewritten help file provides more information on supported geographies and geographic components, includes more links to Census Bureau resources, and is more cleanly organized.
-
 
 **Under the hood**
 
