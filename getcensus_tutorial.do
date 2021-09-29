@@ -1,5 +1,6 @@
 * TUTORIAL: getcensus (v 0.1.1)
 
+/* For further getcensus documentation, visit: LINK TO COME */
 
 * 1. Install getcensus ---------------------------------------------------------
 
@@ -75,19 +76,6 @@ help getcensus
 * 4. Try out some basic queries ------------------------------------------------
 
 
-/* 
-
-Note:
-
-The first time you run getcensus you may have to install a Stata  program
-called jsonio. If it does not install automatically, run the following
-command:
-
-ssc install jsonio
-
-*/
-
-
 * Retrieve a single estimate, number in poverty by state
 
 getcensus b17001_002, clear
@@ -134,9 +122,32 @@ Retreive the table for all counties in those 5 states by specifying
 county in the geography() option and listing the state FIPS codes in the 
 statefips() option
 
+You can use statefips() rather than geoids() when your georgraphy() is
+state or a sub-geography of state
+
 */
 
 getcensus B19013, geography(county) statefips(24 51 11 48 06) clear
+
+
+/*
+ 
+Use geoids() to retrieve data on specific statistical geographic areas
+
+When geoids() is a sub-geography of state and includes state or county code,
+state code should be specified in statefips() and county code should be 
+specified in countyfips()
+
+geoids() should only contain the last component of the GEOID. 
+
+*/
+
+getcensus B19013, sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100) clear
+
+
+* Specify a geocomponent (a geographic unit defined by certain criteria)
+
+getcensus B19013, geography(state) geocomponents(H0) clear
 
 
 /*
@@ -151,7 +162,24 @@ work effort.
 getcensus snap, clear
 
 
-* 5. Export data as Stata or Excel file  ---------------------------------------
+
+* 5. Use the getcensus dialog box to form a query ---------------------------
+
+/*
+
+The dialog box provides full access to the program in an easy-to-use
+interactive format.
+
+*/
+
+getcensus
+
+* or
+
+db getcensus
+
+
+* 6. Export data as Stata or Excel file  ---------------------------------------
 
 
 /*
@@ -171,7 +199,7 @@ getcensus B19013, saveas("getcensus_tutorial") clear  // Don't include file exte
 getcensus B19013, saveas("getcensus_tutorial") exportexcel clear
 
 
-* 6. Enter interactive mode ----------------------------------------------------
+* 7. Enter interactive mode ----------------------------------------------------
 
 
 * Select one option from each section and then click "Retrieve my data"
@@ -179,7 +207,7 @@ getcensus B19013, saveas("getcensus_tutorial") exportexcel clear
 getcensus
 
 
-* 7. Use catalog mode to search the data dictionary ----------------------------
+* 8. Use catalog mode to search the data dictionary ----------------------------
 
 
 * Find all estimates and tables whose names include "poverty"
