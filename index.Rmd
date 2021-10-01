@@ -31,7 +31,7 @@ To obtain data from the API, you will need to know the table ID and variable ID 
 
 To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a [keyword](#keywords) to __getcensus__. If a list of variable IDs is specified, the variables must come from tables that share the same product type (Data Profile, Subject Table, Comparison Profile, or Detailed Table). By default, **getcensus** retrieves both estimates and their margins of error, so users should not suffix variable IDs with "E" (for estimate) or "M" (for margin of error). In the Stata dataset loaded by **getcensus**, the variable names are the ACS variable IDs. Variable labels contain the ACS variable's description and a variable note contains the name of the ACS variable's table. If the option __nolabel__ is specified, this metadata will not be included.
 
-Users rarely know offhand the variable ID or table ID of the data points they would like to retrieve. **getcensus catalog** allows users to access the API data dictionaries. For instance, `getcensus catalog, product(DT)` will load into memory a dataset containing, for every variable in the detailed tables ("DT"): the variable ID, the variable's description, and the name of the variable's table.
+Users rarely know offhand the variable ID or table ID of the data points they would like to retrieve. **getcensus catalog** allows users to access the API data dictionaries. For instance, `getcensus catalog, product(ST)` will load into memory a dataset containing, for every variable in the subject tables ("ST"): the variable ID, the variable's description, and the name of the variable's table.
 
 If you are new to American Community Survey data, the Census Bureau's handbook [Understanding and Using American Community Survey Data: What All Data Users Need to Know](https://www.census.gov/programs-surveys/acs/guidance/handbooks/general.html) is the best place to start.
 
@@ -54,7 +54,7 @@ A list of changes in each release can be found [here](https://github.com/CenterO
 To use **getcensus**, you will need a Census Bureau API
 key. One can be acquired free here: <https://api.census.gov/data/key_signup.html>.
 
-**getcensus** requires Stata version 14.0 or later.
+**getcensus** requires Stata version 13.1 or later.
 
 
 # Syntax
@@ -86,9 +86,11 @@ getcensus catalog [, options]
 
 **<u>noerr</u>or** do not retrieve margins of error associated with estimates.
 
-**saveas(**<i>filename</i>**)** save retrieved data as a Stata dataset and Excel spreadsheet.
+**saveas(**<i>filename</i>**)** save retrieved data as a Stata dataset.
 
-**replace** replace the files in **saveas()** if they already exist.
+**<u>ex</u>portexcel** if **saveas()** is specified, also save retrieved data as an Excel spreadsheet. 
+
+**replace** if **saveas()** is specified, overwrite existing files.
 
 **clear** replace the data in memory, even if the current data have not been saved to disk.
 
@@ -125,7 +127,7 @@ getcensus catalog [, options]
 
 **sample(**<i>integer</i>**)** specifies the sample to retrieve: 1 for 1-year estimates, 3 for 3-year estimates (2012-2013 only), or 5 for 5-year estimates. Default is 1. 1-year estimates are only available for geographic areas with more than 65,000 residents; see [this page](https://www.census.gov/programs-surveys/acs/guidance/estimates.html) on the Census Bureau website.
 
-**geography(**<i>string</i>**)** specifies the geographic unit for which to retrieve data. Default is **geography(state)**. See [Supported Geographies](#supported-geographies).
+**geography(**<i>string</i>**)** specifies the geographic unit for which to retrieve data. Default is state. See [Supported Geographies](#supported-geographies).
 
 **key(**<i>string</i>**)** specifies your Census Bureau API key. If you do not have an API key, you may acquire one [here](https://api.census.gov/data/key_signup.html). To avoid specifying **key()** each time **getcensus** is used, store your API key in a global macro named *censuskey* in your profile.do. Learn about where to find your profile.do [here](https://www.stata.com/support/faqs/programming/profile-do-file/). If you are unfamiliar with global macros, simply type `global censuskey "your-api-key-here"` into your profile.do.
 
@@ -133,9 +135,12 @@ getcensus catalog [, options]
 
 **noerror** specifies that **getcensus** should not retrieve margins of error associated with estimates.
 
-**saveas(**<i>filename</i>**)** causes retrieved data to be saved under the name *filename* as a Stata dataset (*filename.dta*) and also as an Excel spreadsheet (*filename.xlsx*).
+**saveas(**<i>filename</i>**)** causes retrieved data to be saved under the name *filename* as a Stata dataset.
 
-**replace** if **saveas()** is specified, files will be replaced if they already exist.
+**exportexcel**  if **saveas()** is specified, causes retrieved data to also be exported to an Excel spreadsheet.
+
+**replace** if **saveas()** is specified, allows existing files to be 
+overwritten.
 
 **clear** causes the data in memory to be replaced, even if the current data have not been saved to disk.
 
@@ -145,7 +150,7 @@ getcensus catalog [, options]
 
 **statefips(**<i>string</i>**)** Two-digit FIPS codes of state(s) to retrieve. Default is usually all. A listing of state FIPS codes can be found [here](https://www.nrcs.usda.gov/wps/portal/nrcs/detail/?cid=nrcs143_013696).
 
-**countyfips(**<i>string</i>**)** Three-digit FIPS codes of counties to retrieve. A listing of county FIPS codes by year can be found [here](https://www.census.gov/geographies/reference-files.2019.html) on the Census Bureau website. Note that county FIPS codes may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website.
+**countyfips(**<i>string</i>**)** Three-digit FIPS codes of counties to retrieve. A list of county FIPS codes by year can be found [here](https://www.census.gov/geographies/reference-files.2019.html) on the Census Bureau website. Note that county FIPS codes may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website.
 
 **geoids(**<i>string</i>**)** GEOID(s) of geographies to retrieve. Default is usually all. GEOIDs are numeric codes that uniquely identify all geographic areas for which the Census Bureau tabulates data; see [Understanding Geographic Identifiers](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html) on the Census Bureau website. Many geography types have GEOIDs that are made up of several components. Only the last component should be specified in **geoids()**. The state code component of the GEOID should be specified in **statefips()**. If the GEOID includes a county code, it should be specified in **countyfips()**. See [Examples](#examples). Note that GEOIDs and geography definitions may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website. **getcensus** supports most, but not all, geographies supported by the ACS API; see [Supported Geographies](#supported-geographies).
 
@@ -153,7 +158,7 @@ getcensus catalog [, options]
 
 ## Catalog options
 
-**product(**<i>string</i>**)** will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. Either **product()** or **table()** must be specified with **getcensus catalog**. If both are specified, **product()** is ignored.
+**product(**<i>string</i>**)** will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. Default is DT. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. If both **product()** and **table()** are specified with **getcensus catalog**, **product()** is ignored and the appropriate product type is determined by the contents of **table()**.
 
 ```{r}
 options(knitr.kable.NA = "")
@@ -170,13 +175,13 @@ tribble(
                 full_width = FALSE)
 ```
 
-**table(**<i>string</i>**)** will load the API data dictionary for a given table. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. Either **product()** or **table()** must be specified with **getcensus catalog**. If both are specified, **product()** is ignored.
+**table(**<i>string</i>**)** will load the API data dictionary for a given table. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. If both **product()** and **table()** are specified with **getcensus catalog**, **product()** is ignored and the appropriate product type is determined by the contents of **table()**.
 
 **search(**<i>string</i>**)** will load the API data dictionary for variables whose descriptions match a given search term, such as "children", "poverty", or "veteran". A regular expression may be specified to **search()**.
 
 ## Advanced options
 
-**cachepath(**<i>string</i>**) getcensus** caches API data dictionaries for future retreival. By default, these files are saved in application support (`~/AppData/Local/` on Windows and `~/Library/Application Support` on Mac). To save these files elsewhere, pass your desired location to **cachepath()**.
+**cachepath(**<i>string</i>**) getcensus** caches API data dictionaries for future retrieval. By default, these files are saved in application support (`~/AppData/Local/` on Windows and `~/Library/Application Support` on Mac). To save these files elsewhere, pass your desired location to **cachepath()**.
 
 
 # Supported Geographies
@@ -305,17 +310,18 @@ getcensus B19013, sample(5) geography(us) geocomponents(92)
 ```
 ## Catalog
 
-All variables from detailed tables
+All variables in tables of a given product type
 ```
 getcensus catalog, product(DP)
 ```
 Variables from a single table
 ```
-getcensus catalog, table(S0901) product(ST)
+getcensus catalog, table(S0901)
 ```
 Variables matching a search term
 ```
-getcensus catalog, search(children) product(DT)
+getcensus catalog, search(children) product(ST)
+getcensus catalog, search(educational attainment) table(S1701)
 
 ```
 

@@ -252,7 +252,7 @@ div.tocify {
 <p>The Census Bureau publishes thousands of data tables on the web at <a href="https://www.data.cenus.gov">data.census.gov</a>. The underlying data is available through the Census Bureau Application Programming Interface (API).<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p>To obtain data from the API, you will need to know the table ID and variable ID of the data point you are interested in. Each table that the Census Bureau publishes on data.census.gov has a unique table ID, and each data point within a table has a unique variable ID. For instance, table S1701, <a href="https://data.census.gov/cedsci/table?tid=ACSST1Y2019.S1701&amp;hidePreview=true">Poverty status in the past 12 months</a>, contains the estimated number of people in poverty. The variable ID for this data point is S1701_C02_001.</p>
 <p>To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a <a href="#keywords">keyword</a> to <strong>getcensus</strong>. If a list of variable IDs is specified, the variables must come from tables that share the same product type (Data Profile, Subject Table, Comparison Profile, or Detailed Table). By default, <strong>getcensus</strong> retrieves both estimates and their margins of error, so users should not suffix variable IDs with “E” (for estimate) or “M” (for margin of error). In the Stata dataset loaded by <strong>getcensus</strong>, the variable names are the ACS variable IDs. Variable labels contain the ACS variable’s description and a variable note contains the name of the ACS variable’s table. If the option <strong>nolabel</strong> is specified, this metadata will not be included.</p>
-<p>Users rarely know offhand the variable ID or table ID of the data points they would like to retrieve. <strong>getcensus catalog</strong> allows users to access the API data dictionaries. For instance, <code>getcensus catalog, product(DT)</code> will load into memory a dataset containing, for every variable in the detailed tables (“DT”): the variable ID, the variable’s description, and the name of the variable’s table.</p>
+<p>Users rarely know offhand the variable ID or table ID of the data points they would like to retrieve. <strong>getcensus catalog</strong> allows users to access the API data dictionaries. For instance, <code>getcensus catalog, product(ST)</code> will load into memory a dataset containing, for every variable in the subject tables (“ST”): the variable ID, the variable’s description, and the name of the variable’s table.</p>
 <p>If you are new to American Community Survey data, the Census Bureau’s handbook <a href="https://www.census.gov/programs-surveys/acs/guidance/handbooks/general.html">Understanding and Using American Community Survey Data: What All Data Users Need to Know</a> is the best place to start.</p>
 <p><em>getcensus uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.</em></p>
 </div>
@@ -264,7 +264,7 @@ div.tocify {
 <pre><code>ado update getcensus, update</code></pre>
 <p>A list of changes in each release can be found <a href="https://github.com/CenterOnBudget/getcensus/blob/master/NEWS.md">here</a>.</p>
 <p>To use <strong>getcensus</strong>, you will need a Census Bureau API key. One can be acquired free here: <a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a>.</p>
-<p><strong>getcensus</strong> requires Stata version 14.0 or later.</p>
+<p><strong>getcensus</strong> requires Stata version 13.1 or later.</p>
 </div>
 <div id="syntax" class="section level1">
 <h1>Syntax</h1>
@@ -282,8 +282,9 @@ div.tocify {
 <p><strong>key(</strong><i>string</i><strong>)</strong> your Census Bureau API key.</p>
 <p><strong><u>nolab</u>el(</strong><i>string</i><strong>)</strong> do not label variables with associated metadata from the API data dictionary.</p>
 <p><strong><u>noerr</u>or</strong> do not retrieve margins of error associated with estimates.</p>
-<p><strong>saveas(</strong><i>filename</i><strong>)</strong> save retrieved data as a Stata dataset and Excel spreadsheet.</p>
-<p><strong>replace</strong> replace the files in <strong>saveas()</strong> if they already exist.</p>
+<p><strong>saveas(</strong><i>filename</i><strong>)</strong> save retrieved data as a Stata dataset.</p>
+<p><strong><u>ex</u>portexcel</strong> if <strong>saveas()</strong> is specified, also save retrieved data as an Excel spreadsheet.</p>
+<p><strong>replace</strong> if <strong>saveas()</strong> is specified, overwrite existing files.</p>
 <p><strong>clear</strong> replace the data in memory, even if the current data have not been saved to disk.</p>
 <p><strong>browse</strong> browse the retrieved data in the Data Editor after <strong>getcensus</strong> completes.</p>
 </div>
@@ -312,25 +313,26 @@ div.tocify {
 <h2>Main</h2>
 <p><strong>years(</strong><i>numlist</i><strong>)</strong> specifies the years (or endyears, if multiyear estimates are requested) of the sample to be retrieved. Defaults is the latest available year. If multiple years are requested, data for all years requested will be appended together. Users requesting multiple years should be aware that not all ACS estimates are available for all years, and table specifications and geographies may change between years; see <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html">ACS Table &amp; Geography Changes</a> on the Census Bureau website. Users may deviate from <em>numlist</em> conventions and separate ranges with “-” rather than “/” (e.g., “2017-2019” for 2017, 2018 and 2019).</p>
 <p><strong>sample(</strong><i>integer</i><strong>)</strong> specifies the sample to retrieve: 1 for 1-year estimates, 3 for 3-year estimates (2012-2013 only), or 5 for 5-year estimates. Default is 1. 1-year estimates are only available for geographic areas with more than 65,000 residents; see <a href="https://www.census.gov/programs-surveys/acs/guidance/estimates.html">this page</a> on the Census Bureau website.</p>
-<p><strong>geography(</strong><i>string</i><strong>)</strong> specifies the geographic unit for which to retrieve data. Default is <strong>geography(state)</strong>. See <a href="#supported-geographies">Supported Geographies</a>.</p>
+<p><strong>geography(</strong><i>string</i><strong>)</strong> specifies the geographic unit for which to retrieve data. Default is state. See <a href="#supported-geographies">Supported Geographies</a>.</p>
 <p><strong>key(</strong><i>string</i><strong>)</strong> specifies your Census Bureau API key. If you do not have an API key, you may acquire one <a href="https://api.census.gov/data/key_signup.html">here</a>. To avoid specifying <strong>key()</strong> each time <strong>getcensus</strong> is used, store your API key in a global macro named <em>censuskey</em> in your profile.do. Learn about where to find your profile.do <a href="https://www.stata.com/support/faqs/programming/profile-do-file/">here</a>. If you are unfamiliar with global macros, simply type <code>global censuskey &quot;your-api-key-here&quot;</code> into your profile.do.</p>
 <p><strong>nolabel</strong> specifies that retrieved data should not be labeled with associated metadata from the API data dictionary.</p>
 <p><strong>noerror</strong> specifies that <strong>getcensus</strong> should not retrieve margins of error associated with estimates.</p>
-<p><strong>saveas(</strong><i>filename</i><strong>)</strong> causes retrieved data to be saved under the name <em>filename</em> as a Stata dataset (<em>filename.dta</em>) and also as an Excel spreadsheet (<em>filename.xlsx</em>).</p>
-<p><strong>replace</strong> if <strong>saveas()</strong> is specified, files will be replaced if they already exist.</p>
+<p><strong>saveas(</strong><i>filename</i><strong>)</strong> causes retrieved data to be saved under the name <em>filename</em> as a Stata dataset.</p>
+<p><strong>exportexcel</strong> if <strong>saveas()</strong> is specified, causes retrieved data to also be exported to an Excel spreadsheet.</p>
+<p><strong>replace</strong> if <strong>saveas()</strong> is specified, allows existing files to be overwritten.</p>
 <p><strong>clear</strong> causes the data in memory to be replaced, even if the current data have not been saved to disk.</p>
 <p><strong>browse</strong> opens retrieved data in the Data Editor after <strong>getcensus</strong> completes.</p>
 </div>
 <div id="geography-options-1" class="section level2">
 <h2>Geography options</h2>
 <p><strong>statefips(</strong><i>string</i><strong>)</strong> Two-digit FIPS codes of state(s) to retrieve. Default is usually all. A listing of state FIPS codes can be found <a href="https://www.nrcs.usda.gov/wps/portal/nrcs/detail/?cid=nrcs143_013696">here</a>.</p>
-<p><strong>countyfips(</strong><i>string</i><strong>)</strong> Three-digit FIPS codes of counties to retrieve. A listing of county FIPS codes by year can be found <a href="https://www.census.gov/geographies/reference-files.2019.html">here</a> on the Census Bureau website. Note that county FIPS codes may change between years; see <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html">ACS Table &amp; Geography Changes</a> on the Census Bureau website.</p>
+<p><strong>countyfips(</strong><i>string</i><strong>)</strong> Three-digit FIPS codes of counties to retrieve. A list of county FIPS codes by year can be found <a href="https://www.census.gov/geographies/reference-files.2019.html">here</a> on the Census Bureau website. Note that county FIPS codes may change between years; see <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html">ACS Table &amp; Geography Changes</a> on the Census Bureau website.</p>
 <p><strong>geoids(</strong><i>string</i><strong>)</strong> GEOID(s) of geographies to retrieve. Default is usually all. GEOIDs are numeric codes that uniquely identify all geographic areas for which the Census Bureau tabulates data; see <a href="https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html">Understanding Geographic Identifiers</a> on the Census Bureau website. Many geography types have GEOIDs that are made up of several components. Only the last component should be specified in <strong>geoids()</strong>. The state code component of the GEOID should be specified in <strong>statefips()</strong>. If the GEOID includes a county code, it should be specified in <strong>countyfips()</strong>. See <a href="#examples">Examples</a>. Note that GEOIDs and geography definitions may change between years; see <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html">ACS Table &amp; Geography Changes</a> on the Census Bureau website. <strong>getcensus</strong> supports most, but not all, geographies supported by the ACS API; see <a href="#supported-geographies">Supported Geographies</a>.</p>
 <p><strong>geocomponents(</strong><i>string</i><strong>)</strong> Geographic component codes of the geographic components to retrieve. Geographic components are division of a geographic unit by certain criteria, such as rural, urban, in metropolitan statistical area, and not in metropolitan statistical area. <strong>getcensus</strong> does not support all geographic components available on the Census Bureau API; see <a href="#supported-geographies">Supported Geographies</a>.</p>
 </div>
 <div id="catalog-options-1" class="section level2">
 <h2>Catalog options</h2>
-<p><strong>product(</strong><i>string</i><strong>)</strong> will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. For information about ACS tables and product types, see <a href="https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html">this page</a> on the Census Bureau website. Either <strong>product()</strong> or <strong>table()</strong> must be specified with <strong>getcensus catalog</strong>. If both are specified, <strong>product()</strong> is ignored.</p>
+<p><strong>product(</strong><i>string</i><strong>)</strong> will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. Default is DT. For information about ACS tables and product types, see <a href="https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html">this page</a> on the Census Bureau website. If both <strong>product()</strong> and <strong>table()</strong> are specified with <strong>getcensus catalog</strong>, <strong>product()</strong> is ignored and the appropriate product type is determined by the contents of <strong>table()</strong>.</p>
 <table class="table table-striped" style="width: auto !important; ">
 <thead>
 <tr>
@@ -377,12 +379,12 @@ Detailed Table
 </tr>
 </tbody>
 </table>
-<p><strong>table(</strong><i>string</i><strong>)</strong> will load the API data dictionary for a given table. For information about ACS tables and product types, see <a href="https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html">this page</a> on the Census Bureau website. Either <strong>product()</strong> or <strong>table()</strong> must be specified with <strong>getcensus catalog</strong>. If both are specified, <strong>product()</strong> is ignored.</p>
+<p><strong>table(</strong><i>string</i><strong>)</strong> will load the API data dictionary for a given table. For information about ACS tables and product types, see <a href="https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html">this page</a> on the Census Bureau website. If both <strong>product()</strong> and <strong>table()</strong> are specified with <strong>getcensus catalog</strong>, <strong>product()</strong> is ignored and the appropriate product type is determined by the contents of <strong>table()</strong>.</p>
 <p><strong>search(</strong><i>string</i><strong>)</strong> will load the API data dictionary for variables whose descriptions match a given search term, such as “children”, “poverty”, or “veteran”. A regular expression may be specified to <strong>search()</strong>.</p>
 </div>
 <div id="advanced-options-1" class="section level2">
 <h2>Advanced options</h2>
-<p><strong>cachepath(</strong><i>string</i><strong>) getcensus</strong> caches API data dictionaries for future retreival. By default, these files are saved in application support (<code>~/AppData/Local/</code> on Windows and <code>~/Library/Application Support</code> on Mac). To save these files elsewhere, pass your desired location to <strong>cachepath()</strong>.</p>
+<p><strong>cachepath(</strong><i>string</i><strong>) getcensus</strong> caches API data dictionaries for future retrieval. By default, these files are saved in application support (<code>~/AppData/Local/</code> on Windows and <code>~/Library/Application Support</code> on Mac). To save these files elsewhere, pass your desired location to <strong>cachepath()</strong>.</p>
 </div>
 </div>
 <div id="supported-geographies" class="section level1">
@@ -1134,12 +1136,13 @@ getcensus B19013, sample(5) geography(us) geocomponents(92)</code></pre>
 </div>
 <div id="catalog" class="section level2">
 <h2>Catalog</h2>
-<p>All variables from detailed tables</p>
+<p>All variables in tables of a given product type</p>
 <pre><code>getcensus catalog, product(DP)</code></pre>
 <p>Variables from a single table</p>
-<pre><code>getcensus catalog, table(S0901) product(ST)</code></pre>
+<pre><code>getcensus catalog, table(S0901)</code></pre>
 <p>Variables matching a search term</p>
-<pre><code>getcensus catalog, search(children) product(DT)
+<pre><code>getcensus catalog, search(children) product(ST)
+getcensus catalog, search(educational attainment) table(S1701)
 </code></pre>
 </div>
 </div>

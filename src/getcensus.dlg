@@ -55,7 +55,7 @@ BEGIN
                 label("Sample")
   RADIO     rb_samp1    @     +20  200  .,      ///
                 first                           ///
-                label("1")                  ///
+                label("1")                      ///
                 option(sample(1))               ///
                 onclickon(program validate)
   RADIO     rb_samp3    +50   @    @    .,      ///
@@ -114,8 +114,11 @@ BEGIN
                 save                            ///
                 label("Browse...")              ///
                 option(saveas)
-  CHECKBOX  ck_replace  @     +20  385  .,      ///
-                label("Replace the existing files")   ///
+  CHECKBOX  ck_excel    @     +20  200  .,      ///
+                label("Export results to Excel")   ///
+                option(exportexcel)
+  CHECKBOX  ck_replace  +160    @  200  .,        ///
+                label(Replace the existing files)  ///
                 option(replace)
   TEXT      tx_key      10    +30  400  .,      ///
                 label("API key")
@@ -288,10 +291,12 @@ BEGIN
 
   if main.ck_save {
     call main.fi_save.enable
+    call main.ck_excel.enable
     call main.ck_replace.enable
   }
   else {
     call main.fi_save.disable
+    call main.ck_excel.disable
     call main.ck_replace.disable
   }
 
@@ -314,10 +319,10 @@ BEGIN
   option radio(main rb_samp1 rb_samp3 rb_samp5)
   
   if main.cb_geo.iseq("county subdivision") |     ///
-       main.cb_geo.iseq("tract") |                ///
-       main.cb_geo.iseq("block group") |          ///
-       main.cb_geo.contains("state legislative district") | ///
-       main.cb_geo.contains("school district") {
+     main.cb_geo.iseq("tract") |                  ///
+     main.cb_geo.iseq("block group") |            ///
+     main.cb_geo.contains("state legislative district") | ///
+     main.cb_geo.contains("school district") {
       require main.ed_st
   }
   if main.cb_geo.iseq("block group") {
@@ -334,6 +339,7 @@ BEGIN
   option main.ck_nolab
   option main.ck_browse
   optionarg main.fi_save
+  option main.ck_excel
   option main.ck_replace
   
   call create STRING n

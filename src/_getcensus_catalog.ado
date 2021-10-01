@@ -3,7 +3,7 @@
 
 program define _getcensus_catalog
 
-	syntax , year(integer) sample(integer) product(string)		///
+	syntax , year(integer) sample(integer) [product(string)]	///
 			 [table(string) search(string)]						///
 			 cachepath(string) [load browse]
 	
@@ -11,6 +11,9 @@ program define _getcensus_catalog
 	// error checking ---------------------------------------------------------
 
 	// check product is valid
+	if "`product'" == "" {
+		local product "DT"
+	}
 	local product = strupper("`product'")
 	if !inlist("`product'", "DT", "ST", "DP", "CP") {
 		display as error "{p}Invalid product. Product must be one of DT, ST, DP, or CP.{p_end}"
@@ -65,7 +68,7 @@ program define _getcensus_catalog
 	preserve
 	
 	quietly {
-	
+
 	// load, clean, and reshape 
 	clear
 	jsonio kv, file("https://api.census.gov/data/`year'/acs/acs`sample'`product_dir'/variables.json")
@@ -82,10 +85,7 @@ program define _getcensus_catalog
 	capture generate concept = ""
 
 	// remove rows not corresponding to an estimate or MOE variable
-	replace table = "" if table == "N/A" | label == "Geography"
-	replace label = "" if label == "Geography"
-	replace concept = "" if variable == "GEO_ID"
-	drop if concept == "" & table == "" & label == ""
+	drop if label == "Geography" | table == "N/A"
 
 	// replace phrase in calendar year dollars with in nominal dollars,
 	// for clarity in case multiple years are being appended
@@ -190,9 +190,8 @@ program define _getcensus_catalog
 			quietly keep if ustrregexm(variable_descrip, "`search'", 1) | 	///
 						    ustrregexm(table_name, "`search'", 1) |			///
 							ustrregexm(table_id, "`search'", 1) |			///
-							ustrregexm(variable_id, "`search'", 1)
-					
-			display as result `"Searched for variables and tables matching "`search'"."'
+							ustrregexm(variable_id, "`search'", 1)	
+			display as result `"Searched for variables matching "`search'"."'
 			if _N == 0 {
 				display as result "{p}No results. Check for typos in your search term, or try a less specific search term.{p_end}"
 				clear
@@ -200,7 +199,7 @@ program define _getcensus_catalog
 		}
 		
 		if "`table'" == "" & "`search'" == "" {
-			display as result `"{p}Searched for all tables of product type "`product'".{p_end}"'
+			display as result `"{p}Searched for all variables of product type "`product'".{p_end}"'
 		}
 		
 		if _N > 0 {

@@ -1,6 +1,20 @@
 v 2.0.0
-d getcensus. Load data from the American Community Survey into memory.
-d Distribution-Date: 20210930
+
+d 'GETCENSUS': Load American Community Survey data from the U.S. Census Bureau API into Stata.
+
+d getcensus is a program for loading American Community Survey (ACS) data from 
+d the U.S. Census Bureau API into Stata. It also allows users to search the API
+d data dictionaries for ACS variables and tables of interest. For more
+d information, visit the online documentation: 
+d www.centeronbudget.github.io/getcensus/
+
+d Requires: Stata version 13.1
+
+d Distribution-Date: 20211015
+
+d Author: Center on Budget and Policy Priorities
+
+d Support: www.github.com/CenterOnBudget/getcensus/issues
 
 f getcensus.ado
 f getcensus.sthlp

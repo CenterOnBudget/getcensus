@@ -13,7 +13,7 @@
 Title
 ====== 
 
-__getcensus__ {hline 2} Retrieve American Community Survey estimates from the Census Bureau API.
+__getcensus__ {hline 2} Load American Community Survey data from the U.S. Census Bureau API into Stata.
 
 
 {marker syntax}{...}
@@ -45,9 +45,11 @@ Search the API data dictionary
 {p_end}
 {synopt:{opt noerr:or}}do not retrieve margins of error associated with estimates.
 {p_end}
-{synopt:{opth saveas(filename)}}save retrieved data as a Stata dataset and Excel spreadsheet.
+{synopt:{opth saveas(filename)}}save retrieved data as a Stata dataset.
 {p_end}
-{synopt:{opt replace}}replace the files in {opt saveas()} if they already exist.
+{synopt:{opt ex:portexcel}}if __saveas()__ is specified, also save retrieved data as an Excel spreadsheet.
+{p_end}
+{synopt:{opt replace}}if __saveas()__ is specified, overwrite existing files.
 {p_end}
 {synopt:{opt clear}}replace the data in memory, even if the current data have not been saved to disk.
 {p_end}
@@ -83,15 +85,36 @@ Description
 
 __getcensus__ loads American Community Survey (ACS) estimates from the U.S. Census Bureau API into memory. 
 
-To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a {help getcensus##keywords:keyword}. If a list of variable IDs is specified, the variables must come from tables that share the same product type (Data Profile, Subject Table, Comparison Profile, or Detailed Table).
+To retrieve ACS data from the API, users may specify one or more variable IDs, 
+a single table ID, or a {help getcensus##keywords:keyword}. If a list of 
+variable IDs is specified, the variables must come from tables that share the 
+same product type (Data Profile, Subject Table, Comparison Profile, or Detailed 
+Table).
 
-The Census Bureau publishes thousands of tables of ACS data. Each table has a unique table ID. Each data point within a table is called a variable, and each variable has a unique variable ID. For instance, table S1701, "Poverty status in the past 12 months" contains the estimated number of people in poverty. The variable ID for this data point is S1701_C02_001. By default, __getcensus__ retrieves both estimates and their margins of error, so users should not suffix variable IDs with "E" (for estimate) or "M" (for margin of error).
+The Census Bureau publishes thousands of tables of ACS data. Each table has a 
+unique table ID. Each data point within a table is called a variable, and each 
+variable has a unique variable ID. For instance, table S1701, "Poverty status 
+in the past 12 months" contains the estimated number of people in poverty. The 
+variable ID for this data point is S1701_C02_001. By default, __getcensus__ 
+retrieves both estimates and their margins of error, so users should not suffix 
+variable IDs with "E" (for estimate) or "M" (for margin of error).
 
-In a dataset retrieved by __getcensus__, the variable names are the ACS variable IDs. Variable labels contain the ACS variable's description and a variable note contains the name of the ACS variable's table. If the option {opt nolabel} is specified, this metadata will not be included.
+In a dataset retrieved by __getcensus__, the variable names are the ACS variable 
+IDs. Variable labels contain the ACS variable's description and a variable note 
+contains the name of the ACS variable's table. If the option __nolabel__ is 
+specified, this metadata will not be included.
 
-Users rarely know offhand the variable ID or table ID of the data points they would like to retrieve. __getcensus catalog__ allows users to access the API data dictionaries. For instance, __getcensus catalog, product(DT)__ will load into memory a dataset containing, for every variable in the detailed tables ("DT"): the variable ID, the variable's description, and the name of the variable's table. 
+Users rarely know offhand the variable ID or table ID of the data points they 
+would like to retrieve. __getcensus catalog__ allows users to access the API 
+data dictionaries. For instance, __getcensus catalog, product(ST)__ will load 
+into memory a dataset containing, for every variable in the subject tables 
+("ST"): the variable ID, the variable's description, and the name of the 
+variable's table. 
 
-If you are new to American Community Survey data, the handbook "Understanding and Using American Community Survey Data: What All Data Users Need to Know" is the best place to start. It is available on the Census Bureau website [here](https://www.census.gov/programs-surveys/acs/guidance/handbooks/general.html).
+If you are new to American Community Survey data, the handbook "Understanding 
+and Using American Community Survey Data: What All Data Users Need to Know" is 
+the best place to start. It is available on the Census Bureau website 
+[here](https://www.census.gov/programs-surveys/acs/guidance/handbooks/general.html).
 
 _getcensus uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau._
 
@@ -103,76 +126,152 @@ Options
 {dlgtab:Main}
 
 {phang}
-{opth years(numlist)} specifies the years (or endyears, if multiyear estimates are requested) of the sample to be retrieved. Defaults is the latest available year. If multiple years are requested, data for all years requested will be appended together. Users requesting multiple years should be aware that not all ACS estimates are available for all years, and table specifications and geographies may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website. Users may deviate from {help numlist} conventions and separate ranges with "-" rather than "/" (e.g., "2017-2019" for 2017, 2018 and 2019).
+{opth years(numlist)} specifies the years (or endyears, if multiyear estimates 
+are requested) of the sample to be retrieved. Defaults is the latest available 
+year. If multiple years are requested, data for all years requested will be 
+appended together. Users requesting multiple years should be aware that not all 
+ACS estimates are available for all years, and table specifications and 
+geographies may change between years; see 
+[ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) 
+on the Census Bureau website. Users may deviate from {help numlist} conventions 
+and separate ranges with "-" rather than "/" (e.g., "2017-2019" for 2017, 2018 
+and 2019).
 
 {phang}
-{opt sample(integer)} specifies the sample to retrieve: 1 for one-year estimates, 3 for three-year estimates (2012-2013 only), or 5 for five-year estimates. Default is 1. One-year estimates are only available for geographic areas with more than 65,000 residents; see [this page](https://www.census.gov/programs-surveys/acs/guidance/estimates.html) on the Census Bureau website.
+{opt sample(integer)} specifies the sample to retrieve: 1 for one-year 
+estimates, 3 for three-year estimates (2012-2013 only), or 5 for five-year 
+estimates. Default is 1. One-year estimates are only available for geographic 
+areas with more than 65,000 residents; see 
+[this page](https://www.census.gov/programs-surveys/acs/guidance/estimates.html) 
+on the Census Bureau website.
 
 {phang}
-{opt geography(string)} specifies the geographic unit for which to retrieve data. Default is {opt geography(state)}. See {help getcensus##geographies:Supported Geographies}. 
+{opt geography(string)} specifies the geographic unit for which to retrieve
+data. Default is state. See
+{help getcensus##geographies:Supported Geographies}. 
 
 {phang}
-{opt key(string)} specifies your Census Bureau API key. If you do not have an API key, you may acquire one [here](https://api.census.gov/data/key_signup.html). To avoid specifying __key()__ each time {bf:getcensus} is used, store your API key in a global {help macro} named _censuskey_ in your profile.do. Learn about where to find your profile.do [here](https://www.stata.com/support/faqs/programming/profile-do-file/). If you are unfamiliar with global macros, simply type {it:global censuskey "your-api-key-here"} into your profile.do. 
+{opt key(string)} specifies your Census Bureau API key. If you do not have an 
+API key, you may acquire one 
+[here](https://api.census.gov/data/key_signup.html). To avoid specifying 
+__key()__ each time {bf:getcensus} is used, store your API key in a global 
+{help macro} named _censuskey_ in your profile.do. Learn about where to find 
+your profile.do 
+[here](https://www.stata.com/support/faqs/programming/profile-do-file/). If you 
+are unfamiliar with global macros, simply type
+{it:global censuskey "your-api-key-here"} into your profile.do. 
 
 {phang}
-__nolabel__ specifies that retrieved data should not be labeled with associated metadata from the API data dictionary.
+__nolabel__ specifies that retrieved data should not be labeled with 
+associated metadata from the API data dictionary.
 
 {phang}
-__noerror__ specifies that __getcensus__ should not retrieve margins of error associated with estimates.
+__noerror__ specifies that __getcensus__ should not retrieve margins of error 
+associated with estimates.
 
 {phang}
-{opth saveas(filename)} causes retrieved data to be saved under the name _filename_ as a Stata dataset (_filename.dta_) and also as an Excel spreadsheet (_filename.xlsx_). 
+{opth saveas(filename)} causes retrieved data to be saved under the name 
+_filename_ as a Stata dataset.
 
 {phang}
-__replace__ if __saveas()__ is specified, files will be replaced if they already exist.
+{opt exportexcel} if __saveas()__ is specified, causes retrieved data to also be 
+exported to an Excel spreadsheet.
 
 {phang}
-__clear__ causes the data in memory to be replaced, even if the current data have not been saved to disk.
+__replace__ if __saveas()__ is specified, allows existing files to be 
+overwritten.
 
 {phang}
-__browse__ opens retrieved data in the Data Editor after __getcensus__ completes.
+__clear__ causes the data in memory to be replaced, even if the current data 
+have not been saved to disk.
+
+{phang}
+__browse__ opens retrieved data in the Data Editor after __getcensus__ 
+completes.
 
 
 {marker options_geography}{...}
 {dlgtab:Geography options}
 
 {phang}
-{opt statefips(string)} Two-digit FIPS codes of state(s) to retrieve. Default is usually all. A listing of state FIPS codes can be found [here](https://www.nrcs.usda.gov/wps/portal/nrcs/detail/?cid=nrcs143_013696). 
+{opt statefips(string)} Two-digit FIPS codes of state(s) to retrieve. Default is 
+usually all. A listing of state FIPS codes can be found 
+[here](https://www.nrcs.usda.gov/wps/portal/nrcs/detail/?cid=nrcs143_013696). 
 
 {phang}
-{opt countyfips(string)} Three-digit FIPS codes of counties to retrieve. A listing of county FIPS codes by year can be found [here](https://www.census.gov/geographies/reference-files.2019.html) on the Census Bureau website. Note that county FIPS codes may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website. 
+{opt countyfips(string)} Three-digit FIPS codes of counties to retrieve. A list 
+of county FIPS codes by year can be found 
+[here](https://www.census.gov/geographies/reference-files.2019.html) 
+on the Census Bureau website. Note that county FIPS codes may change between 
+years; see 
+[ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) 
+on the Census Bureau website. 
 
 {phang}
-{opt geoids(string)} GEOID(s) of geographies to retrieve. Default is usually all. GEOIDs are numeric codes that uniquely identify all geographic areas for which the Census Bureau tabulates data; see [Understanding Geographic Identifiers](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html) on the Census Bureau website. Many geography types have GEOIDs that are made up of several components. Only the last component should be specified in {bf:geoid()}. The state code component of the GEOID should be specified in {bf:statefips()}. If the GEOID includes a county code, it should be specified in {bf:countyfips()}. See {help getcensus##examples:Examples}. Note that GEOIDs and geography definitions may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website. __getcensus__ supports most, but not all, geographies supported by the ACS API; see {help getcensus##geographies:Supported Geographies}.
+{opt geoids(string)} GEOID(s) of geographies to retrieve. Default is usually 
+all. GEOIDs are numeric codes that uniquely identify all geographic areas for 
+which the Census Bureau tabulates data; see 
+[Understanding Geographic Identifiers](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html) 
+on the Census Bureau website. Many geography types have GEOIDs that are made up 
+of several components. Only the last component should be specified in 
+{bf:geoid()}. The state code component of the GEOID should be specified in 
+{bf:statefips()}. If the GEOID includes a county code, it should be specified in 
+{bf:countyfips()}. See {help getcensus##examples:Examples}. Note that GEOIDs and 
+geography definitions may change between years; see 
+[ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) 
+on the Census Bureau website. __getcensus__ supports most, but not all, 
+geographies supported by the ACS API; see 
+{help getcensus##geographies:Supported Geographies}.
 
 {phang}
-{opt geocomponents(string)} Geographic component codes of the geographic components to retrieve. Geographic components are division of a geographic unit by certain criteria, such as rural, urban,  in metropolitan statistical area, and not in metropolitan statistical area. __getcensus__ does not support all geographic components available on the Census Bureau API; see {help getcensus##geocomp:Supported Geographies}.
+{opt geocomponents(string)} Geographic component codes of the geographic 
+components to retrieve. Geographic components are division of a geographic unit 
+by certain criteria, such as rural, urban,  in metropolitan statistical area, 
+and not in metropolitan statistical area. __getcensus__ does not support all 
+geographic components available on the Census Bureau API; see 
+{help getcensus##geocomp:Supported Geographies}.
 
 {marker options_catalog}{...}
 {dlgtab:Catalog options}
 
 {phang}
-{opt product(string)} will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. Either __product()__ or __table()__ must be specified with __getcensus catalog__. If both are specified, __product()__ is ignored.
+{opt product(string)} will load the API data dictionary for variables in tables 
+of a given product type, as specified with a two-letter abbreviation. Default is 
+DT. For information about ACS tables and product types, see 
+[this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) 
+on the Census Bureau website. If both __product()__ and __table()__ are 
+specified with __getcensus catalog__, __product()__ is ignored and the 
+appropriate product type is determined by the contents of __table()__.
 
 {col 12}{it:product}{col 22}{it:Description}
 {space 8}{hline 85}
-{col 12}{bf:DP}{col 22}Data profile
-{col 12}{bf:ST}{col 22}Subject table
-{col 12}{bf:CP}{col 22}Comparison profile
-{col 12}{bf:DT}{col 22}Detailed table
+{col 12}{bf:DP}{col 22}Data Profile
+{col 12}{bf:ST}{col 22}Subject Table
+{col 12}{bf:CP}{col 22}Comparison Profile
+{col 12}{bf:DT}{col 22}Detailed Table
   
 {phang}
-{opt table(string)} will load the API data dictionary for a given table. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. Either __product()__ or __table()__ must be specified with __getcensus catalog__. If both are specified, __product()__ is ignored.
+{opt table(string)} will load the API data dictionary for a given table. For 
+information about ACS tables and product types, see 
+[this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) 
+on the Census Bureau website. If both __product()__ and __table()__ are 
+specified with __getcensus catalog__, __product()__ is ignored and the 
+appropriate product type is determined by the contents of __table()__.
 
 {phang}
-{opt search(string)} will load the API data dictionary for variables whose descriptions match a given search term, such as "children", "poverty", or "veteran". A regular expression may be specified to {bf:search()}.
+{opt search(string)} will load the API data dictionary for variables whose 
+descriptions match a given search term, such as "children", "poverty", or 
+"veteran". A regular expression may be specified to __search()__.
 {p_end}
 
 
 {dlgtab:Advanced options}
 
 {phang}
-{opt cachepath(string)} __getcensus__ caches API data dictionaries for future retreival. By default, these files are saved in application support ("~/AppData/Local/" on Windows and "~/Library/Application Support" on Mac). To save these files elsewhere, pass your desired location to __cachepath()__.
+{opt cachepath(string)} __getcensus__ caches API data dictionaries for future 
+retreival. By default, these files are saved in application support 
+("~/AppData/Local/" on Windows and "~/Library/Application Support" on Mac). To 
+save these files elsewhere, pass your desired location to __cachepath()__.
 
 
 {marker geographies}{...}
@@ -181,9 +280,17 @@ Supported Geographies
 
 {dlgtab:Geographies}
 
-__getcensus__ supports most, but not all, geographies supported by the Census Bureau API. Users who are requesting data for multiple years should be aware that ACS geography definitions may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website.
+__getcensus__ supports most, but not all, geographies supported by the Census 
+Bureau API. Users who are requesting data for multiple years should be aware 
+that ACS geography definitions may change between years; see 
+[ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) 
+on the Census Bureau website.
 
-A list of geographies supported by __getcensus__ can be found below. For some geographies, users may specify an abbreviation rather than the full name. The third column indicates whether __statefips()__ or __countyfips()__ may be specified with a given geography. Bold indicates the option is required with a given geography. 
+A list of geographies supported by __getcensus__ can be found below. For some 
+geographies, users may specify an abbreviation rather than the full name. The 
+third column indicates whether __statefips()__ or __countyfips()__ may be 
+specified with a given geography. Bold indicates the option is required with a 
+given geography. 
 
 {col 8}{it:Name}{col 53}{it:Abbreviation}{col 68}{it:Options}
 {space 5}{hline 85}
@@ -221,9 +328,14 @@ A list of geographies supported by __getcensus__ can be found below. For some ge
 {marker geocomp}{...}
 {dlgtab:Geographic components}
 
-Geographic components are division of a geographic unit by certain criteria. __getcensus__ does not support all geographic components available on the Census Bureau API.
+Geographic components are division of a geographic unit by certain criteria.
+__getcensus__ does not support all geographic components available on the Census 
+Bureau API.
 
-An example: {bf:getcensus [variable IDs], geography(state) geocomponents(H0 C0)} will return two observations for each state: one for the portion of the state not in a metropolitan statistical area ("H0"), and one for the portion of the state in a metropolitan statistical area ("C0").
+An example: {bf:getcensus [variable IDs], geography(state) geocomponents(H0 C0)} 
+will return two observations for each state: one for the portion of the state 
+not in a metropolitan statistical area ("H0"), and one for the portion of the 
+state in a metropolitan statistical area ("C0").
 
 {col 8}Available with __geography()__ _us_, _region_, _division_, or _state_
 {space 5}{hline 80}
@@ -253,6 +365,7 @@ An example: {bf:getcensus [variable IDs], geography(state) geocomponents(H0 C0)}
     {it:*  only 5-year estimates are available for this geographic component.}
     {it:{c 42}{c 42} 1-year estimates are not available for this geographic component.}
 
+
 {marker keywords}{...}
 Keywords
 --------
@@ -261,21 +374,28 @@ Users may use a keyword to retrieve a curated set of variables.
 
 {synopt:{it:Keyword}}Description{p_end}
 {synoptline}
-{synopt:{bf:pov}}Number and percent of the population in poverty, overall and by various demographic characteristics{p_end}
-{synopt:{bf:povratio}}Population by ratio of income to poverty level{p_end}
-{synopt:{bf:povratio_char}}Characteristics of the population at specified poverty levels{p_end}
+{synopt:{bf:pov}}Number and percent of population in poverty; overall, by age, and by race{p_end}
+{synopt:{bf:povratio}}Population by income-to-poverty ratio{p_end}
+{synopt:{bf:povratio_char}}Characteristics of the population at various income-to-poverty ratios{p_end}
 {synopt:{bf:medinc}}Median household income, overall and by race of householder{p_end}
-{synopt:{bf:snap}}SNAP participation overall and by poverty status, income, disability status, family composition, and family work effort{p_end}
-{synopt:{bf:medicaid}}Medicaid participants, by age{p_end}
-{synopt:{bf:housing_overview}}Various housing-related estimates including occupancy, tenure, costs, and cost burden*{p_end}
+{synopt:{bf:snap}}Percent of households participating in SNAP and characteristics of participating households{p_end}
+{synopt:{bf:medicaid}}Number and percent of population covered by Medicaid, overall and by age{p_end}
+{synopt:{bf:housing_overview}}Housing characteristics, including housing costs*{p_end}
 {synopt:{bf:costburden_renters}}Detailed renter housing cost burden*{p_end}
 {synopt:{bf:costburden_owners}}Detailed homeowner housing cost burden{p_end}
-{synopt:{bf:opt tenure_inc}}Median household income and poverty status of families, by housing tenure{p_end}
+{synopt:{bf:opt tenure_inc}}Median household income and family poverty status, by housing tenure{p_end}
 {synopt:{bf:kids_nativity}}Nativity of children, by age and parent's nativity{p_end}
 {synopt:{bf:kids_pov_parents_nativity}}Children by poverty status and parent's nativity {p_end}
 {synoptline}
 
-{it:* When using the data retrieved by keyword {bf:costburden_renters} to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the number of renters (B25070_001). This step is not necessary when using the data returned by keyword {bf:housing_overview}; the total in this table's section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed.}
+{p 4 4 2}
+{it}* When using the data retrieved by keyword {bf:costburden_renters} to 
+compute rates of renter housing cost burden, compute the denominator by 
+subtracting the number of renters for whom cost burden is not computed 
+(B25070_011) from the number of renters (B25070_001). This step is not necessary 
+when using the data returned by keyword {bf:housing_overview}; the total in this 
+table's section on rent burden (DP04_0136) already excludes the number of 
+renters for whom cost burden cannot be computed.{sf}
 
 
 {marker examples}{...}
@@ -338,25 +458,34 @@ Example(s)
 
 {p}{it:Catalog}{p_end}
 
-	All variables from detailed tables  
+	All variables in tables of a given product type  
 		{bf:. getcensus catalog, product(DP)}
 
 	Variables from a single table  
-		{bf:. getcensus catalog, table(S0901) product(ST)}
+		{bf:. getcensus catalog, table(S0901)}
 
 	Variables matching a search term  
-		{bf:. getcensus catalog, search(children) product(DT)}
+		{bf:. getcensus catalog, search(children) product(ST)}  
+		{bf:. getcensus catalog, search(educational attainment) table(S1701)}
 
 
 Website
 -------
 
+Online documentation:
+[centeronbudget.github.io/getcensus/](https://centeronbudget.github.io/getcensus/)
+
+GitHub repository:
 [github.com/CenterOnBudget/getcensus](http://www.github.com/CenterOnBudget/getcensus)
 
 
 Authors
 -------
 
-__getcensus__ is a project of the [Center on Budget and Policy Priorities](http://www.cbpp.org), a nonpartisan research and policy institute. It is developed and maintained by Claire Zippel and Matt Saenz. It was created by Raheem Chaudhry and Vincent Palacios.
+__getcensus__ is a project of the 
+[Center on Budget and Policy Priorities](http://www.cbpp.org), a nonpartisan 
+research and policy institute. It is developed and maintained by Claire Zippel 
+and Matt Saenz. It was created by Raheem Chaudhry and Vincent Palacios. 
+Contributors include Lori Zakalik.
  
 ***/

@@ -19,10 +19,10 @@ program define getcensus
 		   [GEOgraphy(string) STatefips(string) COuntyfips(string)]		///
 		   [GEOIDs(string) GEOCOMPonents(string)]						///
 		   [NOLabel NOERRor]											///
-		   [clear SAVEas(string) replace BRowse]						///
+		   [clear SAVEas(string) EXportexcel replace BRowse]			///
 		   [PRoduct(string) Table(string) search(string)]				///
 		   [key(string) CACHEpath(string)]								///
-		   [EXportexcel DATAset(integer 0)] // for backwards-compatibility
+		   [DATAset(integer 0)] // for backwards-compatibility
 
 	// open dialog box if no estimates provided
 	if "`estimates'" == "" {
@@ -136,12 +136,7 @@ program define getcensus
 			display as result "{p}{bf:getcensus catalog} searches only one year at a time. Using most recent year in {bf:years()}, `max_year'.{p_end}"
 		}
 
-		// check product or table is specified
-		if "`product'" == "" & "`table'" == "" {
-			display as error "{p}Either {bf:product()} or {bf:table()} must be specified with {bf:getcensus catalog}.{p_end}"
-			exit 0
-		}
-		
+		// check table
 		if "`table'" != "" {
 			if wordcount("`table'") != 1 {
 				display as error "{p}Only one table ID at a time is allowed in {bf:table()}.{p_end}"
@@ -338,7 +333,7 @@ program define getcensus
 	}
 	if inlist("`geography'", "us", "region", "division", "cbsa", "necta", "cnecta", "aiannh") &	///
 	   ("`statefips'" != "*") {
-		display as error "{p}{bf:statefips()} cannot be specified with {bf:geography({it:`geo_full_name'})}.{p_end}"
+		display as error "{p}{bf:statefips()} may not be specified with {bf:geography({it:`geo_full_name'})}.{p_end}"
 		exit 198
 	}
 	if inlist("`geography'", "cousub", "tract", "bg", "elsd", "scsd", "unsd", 	///
@@ -348,7 +343,7 @@ program define getcensus
 		exit 198
 	}
 	// statefips is sometimes required when geoid is specified
-	if inlist("`geography'", "county", "zcta", "place", "cd") & 				///
+	if inlist("`geography'", "county", "zcta", "place", "cd", "puma") & 		///
 	   ("`statefips'" == "*") & ("`geoids'" != "*") {
 		display as error "{p}When {bf:geoids()} is specified with {bf:geography({it:`geo_full_name'})}, {bf:statefips()} must also be specified.{p_end}"
 		exit 198
@@ -660,49 +655,51 @@ program define getcensus
 		
 		local saveas = ustrregexra("`saveas'", "((\.xlsx?)$)|((\.dta)$)", "")
 		
-		// check files don't already exist if no replace
-		if "`replace'" == "" {
-			foreach ext in xlsx dta {
-				capture confirm file "`saveas'.`ext'"
+		// export to stata
+		save "`saveas'.dta", `replace'
+		
+			if "`exportexcel'" != "" {
+			
+			// check file doesn't already exist if no replace
+			if "`replace'" == "" {
+				capture confirm file "`saveas'.xlsx"
 				if _rc == 0 {
-					display as error "file `saveas'.`ext' already exists"
+					display as error "file `saveas'.xlsx already exists"
 					exit 602
 				}
 			}
-		}
-	
-		quietly putexcel set "`saveas'.xlsx", sheet("acs_`sample'yr") `replace'
 		
-		// export variable labels to excel
-		if "`nolabel'" == "" {
-			local i 1
-			foreach var of varlist _all {
-				// extract variable description from notes (so not truncated)
-				// if no note, use variable label 
-				// if no label, use variable name
-				notes _fetch var_note : `var' 1
-				local var_note = ustrregexra("`var_note'", "Variable: ", "")
-				local var_lbl : variable label `var'
-				local var_header = cond("`var_note'" != "", "`var_note'", "`var_lbl'")
-				local var_header = cond("`var_header'" == "", "`var'", "`var_header'")
-				// find column index
-				local col_1 = strupper(word("`c(alpha)'", floor((`i' - 1) / 26)))
-				local col_2 = strupper(word("`c(alpha)'", mod(`i' - 1 , 26) + 1))
-				local col = "`col_1'" + "`col_2'"
-				// export variable label
-				quietly putexcel `col'1 = "`var_header'"
-				local ++i
+			quietly putexcel set "`saveas'.xlsx", sheet("acs_`sample'yr") `replace'
+			
+			// export variable labels to excel
+			if "`nolabel'" == "" {
+				local i 1
+				foreach var of varlist _all {
+					// extract variable description from notes (so not truncated)
+					// if no note, use variable label 
+					// if no label, use variable name
+					notes _fetch var_note : `var' 1
+					local var_note = ustrregexra("`var_note'", "Variable: ", "")
+					local var_lbl : variable label `var'
+					local var_header = cond("`var_note'" != "", "`var_note'", "`var_lbl'")
+					local var_header = cond("`var_header'" == "", "`var'", "`var_header'")
+					// find column index
+					local col_1 = strupper(word("`c(alpha)'", floor((`i' - 1) / 26)))
+					local col_2 = strupper(word("`c(alpha)'", mod(`i' - 1 , 26) + 1))
+					local col = "`col_1'" + "`col_2'"
+					// export variable label
+					quietly putexcel `col'1 = "`var_header'"
+					local ++i
+				}
 			}
+			
+			// export data to excel
+			local start_cell = cond("`nolabel'" == "", "A2", "A1")
+			export excel using "`saveas'.xlsx", 								///
+						 cell(`start_cell') sheet("acs_`sample'yr", modify) 	///
+						 firstrow(variables)
+			
 		}
-		
-		// export data to excel
-		local start_cell = cond("`nolabel'" == "", "A2", "A1")
-		export excel using "`saveas'.xlsx", 								///
-					 cell(`start_cell') sheet("acs_`sample'yr", modify) 	///
-					 firstrow(variables)
-		
-		// export to stata
-		save "`saveas'.dta", `replace'
 		
 	}
 
