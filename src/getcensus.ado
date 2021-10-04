@@ -653,7 +653,8 @@ program define getcensus
 	
 	if "`saveas'" != "" {
 		
-		local saveas = ustrregexra("`saveas'", "((\.xlsx?)$)|((\.dta)$)", "")
+		// strip file extension
+		local saveas = ustrregexra("`saveas'", "\.(.*)$", "") 
 		
 		// export to stata
 		save "`saveas'.dta", `replace'
@@ -669,10 +670,9 @@ program define getcensus
 				}
 			}
 		
-			quietly putexcel set "`saveas'.xlsx", sheet("acs_`sample'yr") `replace'
-			
 			// export variable labels to excel
 			if "`nolabel'" == "" {
+			    quietly putexcel set "`saveas'.xlsx", sheet("acs_`sample'yr") `replace'
 				local i 1
 				foreach var of varlist _all {
 					// extract variable description from notes (so not truncated)
@@ -698,9 +698,7 @@ program define getcensus
 			export excel using "`saveas'.xlsx", 								///
 						 cell(`start_cell') sheet("acs_`sample'yr", modify) 	///
 						 firstrow(variables)
-			
 		}
-		
 	}
 
 	`browse'
