@@ -1,6 +1,11 @@
 * TUTORIAL: getcensus (v 0.1.1)
 
-/* For further getcensus documentation, visit: LINK TO COME */
+/* 
+
+For additional getcensus documentation, visit: 
+https://centeronbudget.github.io/getcensus/ 
+
+*/
 
 * 1. Install getcensus ---------------------------------------------------------
 
@@ -13,36 +18,6 @@ net install getcensus, from("https://raw.githubusercontent.com/CenterOnBudget/ge
 * Now, check to see if Stata can locate getcensus:
 
 which getcensus
-
-
-* If you don't get an error, move on to the next section
-
-
-* If you get an error, manually install getcensus by following these steps:
-
-/*
-
-A) Download getcensus
-   Go to the GitHub repository page for getcensus and click the green
-   "Clone or Download" button. Select "Download ZIP" and unzip the
-   downloaded file.
-
-B) Locate your adopath
-   Run the following command to locate you adopath:
-   adopath
-
-C) Copy getcensus.ado and getcensus.sthlp into your adopath
-   If you want to keep getcensus in a different folder, you will need to
-   add that folder to your adopath in your profile.do.
-
-
-Here is the link to GitHub repository page for getcensus:
-https://github.com/CenterOnBudget/getcensus
-
-And you can learn more about your profile.do here:
-https://www.stata.com/support/faqs/programming/profile-do-file/
-
-*/
 
 
 * 2. Obtain a Census API key ---------------------------------------------------
@@ -194,7 +169,10 @@ cd // Current working directory
 getcensus B19013, saveas("getcensus_tutorial") clear  // Don't include file extension
 
 
-* To export data as an Excel spreadshset, add the exportexcel option
+/* 
+To export data as an Excel spreadsheet, add the exportexcel option.
+This saves a .xls/.xlsx  file in your working directory.
+*/
 
 getcensus B19013, saveas("getcensus_tutorial") exportexcel clear
 
@@ -220,8 +198,14 @@ getcensus catalog, search(poverty) clear
 getcensus catalog, table(S1701) clear
 
 
-* That's it! -------------------------------------------------------------------
+* 9. Getting Help --------------------------------------------------------------
 
+/* 
+
+If you are having trouble installing getcensus, report your issue here:
+https://github.com/CenterOnBudget/getcensus/issues 
+
+*/
 
 /*
 
@@ -230,9 +214,16 @@ it by running:
 
 */
 
-
 help getcensus
 
+/*
+
+For further getcensus documentation, visit: 
+https://centeronbudget.github.io/getcensus/
+
+*/
+
+* That's it! -------------------------------------------------------------------
 
 * End of script ----------------------------------------------------------------
 
