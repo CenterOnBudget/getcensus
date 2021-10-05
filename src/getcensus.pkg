@@ -10,7 +10,7 @@ d www.centeronbudget.github.io/getcensus/
 
 d Requires: Stata version 13.1
 
-d Distribution-Date: 20211015
+d Distribution-Date: 20211006
 
 d Author: Center on Budget and Policy Priorities
 
@@ -25,5 +25,4 @@ f _getcensus_browse_keywords.dlg
 f _getcensus_catalog.ado
 f _getcensus_expand_keyword.ado
 f _getcensus_parse_geography.ado
-
-F _getcensus_geo_args.dta
+f _getcensus_geo_args.ado

@@ -1,5 +1,4 @@
-
-* capture program drop _getcensus_parse_geography
+* v 2.0.0
 
 program define _getcensus_parse_geography, sclass
 
@@ -7,14 +6,21 @@ program define _getcensus_parse_geography, sclass
 	
 	sreturn clear
 	
+	capture confirm file "`cachepath'/_getcensus_geo_args.dta"
+	if _rc != 0 {
+		findfile "_getcensus_geo_args.ado"
+		preserve
+		import delimited using "`r(fn)'", varnames(1) stringcols(_all) clear
+		save "`cachepath'/_getcensus_geo_args.dta", replace
+		restore
+	}
+	
 	preserve
+	
+	use "`cachepath'/_getcensus_geo_args.dta", clear
 
-	* prior to release: un-comment line 13, remove line 14
-	* sysuse "_getcensus_geo_args.dta", clear
-	use "_getcensus_geo_args.dta", clear
-
-	quietly levelsof geo_names, local(geo_names)
-	quietly levelsof geo_abbrvs, local(geo_abbrvs)
+	levelsof geo_names, local(geo_names)
+	levelsof geo_abbrvs, local(geo_abbrvs)
 
 	foreach g of local geo_names {
 		if inlist("`is_full'", "", "0"){
@@ -28,17 +34,17 @@ program define _getcensus_parse_geography, sclass
 	}
 
 	if `is_full' {
-		quietly levelsof geo_abbrvs if geo_names == "`geography'", local(geo_abbrv) clean
+		levelsof geo_abbrvs if geo_names == "`geography'", local(geo_abbrv) clean
 		local geo_name "`geography'"
 		local geo_abbrv = cond("`geo_abbrv'" == "", "`geography'", "`geo_abbrv'")
 	}
 	if `is_abbrv' {
-		quietly levelsof geo_names if geo_abbrvs == "`geography'", local(geo_name)
+		levelsof geo_names if geo_abbrvs == "`geography'", local(geo_name)
 		local geo_name `geo_name'
 		local geo_abbrv "`geography'"
 	}
 	
-	quietly levelsof geo_order if geo_names == "`geo_name'", local(geo_order)
+	levelsof geo_order if geo_names == "`geo_name'", local(geo_order)
 	local geo_order `geo_order'
 	
 	restore
@@ -53,6 +59,6 @@ program define _getcensus_parse_geography, sclass
 	sreturn local geography = `"`geo_abbrv'"'
 	sreturn local geo_order = `"`geo_order'"'
 	
-
 end
+
 

@@ -1,5 +1,4 @@
-
-* capture program drop _getcensus_catalog
+* v 2.0.0
 
 program define _getcensus_catalog
 
@@ -179,7 +178,9 @@ program define _getcensus_catalog
 
 		if "`table'" != "" {
 			quietly keep if ustrregexm(table_id,  "`table'", 1)
-			display as result `"Searched for table "`table'"."'
+			if "`search'" == "" {
+				display as result `"Searched for table "`table'"."'
+			}
 			if _N == 0 {
 				display as result "{p}No results. Check that your table ID is valid and available for the year requested.{p_end}"
 				clear
@@ -191,7 +192,10 @@ program define _getcensus_catalog
 						    ustrregexm(table_name, "`search'", 1) |			///
 							ustrregexm(table_id, "`search'", 1) |			///
 							ustrregexm(variable_id, "`search'", 1)	
-			display as result `"Searched for variables matching "`search'"."'
+			local msg = cond("`table'" == "", 								///
+							 `"of product type "`product'""',				///
+							 `"in table "`table'""')
+			display as result `"Searched for variables `msg' matching "`search'"."'
 			if _N == 0 {
 				display as result "{p}No results. Check for typos in your search term, or try a less specific search term.{p_end}"
 				clear

@@ -1,2 +1,2 @@
 v 2.0.0
-p getcensus Load American Community Survey estimates from the U.S. Census Bureau API into memory
+p 'GETCENSUS': Load American Community Survey data from the U.S. Census Bureau API into Stata

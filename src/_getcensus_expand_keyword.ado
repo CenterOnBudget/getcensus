@@ -1,5 +1,4 @@
-
-* capture program drop _getcensus_expand_keyword
+* v 2.0.0
 
 program define _getcensus_expand_keyword, sclass
 

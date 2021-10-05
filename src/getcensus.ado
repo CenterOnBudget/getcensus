@@ -1,6 +1,7 @@
+* v 2.0.0
 
-* for testing; remove prior to release
-**/
+* for dev testing
+/*
 cd "${ghpath}/getcensus/src"
 capture program drop getcensus
 capture program drop _getcensus_expand_keyword
@@ -115,11 +116,10 @@ program define getcensus
 
 	// set cache location -----------------------------------------------------
 
-	* prior to release: change from getcensus/dev to getcensus/
 	if "`cachepath'" == "" {
-		local cachepath = cond("`c(os)'" == "Windows", 							///
-							   "~/AppData/Local/getcensus/dev",					///
-							   "~/Library/Application Support/getcensus/dev")
+		local cachepath = cond("`c(os)'" == "Windows", 						///
+							   "~/AppData/Local/getcensus",					///
+							   "~/Library/Application Support/getcensus")
 	}
 	capture mkdir "`cachepath'"
 
@@ -282,7 +282,7 @@ program define getcensus
 	local geography = ustrlower("`geography'")
 
 	// parse geography name
-	_getcensus_parse_geography `geography', cachepath("`cachepath'")
+	quietly _getcensus_parse_geography `geography', cachepath("`cachepath'")
 	if `s(geo_valid)' == 0 {
 		display as error "{p}Invalid or unsupported {bf:geography()}.{p_end}"
 		exit 198
@@ -702,7 +702,6 @@ program define getcensus
 	}
 
 	`browse'
-	
 
 end
 
