@@ -21,7 +21,7 @@ A list of changes in each release can be found [here](https://github.com/CenterO
 Before getting started with getcensus, you will need a Census Bureau API
 key. One can be acquired free here: <https://api.census.gov/data/key_signup.html>.
 
-getcensus requires Stata version 14.0 or later.
+getcensus requires Stata version 13.1 or later.
 
 ## About
 
