@@ -56,7 +56,7 @@
 
 ## Under the hood
 
-getcensus version 2.0.0 is a full refactor of the program. Contributors should review [dev/README.md](https://github.com/CenterOnBudget/getcensus/blob/version-2/dev/README.md).
+getcensus version 2.0.0 is a full refactor of the program. Contributors should review [dev/README.md](https://github.com/CenterOnBudget/getcensus/tree/master/dev#readme).
 
 # 1.1.0
 
