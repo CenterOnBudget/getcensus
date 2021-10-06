@@ -1,943 +1,708 @@
-*! maintainers  Claire Zippel, Matt Saenz
-*! authors      Raheem Chaudhry, Vincent Palacios
-*! description  Load published estimates from the American Community Survey into memory.
-*! changelog    https://github.com/CenterOnBudget/getcensus/blob/master/NEWS.md
+* v 2.0.0
 
-
-/* DESCRIPTION -----------------------------------------------------------------
-
-
-This program retrieves American Community Survey data from the Census Bureau API 
-and imports it into Stata.
-It has three subroutines:
-- The main command-driven program
-- A "catalog" that helps users search the data dictionaries
-- A "point-and-click" system to help users who are new to Stata and may
-need some help writing Stata commands
-
-
-* DEFINE -------------------------------------------------------------------- */
-
-/* for debugging
-cap program drop getcensus
-cap program drop getcensus_catalog
-cap program drop getcensus_help
-cap program drop getcensus_main
+* for dev testing
+/*
+cd "${ghpath}/getcensus/src"
+capture program drop getcensus
+capture program drop _getcensus_expand_keyword
+capture program drop _getcensus_catalog
+capture program drop _getcensus_parse_geography
+run "_getcensus_expand_keyword.ado"
+run "_getcensus_catalog.ado"
+run "_getcensus_parse_geography.ado"
 **/
 
+
 program define getcensus
-version 14.0
 
-// store syntax in global since it is repeated for each of the subroutines
-global syntax "syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) GEOIDs(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) CACHEpath(string) PRoduct(string) Table(string) search(string) NOLabel NOERRor EXportexcel BRowse clear]"
+	syntax [anything(name=estimates)], 									///
+		   [YEARs(string) SAMPle(integer 1)]							///
+		   [GEOgraphy(string) STatefips(string) COuntyfips(string)]		///
+		   [GEOIDs(string) GEOCOMPonents(string)]						///
+		   [NOLabel NOERRor]											///
+		   [clear SAVEas(string) EXportexcel replace BRowse]			///
+		   [PRoduct(string) Table(string) search(string)]				///
+		   [key(string) CACHEpath(string)]								///
+		   [DATAset(integer 0)] // for backwards-compatibility
 
-${syntax}
+	// open dialog box if no estimates provided
+	if "`estimates'" == "" {
+		db getcensus
+		exit
+	}
+	
+	// defaults
+	if "`years'" == "" {
+		local years 2019
+	}
+	
+
+	// prelim checks and parsing  ---------------------------------------------
+	
+	if c(N) != 0 & c(changed) != 0 & "`clear'" == "" {
+		error 4
+	}
+	
+	// install dependency
+	capture which jsonio
+	if _rc != 0 {
+		display as result "{p}To use {bf:getcensus}, the {bf:jsonio} package must be installed. Type -yes- to install this package (any other key will exit).{p_end}" _request(_install)
+		if "`install'" == "yes" {
+			ssc install jsonio
+		}
+		if "`install'" != "yes" {
+			exit
+		}
+	}
+	
+	// compatibility
+	if `dataset' != 0 {
+		local sample `dataset'
+	}
+	
+	// check sample is valid
+	if !inlist(`sample', 1, 3, 5) {
+		display as error "{p}{bf:sample()} must be 1, 3, or 5.{p_end}"
+		exit 198
+	}
+
+	// parse years
+	local years = ustrregexra("`years'", "-", "/")
+	numlist "`years'",  sort
+	local years = "`r(numlist)'"
+	// special handling for 2020
+	if `sample' == 1 & ustrregexm("`years'", "2020") {
+	    display as error `"{p}Standard 1-year ACS estimates for 2020 will not be released. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases/2020.html":2020 ACS Data Release} page on the Census Bureau website.{p_end}"'
+		exit 
+	}
+	if wordcount("`years'") > 1 {
+		local years_list = ustrregexra("`years'", " ", ",")
+		local max_year = max(`years_list')
+		local min_year = min(`years_list')
+	}
+	if wordcount("`years'") == 1 {
+		local max_year `years'
+		local min_year `years'
+	}
+
+	// check min year is available for given sample
+	local min_avail_year = cond(`sample' == 1, 2005, 2009)
+	if `sample' == 3 {
+		capture numlist "`years'", range(>=2012 <=2013)
+		if _rc != 0 {
+			display as error "{p}3-year ACS estimates are available for 2012 and 2013.{p_end}"
+			exit
+		}
+	}
+	if `min_year' < `min_avail_year' {
+		display as error "{p}`sample'-year ACS estimates are available for `min_avail_year' and later.{p_end}"
+		exit
+	}
+
+	// check max year is available for given sample
+	local today = "`c(current_date)'" 
+	local this_year = year(td(`today'))
+	local release_date = cond(`sample' == 1, 					///
+							  td(17sep`this_year'), 			///
+							  td(10dec`this_year'))
+	local max_avail_year = cond(td(`today') > `release_date',	///
+								`this_year' - 1,				///
+								`this_year' - 2)
+	if `max_year' > `max_avail_year' {
+		display as error `"{p}`sample'-year ACS estimates for `max_year' have not yet been released. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases.html":ACS data release page} on the Census website.{p_end}"'
+		exit
+	}
 
 
-* DEPENDENCIES -----------------------------------------------------------------
+	// set cache location -----------------------------------------------------
 
-// This program requires jsonio to run (just "catalog" portion)
-foreach program in jsonio {
-    capture which `program'
-    if _rc    {
-        display _newline(1)
-        display as result "You don't have `program' installed. Enter -yes- to install or any other key to abort." _request(_y)
-        if "`y'"=="yes" ssc install `program'
-        else {
-            display as error "`program' not installed. To use getcensus, first install `program' by typing -ssc install `program'-."
-            exit
-        }
-    }
-}
+	if "`cachepath'" == "" {
+		local cachepath = cond("`c(os)'" == "Windows", 						///
+							   "~/AppData/Local/getcensus",					///
+							   "~/Library/Application Support/getcensus")
+	}
+	capture mkdir "`cachepath'"
 
 
-* DEFAULTS ---------------------------------------------------------------------
+	// catalog-specific checks ----------------------------------------------------
 
-** Dataset (Default: 1-year data)
-if "`dataset'" == "" local dataset "1"
+	// these checks go outside the catalog subroutine, since they are not relevant 
+	// if getcensus_catalog is called from within the main program 
 
-** Years (Default: most current year)
-local curryear  year(td(`c(current_date)'))
-local currmonth month(td(`c(current_date)'))
-local currday   day(td(`c(current_date)'))
+	if ustrregexm("`estimates'", "catalog", 1) {
+		
+		// search only the most recent year specified
+		if wordcount("`years") > 1 {
+			display as result "{p}{bf:getcensus catalog} searches only one year at a time. Using most recent year in {bf:years()}, `max_year'.{p_end}"
+		}
 
-local lastacs1yr = `curryear' - 2
-if `currmonth' >= 10 | (`currmonth' == 9 & `currday' >= 13) {
-    local lastacs1yr = `curryear' - 1 
-    // if past mid-sep, then lastacs1yr is just year before; clean up
-}
+		// check table
+		if "`table'" != "" {
+			if wordcount("`table'") != 1 {
+				display as error "{p}Only one table ID at a time is allowed in {bf:table()}.{p_end}"
+				exit 198
+			}
+			if ustrregexm("`table'", "_") {
+				display as error "{p}{bf:table()} must be a table ID, not a variable ID.{p_end}"
+				exit 198
+			}
+			// find product of specified table
+			local product = cond(ustrregexm("`table'", "^S"), "ST",				///
+								cond(ustrregexm("`table'", "^DP"), "DP",		///
+									cond(ustrregexm("`table'", "^CP"), "CP", 	///
+										"DT")))
+		}
+		
+		// run getcensus_catalog
+		capture noisily {
+		_getcensus_catalog, year(`max_year') sample(`sample') product("`product'")	///
+							table("`table'") search("`search'")						///
+							cachepath("`cachepath'") load `browse'  
+		}
+		exit _rc
+	}
 
-local lastacs5yr = `curryear' - 2
-if `currmonth' >= 12 & `currday' >= 6 {
-    local lastacs5yr = `curryear' - 1
-    // if past mid-dec, then lastacs5yr is just year before; clean up
-}
 
-if "`years'" == ""                              local years "`lastacs1yr'"
-if "`years'" == "" & "`dataset'" == "5"         local years "`lastacs5yr'"
+	// main only --------------------------------------------------------------
 
-** Path (Default: Save data in App Support)
-if "`cachepath'" == "" {
-    if "`c(os)'" == "Windows" {
-        local cachepath "~/AppData/Local/getcensus"
-    }
-    else {
-        local cachepath "~/Library/Application Support/getcensus"
-    }
-    cap mkdir "`cachepath'"
-}
+	// determine if includes keyword, and if so, expand
+	foreach item of local estimates {
+		if inlist("`is_keyword'", "", "0") {
+			local is_keyword = !ustrregexm(strupper("`item'"), "^(B|C|CP|DP|S)(\d)")
+		}
+	}
+	if `is_keyword' {
+		_getcensus_expand_keyword `estimates'
+		local estimates = "`s(estimates)'"
+		sreturn clear
+	}
+	
+	// uppercase estimates now that keywords (if present) are expanded
+	local estimates = strupper("`estimates'")
 
 
-* PARSE YEARS ------------------------------------------------------------------
+	// determine if estimate(s) or table id
+	foreach item of local estimates {
+		if inlist("`is_table'", "", "0") {
+			local is_table = ustrregexm("`item'", "^(B|C|CP|DP|S)(\d)") &		///
+							 !ustrregexm("`item'", "_")
+		}
+		if inlist("`is_estimate'", "", "0") {
+			local is_estimate = ustrregexm("`item'", "^(B|C|CP|DP|S)(\d)(.*)(_)")
+		}
+	}
+	
+	if inlist("`is_table'", "", "0") & inlist("`is_estimate'", "", "0") {
+		display as error "{p}Something went wrong. Please check that you have requested a valid table ID, variable IDs, or keyword.{p_end}"
+		exit
+	}
+	
 
-local switch 0
-local allyears ""
+	// confirm table id not mixed with estimate(s)
+	if `is_table'  {
+		if `is_estimate' {
+			display as error "{p}Either variables or a table can be requested at a time, not both.{p_end}"
+			if `is_keyword' {
+				display as error "{p}Note: Some keywords are shortcuts for a table and some are shortcuts for variables.{p_end}"
+			}
+			exit 198
+		}
+		if wordcount("`estimates'") > 1 {
+			display as error "{p}Only one table ID at a time is allowed.{p_end}"
+			exit 198
+		}
+	}
 
-foreach split in "-" "/" " - " " / " {
-    local years = subinstr("`years'", "`split'", " - ", .)
-}
+	// find product of estimates/table
+	foreach est of local estimates {
+		if inlist("`product_dt'", "", "0"){
+			local product_dt = ustrregexm("`est'", "^((B)|(C(?!P)))(\d{5})")
+			// store product type for API query
+			local product = cond(`product_dt', "DT", "`product'")
+		}
+		foreach prod in st dp cp {
+			if inlist(`"`product_`prod''"', "", "0"){
+				local prod_regex = cond("`prod'" == "st", "s", "`prod'")
+				local product_`prod' = ustrregexm("`est'", "`prod_regex'\d", 1)
+				// store product type for API query
+				local product = cond(`product_`prod'',			///
+									 strupper("`prod'"),		///
+									 "`product'")
+			}
+		}
+	}
 
-foreach i in `years' {
-    if `switch' == 1 {
-        local start = `beforesplit' + 1
-        local stop = `i' - 1
-        if `stop' < `start' & `stop' - `start' != -1 {
-            dis as error "Make sure to pass larger years first if separating with delimiter (/ or -)"
-            exit
-        }
-        
-        forvalues j = `start'/`stop' {
-            local allyears = "`allyears' `j'"
-        }
-        
-        local switch 0
-    }
+	if `is_estimate' {
+		
+		// check all estimates from same product
+		local n_products = (`product_dt' + `product_st' + `product_dp' + `product_cp')
+		if `n_products' > 1 {
+			display as error "{p}All variables must come from the same product.{p_end}"
+			if `is_keyword' {
+				display as error "{p}Note: If you inputting both a keyword and variables, the keyword may be a shortcut to variables from a different product as your variables.{p_end}"
+			}
+			exit 198
+		}
+		if `n_products' == 0 | "`product'" == "" {
+			display as error "{p}Something went wrong. Please check that you have inputted a valid table ID, variables, or keyword.{p_end}"
+			exit
+		}
 
-    if "`i'" == "-" {
-        local switch = 1
-    }
-    else {
-        local allyears = "`allyears' `i'"
-        local beforesplit "`i'"
-    }
-}
+		// confirm no suffix on estimates
+		foreach est of local estimates {
+			if ustrregexm("`est'", "(E|M)$") {
+				display as error "{p}Do not include 'E' or 'M' at the end of variable IDs.{p_end}"
+				exit 198
+			}
+		}
+		
+		// confirm within API limit
+		local max_estimates = cond("`noerror'" == "" & "`product'" != "CP", 25, 50)
+		if wordcount("`estimates'") > `max_estimates' {
+			display as error "{p}Too many variables requested. Up to 50 estimates and/or margins of error can be included in a single API query.{p_end}"
+			exit
+		}
+	}
+	
+	// check product is available for year
+	if inlist("`product'", "ST", "CP") & `min_year' < 2010 {
+		display as error "{p}Product `product' only available for 2010 and later.{p_end}"
+		exit 
+	}
+	
 
-local years = strtrim("`allyears'")
-local recentyear 0
-foreach year in `years' {
-    if `year' > `recentyear' local recentyear `year'
-}
+	// geography --------------------------------------------------------------
 
-* ERROR HANDLING ---------------------------------------------------------------
+	// default geography
+	if "`geography'" == "" {
+		local geography "state"
+	}
+	
+	// lowercase before parsing
+	local geography = ustrlower("`geography'")
 
-if (`c(changed)' | `c(N)' | `c(k)') & "`clear'" == "" & "`estimates'" != "" {
-	display as error "no; dataset in memory has changed since last saved"
-    exit 4
-}
+	// parse geography name
+	quietly _getcensus_parse_geography `geography', cachepath("`cachepath'")
+	if `s(geo_valid)' == 0 {
+		display as error "{p}Invalid or unsupported {bf:geography()}.{p_end}"
+		exit 198
+	}
+	local geography "`s(geography)'"
+	local geo_full_name "`s(geo_full_name)'"
+	local geo_order "`s(geo_order)'"	// used to order variables later
+	sreturn clear
 
-capture noisily {
+	// replace unspecified geoid and statefips with wildcard
+	if "`geoids'" == "" {
+		local geoids "*"
+	}
+	if "`statefips'" == "" {
+		local statefips "*"
+	}
+
+	// do the reverse to countyfips, since when the county predicate is uneccesary 
+	// it can mess up the call
+	if "`countyfips'" == "*" {
+		local countyfips ""
+	}
+	
+	// check geography is available for sample
+	if `sample' != 5 {
+		if "`geography'" == "metro" & "`statefips'" != "*" {
+			display as error "{p}`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography within state(s).{p_end}"
+			exit
+		}
+		if inlist("`geography'", "sldu", "sldl", "zcta", "cousub", "tract", "bg") {
+			display as error "{p}`sample'-year ACS estimates are not available for the {it:`geo_full_name'} geography.{p_end}"
+			exit
+		}
+	}
+
+	// check statefips
+	if "`geography'" == "state" {
+		// check if statefips conflicts with geoids
+		if (("`statefips'" != "*") & ("`geoids'" != "*")) & ("`statefips'" != "`geoids'") {
+			display as error "{p}With {bf:geography({it:state})}, state code(s) may be specified in either {bf:statefips()} or {bf:geoids()}, but not both.{p_end}"
+			exit 184
+		}
+		// switch statefips and geoids if needed
+		if "`statefips'" != "*" & "`geoids'" == "*" {
+		   local geoids = "`statefips'"
+		   local statefips "*"
+		}
+	}
+	if inlist("`geography'", "us", "region", "division", "cbsa", "necta", "cnecta", "aiannh") &	///
+	   ("`statefips'" != "*") {
+		display as error "{p}{bf:statefips()} may not be specified with {bf:geography({it:`geo_full_name'})}.{p_end}"
+		exit 198
+	}
+	if inlist("`geography'", "cousub", "tract", "bg", "elsd", "scsd", "unsd", 	///
+			  "sldu", "sldl") &											///
+	   (("`statefips'" == "*") | (wordcount("`statefips'") > 1)) {
+		display as error "{p}A single state code must be specified in {bf:statefips()} with {bf:geography({it:`geo_full_name'})}.{p_end}"
+		exit 198
+	}
+	// statefips is sometimes required when geoid is specified
+	if inlist("`geography'", "county", "zcta", "place", "cd", "puma") & 		///
+	   ("`statefips'" == "*") & ("`geoids'" != "*") {
+		display as error "{p}When {bf:geoids()} is specified with {bf:geography({it:`geo_full_name'})}, {bf:statefips()} must also be specified.{p_end}"
+		exit 198
+	}
+
+	// check countyfips
+	if "`countyfips'" != "" & !inlist("`geography'", "cousub", "tract", "bg"){
+			display as error "{p}{bf:countyfips()} may not be specified with {bf:geography({it:`geo_full_name'})}.{p_end}"
+			if "`geography'" == "county" {
+				display as error "{p}County GEOIDs may be specified in {bf:geoids()}.{p_end}"
+			}
+			exit 198
+	}
+	if wordcount("`countyfips'") != 1 & "`geography'" == "bg" {
+		display as error "{p}A single county code must be specified in {bf:countyfips()} with {bf:geography({it:`geo_full_name'})}.{p_end}"
+		exit 198
+	}
+
+	// check geocomponent and geography combo
+	if "`geocomponents'" != "" {
+		local geo_order "`geo_order' geocomp"	// add geocomponent to geo_order
+		local geocomponents = ustrupper("`geocomponents'")
+		foreach g in `geocomponents' {
+			// check if supported
+			if !(inlist("`g'", "00", "C0", "C1", "C2", "E0", "E1", "E2", "G0") |		///
+				 inlist("`g'", "H0", "01", "43", "89", "90", "91", "92", "93", "94") |	///
+				 inlist("`g'", "95", "A0")) {
+				display as error "{p}Invalid {bf:geocomponents()} {it:`g'}.{p_end}"
+				exit 198
+			}
+			// check geocomponent and geography combination
+			if inlist("`g'", "89", "90", "91", "92", "93", "94", "95") & 	///
+			   "`geography'" != "us" {
+				display as error "{p}With {bf:geocomponents({it:`g'})}, only allowed {bf:geography()} is {it:us}.{p_end}"
+				exit 198
+			}
+			if (inlist("`g'", "C0", "C1", "C2", "E0", "E1", "E2", "G0", "H0") |		///
+				inlist("`g'" "01", "43", "A0")) & 									///
+			   !inlist("`geography'", "us", "state", "region", "division") {
+				display as error "{p}With {bf:geocomponents({it:`g'})}, only allowed {bf:geography()} are {it:us}, {it:region}, {it:division} or {it:state}.{p_end}"
+				exit 198
+			}
+			// check sample is available for geocomponent
+			if `sample' != 5 {
+				if inlist("`g'", "90", "95" ) {
+					display as error "{p}`sample'-year ACS estimates are not available for {bf:geocomponents({it:`g'})}.{p_end}"
+					exit 198
+				}
+				if `sample' == 1 & "`g'" == "92" {
+					display as error "{p}`sample'-year ACS estimates are not available for {bf:geocomponents({it:`g'})}.{p_end}"
+					exit 198
+				}
+			}
+		}
+	}
+
+
+	// prep for API call ------------------------------------------------------
+
+	// check API key is supplied
+	if "`key'" != "" {
+		display as result "{p}To avoid needing to specify {bf:key()}, store your API key in a global macro named {it:censuskey} in your profile.do. See the {help getcensus:help file} for instructions.{p_end}"
+	}
+	if "`key'" == "" {
+		if "$censuskey" == "" {
+			display as error `"{p}You must provide an API key to {bf:key()} or have defined a global macro named {it:censuskey} that contains your API key. To acquire an API key, register {browse "https://api.census.gov/data/key_signup.html":here}.{p_end}"'
+			exit
+		}
+		if "$censuskey" != "" {
+			local key "$censuskey"
+		}
+	}
+
+	// add suffix(es) to estimate ids
+	if `is_estimate' {
+		local variables ""
+		foreach item of local estimates {
+			if "`noerror'" == "" & "`product'" != "CP" &	///
+			   !ustrregexm("`item'", "^B(98|99)") {
+				local moe "`item'M "
+			}
+			local variables = "`variables'" + "`item'E " + "`moe'"
+		}
+	}
+
+	// variable list or group (table)
+	local api_variables = cond(`is_table', 								///
+							   "group(`estimates')",					///
+							   ustrregexra("`variables'", " ", ","))
+
+	// product directory in API structure
+	if "`product'" == "DT" {
+		local product_dir ""
+	}
+	if "`product'" == "DP" {
+		local product_dir "/profile"
+	}
+	if "`product'" == "ST" {
+		local product_dir "/subject"
+	}
+	if "`product'" == "CP" {
+		local product_dir "/cprofile"
+	}
+
+
+	// compose geography predicate(s) -----------------------------------------
+
+	local statefips_list = ustrregexra("`statefips'", " ", ",")
+	local geoids_list = ustrregexra("`geoids'", " ", ",")
+	local countyfips_list = ustrregexra("`countyfips'", " ", ",")
+
+	local county_predicate = cond("`countyfips'" != "", " county:`countyfips_list'", "")
+	local state_predicate = cond("`statefips'" != "*", "&in=state:`statefips_list'", "")
+
+	local geocomp_list ""
+	if "`geocomponents'" != "" {
+		foreach g of local geocomponents {
+			local g = "&GEOCOMP=`g'"
+			local geocomp_list = "`geocomp_list'" + "`g'"
+		}
+	}
+
+	if "`statefips'" != "*" & "`geography'" == "metro" {
+		local geo_predicate "&for=`geo_full_name' (or part):`geoids_list'&in=state:`statefips_list'"
+		local geo_order "state `geo_order'"		// add state to geo order
+
+	} 
+	else {
+		local geo_predicate "`geocomp_list'&for=`geo_full_name':`geoids_list'`state_predicate'`county_predicate'"
+		
+	}
+	
+	// replace spaces with %20
+	local geo_predicate = ustrregexra("`geo_predicate'", " ", "%20", 1)
+
+
+	// make API calls ---------------------------------------------------------
+
+	clear
+	tempfile temp_data
+	
 	foreach year in `years' {
-		if `dataset' == 1 {
-			if `year' < 2005 {
-				display as error "1-year ACS estimates are only available for 2005 and later."
-				exit 1
-				continue, break
-			}
-			if `year' > `lastacs1yr' {
-				display as error "As of last update for getcensus, 1-year ACS estimates for `year' had not been released."
-				exit 1
-				continue, break
-			}	
+		
+		// construct url
+		local api_url_base "https://api.census.gov/data/`year'/acs/acs`sample'`product_dir'"
+		local api_url_get "?get=`api_variables'NAME"
+		local api_url_geo "`geo_predicate'"
+		local api_url_key "&key=`key'"
+		local api_url "`api_url_base'`api_url_get'`api_url_geo'`api_url_key'"
+		
+		// for messages, whether to display link to API call or text of call
+		local show_link = ustrlen("`api_url'") < 255
+		
+		// make API call
+		capture noisily {
+			import delimited "`api_url'", stringcols(_all) varnames(1) stripquotes(yes) clear
 		}
-		if `dataset' == 5 {
-			if `year' < 2009 {
-				display as error "5-year ACS estimates are only available for 2009 and later."
-				exit 1
-				continue, break
+		
+		// if unsuccessful, list possible reasons and provide link to API call
+		// so users can view error there
+		if _rc != 0 | c(N) == 0 {
+			display as error "{p}The Census Bureau API did not return data for `year'.{p_end}"
+			display as error "{p}This may have happened because:{p_end}" 
+			display as error "{phang}{c 149}  Table ID or variable IDs are invalid or are not available for the requested year.{p_end}" 
+			if "`geoids'" != "*" {
+				display as error "{phang}{c 149}  GEOIDs are invalid, or are not available for the requested sample and/or year.{p_end}"
 			}
-			if `year' > `lastacs5yr' {
-				display as error "As of last update for getcensus, 5-year ACS estimates for `year' had not been released."
-				exit 1
-				continue, break
+			if "`geocomponents'" != "" {
+				display as error "{phang}{c 149}  Geographic components are not available for the requested sample and/or year, or could not be combined with (if specified) the requested state FIPS codes or GEOIDs.{p_end}"
 			}
+			display as error "{phang}{c 149}  API key is invalid.{p_end}"
+			display as error "{phang}{c 149}  Problems with your internet connection.{p_end}"
+			if `show_link' {
+				display as error `"{p}To see the error message returned by the Census Bureau API, click {browse "`api_url'":here}.{p_end}"'
+			}
+			if !`show_link' {
+				display as error "{p}To see the error message returned by the Census Bureau API, copy the URL below into a web browser.{p_end}"
+				local n_lines = ceil(ustrlen("`api_url'") / 80)
+				forvalues n = 1/`n_lines' {
+					local line : piece `n' 80 of "`api_url'"
+					display as text "`line'"
+				}
+			}
+			if "`geoids'" != "*" & `sample' != 5 {
+				display as error "{p}{it:(If there is no error message, this may be because the request was valid, but no data was returned because `sample'-year estimates are not published for the requested GEOIDs.)}{p_end}"
+			}
+			exit
 		}
-		if `dataset' == 3 & !inlist(`year', 2012, 2013) {
-			display as error "3-year ACS estimates are only available for 2012 and 2013."
-			exit 1
-			continue, break
-		}
-	}
-}
-
-if _rc != 0 {
-	exit
-}
-
-if !inlist(`dataset', 1, 3, 5) {
-    display as error "Census only produces 1-, 3-, or 5-year ACS estimates."
-	exit
-}
-
-* SWITCHES ---------------------------------------------------------------------
-
-if "`estimates'" == "" {
-    getcensus_help
-}
-else if "`estimates'" == "catalog" {
-    if "`geography'" != "" | "`geoids'" != "" | "`statefips'" != "" | "`countyfips'" != "" | "`saveas'" != "" {
-        dis as err "The 'catalog' program only accepts arguments for 'dataset', 'cachepath', 'product', 'search', 'table', and 'years' options. All other arguments will be disregarded."
-    }
-    getcensus_catalog, years(`recentyear') dataset(`dataset') cachepath(`cachepath') search(`search') table(`table') product(`product') `browse' `clear'
-}
-else if "`estimates'" == "point_and_click" {
-    if "`exportexcel'" != "" local export "exportexcel saveas(Results)"
-    getcensus ${tablelist}, years(${years}) dataset(${dataset}) geography(${geography}) `export' clear
-    dis "Here is the code used to produce your estimates. You can revise this as needed:"
-    dis "getcensus ${tablelist}, years(${years}) dataset(${dataset}) geography(${geography}) `export' clear"
-    macro drop tablelist
-    macro drop years
-    macro drop dataset
-    macro drop geography
-}
-else {
-    if "`product'" != "" | "`search'" != "" | "`table'" != "" | {
-        display as error "The arguments 'product', 'search', and 'table' are only used by 'getcensus catalog'. They will be disregarded."
-    }
-	getcensus_main `estimates', years(`years') dataset(`dataset') geography(`geography') geoids(`geoids') statefips(`statefips') countyfips(`countyfips') geocomponent(`geocomponent') key(`key') saveas(`saveas') cachepath(`cachepath') `nolabel' `noerror' `exportexcel' `browse' `clear' recentyear(`recentyear')
-
-}
-
-macro drop syntax
-end
-
-* SUBROUTINE: HELP -------------------------------------------------------------
-
-program define getcensus_help
-    dis as text "You didn't pass any arguments. Here are some tips for getting started:"
-    dis as text ""
-    dis as text "For instructions on how to get started, or a browsable list of key tables you"
-    dis as text "can retrieve, type 'help getcensus' into the Command window."
-    dis as text ""
-    dis as text "Type 'getcensus catalog' if you need help finding estimate or table IDs."
-    dis as text ""
-    dis as text "While you don't need to be an expert at writing Stata code for this program to"
-    dis as text "work, it will be most useful to you if you understand the basics."
-    dis as text ""
-    dis as text "If you know your estimate or table IDs and want to customize your geography or"
-    dis as text "other options, the syntax is as follows:"
-    dis as text "getcensus *List of estimate or table IDS*, years() geography() statefips() product()"
-    dis as text "In Stata, options go after a comma, and each option takes 'arguments' in"
-    dis as text "parentheses."
-    dis as text ""
-    dis as text "That may be intimidating, so we can also help you construct a query below:"
-    dis as text "Note, you *must* pick a table. If you don't choose among any of the other options before retrieving the data, the program will retrieve 1-year, state-by-state estimates for the most recent year of data available."
-
-    dis as text ""
-    dis as text "First, what types of tables are you looking for?"
-    dis "{stata global tablelist ""pop"":Population, overall and by sex, age, and race [pop]}"
-    dis "{stata global tablelist ""pov"":Poverty, overall and by sex, age, and race [pov]}"
-    dis "{stata global tablelist ""povrate"":Poverty rate, overall and by sex, age, and race [povrate]}"
-	dis "{stata global tablelist ""povratio"":Population by ratio of income to poverty level [povratio]}"
-	dis "{stata global tablelist ""povratio_char"":Characteristics of the population at specified poverty levels [povratio_char]}"
-    dis "{stata global tablelist ""medinc"":Median household income, overall and by race of householder [medinc]}"
-    dis "{stata global tablelist ""snap"":SNAP participation by poverty status, income, disability, family composition, and family work experience [snap]}"
-    dis "{stata global tablelist ""medicaid"":Medicaid participants, by age [medicaid]}"
-	dis "{stata global tablelist ""housing_overview"":Various housing-related estimates including occupancy, tenure, costs, and cost burden [housing_overview]}"
-	dis "{stata global tablelist ""costburden_renters"":Detailed renter housing cost burden [costburden_renters]}"
-		dis "{stata global tablelist ""costburden_owners"":Detailed homeowner housing cost burden [costburden_owners]}"
-    dis "{stata global tablelist ""tenure_inc"":Median household income and poverty status of families, by housing tenure [tenure_inc]}"
-    dis "{stata global tablelist ""kids_nativity"":Nativity of children, by age and parent's natvity  [kids_nativity]}"
-	dis "{stata global tablelist ""kids_pov_parents_nativity"":Children by poverty status and parent's nativity [kids_pov_parents_nativity]}"
-    
-    dis as text ""
-    dis as text "Are you looking for single-year data or 5-year averages?"
-    dis "{stata global dataset 1:1-year data}"
-    dis "{stata global dataset 5:5-year averages}"
-    
-    dis as text ""
-    dis as text "Which year do you want data for?"
-	dis "{stata global years 2005:2005} (1-year data only)"
-	dis "{stata global years 2006:2006} (1-year data only)"
-	dis "{stata global years 2007:2007} (1-year data only)"
-	dis "{stata global years 2008:2008} (1-year data only)"
-    dis "{stata global years 2009:2009}"
-    dis "{stata global years 2010:2010}"
-    dis "{stata global years 2011:2011}"
-    dis "{stata global years 2012:2012}"
-    dis "{stata global years 2013:2013}"
-    dis "{stata global years 2014:2014}"
-    dis "{stata global years 2015:2015}"
-    dis "{stata global years 2016:2016}"
-    dis "{stata global years 2017:2017}"
-    dis "{stata global years 2018:2018}"
-    
-    dis as text "(If you want a range of years, type something like"
-    dis as text "'global years 2010-2017' into the Command Window"
-    
-    dis as text ""
-    dis as text "What level of geographic detail are you looking for?"
-    dis as text "(Note: You can get more from the program if you use the command line. Type"
-    dis as text "'help getcensus' into the Command Window for more details.)"
-    dis "{stata global geography ""us"":US}"
-    dis "{stata global geography ""state"":State}"
-    dis "{stata global geography ""region"":Census Region}"
-    dis "{stata global geography ""division"":Division}"
-    dis "{stata global geography ""county"":County}"
-    dis "{stata global geography ""cd"":Congressional District}"
-    
-    dis as text ""
-    dis as text "When you're ready, click one of the links below:"
-    dis "{stata getcensus point_and_click, clear: Retrieve my data}"
-    dis "{stata getcensus point_and_click, exportexcel clear: Retrieve my data and export to Excel (will store in current directory)}"
-    
-    // dis as text ""
-    // dis "{stata export excel using Results.xlsx, replace:Click here to export results to Excel (will store in current directory)}"
-    
-end
-
-
-* SUBROUTINE: CATALOG ----------------------------------------------------------
-
-program define getcensus_catalog
-${syntax}
-
-* ERROR HANDLING ---------------------------------------------------------------
-
-** Product
-local table = upper("`table'")
-
-if "`table'" != "" & "`product'" != "" {
-    dis "Program will derive product from 'table' and ignore 'product'"
-}
-
-if ustrregexm("`table'", "(^B)|(^C(?!P))") == 1 | "`product'" == "" | "`product'" == "DT" {
-    local product "DT"
-    local productdir ""
-}
-
-if strpos("`table'", "CP") == 1 | "`product'" == "CP" {
-    local product "CP"
-    local productdir "/cprofile"
-}
-
-if strpos("`table'", "DP") == 1 | "`product'" == "DP" {
-    local product "DP"
-    local productdir "/profile"
-}
-
-if strpos("`table'", "S") == 1 | "`product'" == "ST" {
-    local product "ST"
-    local productdir "/subject"
-}
-
-
-
-** Protect data in memory
-preserve
-if "`clear'" != "" {
-    clear
-}
-
-
-* GET CATALOG ------------------------------------------------------------------
-
-** Download data dictionary if it doesn't exist
-qui cap confirm file "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta"
-if _rc {
-    jsonio kv, file("https://api.census.gov/data/`years'/acs/acs`dataset'`productdir'/variables.json") elem("(/variables/)(.*)(label)(.*)")
-    dis "https://api.census.gov/data/`years'/acs/acs`dataset'`productdir'/variables.json"
-    drop if inlist(key, "/variables/for/label", "/variables/in/label")
-    replace key = subinstr(key, "/variables/", "", .)
-    replace key = subinstr(key, "/label", "", .)
-    rename key estimateID
-    rename value estimateLabel
-    compress
-    sort estimateID
-    save "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta", replace
-}
-
-** Conduct search use 'table' and 'search'
-if "`table'" == "" {
-    use "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta", clear
-    dis as result "Searched for all tables for product `product'"
-}
-else {
-    use "`cachepath'/`productdir'variables_`dataset'yr_`years'.dta" if strpos(estimateID, "`table'") != 0, clear
-    dis as result "Searched for table `table'"
-}
-
-qui ds
-foreach var in `r(varlist)' {
-    local fmt: format `var'
-    local fmt: subinstr local fmt "%" "%-"
-    format `var' `fmt'
-    
-}
-
-if "`search'" != "" {
-    local regex = "(.*)(`search')(.*)"
-    local regex = subinstr("`regex'", " ", ")(.*)(", .)
-
-    qui sort estimateID
-
-    cap drop searchmatch
-    gen searchmatch = regexm(strlower(estimateLabel), "`regex'")
-    qui levelsof estimateID if searchmatch == 1
-
-    qui keep if searchmatch == 1
-    dis as result "Searched using search term *`search'*"
-    // alternative: 
-    // br if searchmatch == 1
-}
-
-restore, not
-    
-end
-
-* SUBROUTINE: MAIN -------------------------------------------------------------
-
-program define getcensus_main
-
-syntax [anything(name=estimates)] [, YEARs(string) DATAset(string) GEOgraphy(string) GEOIDs(string) STatefips(string) COuntyfips(string) GEOCOMPonent(string) key(string) SAVEas(string) CACHEpath(string) NOLabel NOERRor EXportexcel BRowse clear recentyear(string)]
-
-
-* PRE-PACKAGED ESTIMATES -------------------------------------------------------
-
-/*
-For this program, we have a list of 'curated' tables. These are keywords that
-users can pass to get a list of estimates we pick by hand. These are nothing
-more than locals which hold the names of the estimates.
-*/
-
-** Poverty
-local pop_total "S1701_C01_001"
-local pop_byage "S1701_C01_002 S1701_C01_006 S1701_C01_010"
-local pop_bysex "S1701_C01_011 S1701_C01_012"
-local pop_byrace "S1701_C01_014 S1701_C01_015 S1701_C01_016 S1701_C01_017 S1701_C01_018 S1701_C01_019 S1701_C01_020 S1701_C01_021"
-local pop "`pop_total' `pop_byage' `pop_bysex' `pop_byrace'"
-
-local pov_total "S1701_C02_001"
-local pov_byage "S1701_C02_002 S1701_C02_006 S1701_C02_010"
-local pov_bysex "S1701_C02_011 S1701_C02_012"
-local pov_byrace "S1701_C02_014 S1701_C02_015 S1701_C02_016 S1701_C02_017 S1701_C02_018 S1701_C02_019 S1701_C02_020 S1701_C02_021"
-local pov "`pov_total' `pov_byage' `pov_bysex' `pov_byrace'"
-
-local povrate_total "S1701_C03_001"
-local povrate_byage "S1701_C03_002 S1701_C03_006 S1701_C03_010"
-local povrate_bysex "S1701_C03_011 S1701_C03_012"
-local povrate_byrace "S1701_C03_014 S1701_C03_015 S1701_C03_016 S1701_C03_017 S1701_C03_018 S1701_C03_019 S1701_C03_020 S1701_C03_021"
-local povrate "`povrate_total' `povrate_byage' `povrate_bysex' `povrate_byrace'"
-
-local povratio "B17002"
-local povratio_char "S1703"
-
-** Income
-local medinc "B19013_001"
-local medinc_byrace "B19013B_001 B19013C_001 B19013D_001 B19013E_001 B19013F_001 B19013G_001 B19013H_001 B19013I_001"
-local medinc "`medinc' `medinc_byrace'"
-
-** Program participation
-local snap_total "S2201_C04_001"
-local snap_composition "S2201_C04_007 S2201_C04_009"
-local snap_poverty "S2201_C04_021"
-local snap_disability "S2201_C04_023"
-local snap_byrace "S2201_C04_026 S2201_C04_027 S2201_C04_028 S2201_C04_029 S2201_C04_030 S2201_C04_031 S2201_C04_032 S2201_C04_033"
-local snap_medinc "S2201_C04_034"
-local snap_employment "S2201_C04_035 S2201_C04_036 S2201_C04_037 S2201_C04_038"
-local snap "`snap_total' `snap_composition' `snap_poverty' `snap_disability' `snap_byrace' `snap_medinc' `snap_employment'"
-
-local medicaid_total "S2704_C02_006"
-local medicaid_byage "S2704_C02_007 S2704_C02_008 S2704_C02_009"
-local medicaid "`medicaid_total' `medicaid_byage'"
-
-** Housing
-local housing_overview "DP04"
-local costburden_renters "B25070"
-local costburden_owners "B25091"
-
-local ten "B25003_001 B25003_002 B25003_003"
-local ten_medinc "B25119_001 B25119_002 B25119_003"
-local ten_pov "C17019_001 C17019_002 C17019_003 C17019_004 C17019_005 C17019_006 C17019_007"
-local tenure_inc "`ten' `ten_medinc' `ten_pov'"
-
-** Children and nativity
-local kids_nativity "B05009"
-local kids_pov_parents_nativity "B05010"
-
-** Create "estimates" based on expanding local if not from table
-local prepackaged ""
-foreach estimate in `estimates' {
-    if !ustrregexm("`estimates'", "^(B|C|CP|DP|S)(?=\d)", 1) {
-        local prepackaged "`prepackaged' ``estimate''"
-    }
-    else {
-        local prepackaged "`prepackaged' `estimate'"
-    }
-    local estimates = strtrim("`prepackaged'")
-}
-
-local estimates = upper("`estimates'")
-
-
-* ERROR HANDLING ---------------------------------------------------------------
-
-preserve
-if "`clear'" != "" {
-    clear
-}
-
-** Product
-
-local product_dt 0
-local product_cp 0
-local product_dp 0
-local product_st 0
-
-if ustrregexm("`estimates'", "((B)|(C(?!P)))\d{5}") {
-	local product "DT"
-	local productdir ""
-	local product_dt  1
-}
-if ustrregexm("`estimates'", "CP") {
-	local product "CP"
-	local productdir "/cprofile"
-	local product_cp  1
-}
-if ustrregexm("`estimates'", "DP") {
-	local product "DP"
-	local productdir "/profile"
-	local product_dp 1
-}
-if ustrregexm("`estimates'", "S") {
-	local product "ST"
-	local productdir "/subject"
-	local product_st 1
-}
-
-if (`product_dt' + `product_cp' + `product_dp' + `product_st') != 1 {
-	display as error "All estimates must come from the same product."
-	exit 
-}
-
-capture noisily {
-	foreach year in `years' {
-		if `year' < 2010 {
-			if "`product'" == "CP" {
-				display as error "Comparison profiles (table and estimate IDs starting with 'CP') are only available for 2010 and later."
-				exit 1
-				continue, break
+		
+		// display link to data if successful call
+		else {
+			if `show_link' {
+				display as result `"{browse "`api_url'": Link to data for `year'}"'
 			}
-			if "`product'" == "ST" {
-				display as error "Subject tables (table and estimate IDs starting with 'S') are only available for 2010 and later."
-				exit 1
-				continue, break
+			if !`show_link' {
+				display as result "Link to data for `year':"
+				local n_lines = ceil(ustrlen("`api_url'") / 80)
+				forvalues n = 1/`n_lines' {
+					local line : piece `n' 80 of "`api_url'"
+					display as text "`line'"
+				}
 			}
 		}
+		
+		// add year variable
+		quietly generate year = `year'
+
+		// append
+		capture append using `temp_data'
+		quietly save `temp_data', replace
+		
 	}
-}
-if _rc != 0 {
-	exit
-}
 
-local api_estimateslist ""
+	// clean and label data ---------------------------------------------------
 
-foreach estimate in `estimates' {    
-    ** Create estimate ID list (ignore if passing group)
-    if strpos("`estimates'", "_") != 0 {
-    ** Add estimates and MOEs for all products except comparison profiles
-        if "`noerror'" == "" & "`product'" != "CP" {
-            local api_estimateslist "`api_estimateslist'`estimate'E,`estimate'M,"
-        }
-        else {
-            local api_estimateslist "`api_estimateslist'`estimate'E,"
-        }
-    }
-    else {
-        local api_estimateslist "group(`estimates')"
-    }
-}
-
-** Geography
-if "`geography'" == "" local geography "state"
-
-if "`geography'" == "cd" local geography "congressional district"
-
-if "`geography'" == "metro" local geography "metropolitan statistical area/micropolitan statistical area"
-
-if "`geography'" == "block" local geography "block group"
-
-if inlist("`geography'", "sch", "school district") local geography "school district (unified)"
-
-** Statefips
-if "`statefips'" == "" local statefips "*"
-
-local statefipslist ""
-if "`statefips'" == "*" {
-    local statefipslist "*"
-}
-else {
-    foreach statefip in `statefips' {
-		local statefip = string(`statefip',"%02.0f")
-        local statefipslist "`statefipslist'`statefip',"
-    }
-    local statefipslist = substr("`statefipslist'", 1, length("`statefipslist'") - 1)
-}
-
-** Key
-if "`key'" != "" {
-    dis "To avoid passing the key each time, set -global censuskey YOUR_KEY- in your profile.do. Type -help getcensus- for details."
-}
-
-if "`key'" == "" local key "$censuskey"
-
-** Geoids
-if "`geoids'" == "" local geoids "*"
-
-local geoidslist ""
-if "`geoids'" == "*" {
-    local geoidslist "*"
-}
-else {
-    foreach geoid in `geoids' {
-        local geoidslist "`geoidslist'`geoid',"
-    }
-    local geoidslist = substr("`geoidslist'", 1, length("`geoidslist'") - 1)
-}
-
-** Geographic components
-// validate geocomponent(s) and geography combo
-local geocomponent = upper("`geocomponent'")
-foreach g in `geocomponent' {
-	if !(inlist("`g'", "", "00", "C0", "C1", "C2", "E0", "E1", "E2", "G0") |	///
-		 inlist("`g'", "H0", "01", "43", "89", "90", "91", "92", "93", "94") |	///
-		 inlist("`g'", "95", "A0")) {
-		display as error "Invalid geocomponent `g'."
-		exit
-	}
-	if inlist("`g'", "89", "90", "91", "92", "93", "94", "95") & 	///
-	   "`geography'" != "us" {
-		display as error "Geography must be us if geocomponent is `g'."
-		exit
-	}
-	if (inlist("`g'", "C0", "C1", "C2", "E0", "E1", "E2", "G0", "H0") |		///
-		inlist("`g'" "01", "43", "A0")) & 									///
-	   !inlist("`geography'", "us", "state", "region", "division") {
-		display as error "Geography must be us, state, region, or division if geocomponent is `g'."
-		exit
-	}
-}
-// expand geocomponent(s) and construct API phrase
-if "`geocomponent'" != "" {
-	local geocomplist "&"
-	foreach g in `geocomponent' {
-		local g = "GEOCOMP=`g'"
-		local geocomplist "`geocomplist'`g'&"
-	}
-	local geocomplist = substr("`geocomplist'", 1, length("`geocomplist'") - 1)
-}
-
-** Set order of dataset
-local geovarname = "`geography'"
-if "`geography'" == "county" local geovarname "state county"
-if "`geography'" == "tract" local geovarname "state county tract"
-if "`geography'" == "congressional district" local geovarname "state congressionaldistrict"
-if "`geography'" == "metropolitan statistical area/micropolitan statistical area" local geovarname "metropolitanstatisticalareamicro"
-if "`geography'" == "block group" local geovarname "state county tract blockgroup"
-if "`geography'" == "school district (unified)" local geovarname "state schooldistrictunified"
-if "`geography'" == "county subdivision" local geovarname "state county countysubdivision"
-
-if inlist("`geography'", "us", "state", "region", "division") {
-    local sort "year name"
-    local order "year `geovarname' name"
-}
-else {
-    local sort "year `geovarname'"
-    local order "year `geovarname' name"
-}
-
-if strpos("`estimates'", "_") == 0 & strpos("`estimates'", " ")!= 0 {
-    dis as err "Only pass one group at a time."
-    exit
-}
-
-** Varnames
-// Note this is only for estimate IDs, if passing an entire table, we ignore this
-foreach estimate in `estimates' {
-    if inlist(substr("`estimate'", strlen("`estimate'"),.), "E", "M") & strpos("`estimate'", "_") != 0 {
-        dis as err "Make sure none of your estimates include 'E' or 'M' in suffix."
-        exit
-    }
-}
-
-** Geography
-if "`geography'" == "state" & "`statefips'" != "*" & "`geoids'" == "*" {
-    dis as yellow "If chosen geography is 'state', pass selected state(s) to 'geoids' instead of 'statefips'. We'll fix that for you."
-	
-	* Redefine geoids and geoidslist with statefips and statefipslist
-	local geoids "`statefips'"
-	local geoidslist "`statefipslist'"
-	
-	* Reset statefips and statefipslist to default
-	local statefips "*"
-	local statefipslist "*"
-}
-
-if "`geography'" == "state" & "`statefips'" != "*" & "`statefips'" != "`geoids'" {
-    dis as err "If chosen geography is 'state', 'statefips' must be blank or equal to 'geoids'."
-    exit
-}
-
-if inlist("`geography'", "us", "region", "division") & "`statefips'" != "*" {
-    dis as err "If chosen geography is `geography', 'statefips' must be blank."
-    exit
-}
-
-if "`geography'"=="metropolitan statistical area/micropolitan statistical area" & "`dataset'"!="5" & "`statefips'" != "*" {
-    dis as err "You can only get part of state for metropolitan or micropolitan statistical areas using 5-year datasets."
-    exit
-}
-
-if "`geography'" != "block group" & "`countyfips'" != "" {
-    dis as err "Cannot pass county unless geography is block."
-    exit
-}
-
-if "`geography'" == "block group" & "`countyfips'" == "" {
-    dis as err "Must pass county if geography is block."
-    exit
-}
-
-if "`geography'" == "block group" & strpos("`countyfips'", " ") != 0 {
-    dis as err "Can only pass one county if geography is block."
-    exit
-}
-
-if "`countyfips'" != "" local countyfips = string(`countyfips',"%03.0f")
-if "`countyfips'" != "" local countycondition "%20county:`countyfips'"
-
-if "`dataset'" != "5" & inlist("`geography'", "tract", "block group", "county subdivision") {
-    dis as err "`geography' only available using 5-year data."
-    exit
-}
-
-if "`statefips'" == "*" & inlist("`geography'", "tract", "block group", "county subdivision") {
-    dis as err "Census API only allows one state per `geography'."
-    exit
-}
-
-local geography = subinstr("`geography'", " ", "%20", .)
-
-** Export
-if "`exportexcel'"!="" & "`saveas'"=="" {
-    dis as err "If you specify the 'exportexcel' option, must pass filename to 'saveas'."
-    exit
-}
-
-** Varnames
-local varcount: word count `estimates'
-if `varcount' > 25 {
-    exit
-    dis as err "API cannot handle more than 25 IDs at once."
-}
-
-if "`key'" == "" {
-    dis as err "Must pass Census key. To acquire, register here: https://api.census.gov/data/key_signup.html." 
-    dis "To avoid passing each time, set -global censuskey YOUR_KEY- in your profile.do. Type -help getcensus- for details."
-    exit
-}
-
-
-* API CALL ---------------------------------------------------------------------
-
-** Generate URL
-tempname temp
-cap erase `temp'.dta
-
-foreach year in `years' {
-    clear
-    
-    // okay, so here's a problem -- if the estimate is wrong, no error. just doesn't execute
-    local apiroot "acs/acs"
-    
-    if "`geography'" != "state" & "`statefips'" != "*" {
-        if "`geography'" == "metropolitan%20statistical%20area/micropolitan%20statistical%20area" {
-            local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME&for=state%20(or%20part):`statefipslist'&in=`geography':`geoidslist'&key=`key'"
-        }
-        else {
-            local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME`geocomplist'&for=`geography':`geoidslist'&in=state:`statefipslist'`countycondition'&key=`key'"
-        }
-    }
-    else {
-        local APIcall "https://api.census.gov/data/`year'/`apiroot'`dataset'`productdir'?get=`api_estimateslist'NAME`geocomplist'&for=`geography':`geoidslist'&key=`key'"
-    }
-
-    ** Retrieve Data
-    if strlen("`APIcall'") < 255 {
-        local displaylink "{browse "`APIcall'": Link to data for `year'}"
-        dis `"`displaylink'"'
-    }
-    else {
-        dis "Link to data for `year': `APIcall'"
-    }
-    import delimited using "`APIcall'", varnames(1) stringcols(_all)
-    
-    qui des
-    if r(N) == 0 {
-        dis as err "The Census API did not return data. This can happen if 1) the Table IDs were wrong; 2) your API key is invalid; 3) you are not connected to the internet or the Census API server is down. Click 'Link to data', or copy the URL into your browser, to view the specific error message sent by the Census API."
-        exit
-    }
-
-    ** Post retrieval
-    qui gen year = "`year'"
-    if "`noerror'" != "" qui cap drop *m
-    qui cap drop *ma
-    qui cap drop *ea
-    qui cap drop v*
-    qui compress
-    
-    qui cap append using `temp'
-    qui save `temp', replace
-    
-}
-
-** Clean up
-qui ds
-foreach var in `r(varlist)' {
-    qui cap replace `var' = subinstr(`var', "[", "", .)
-    qui cap replace `var' = subinstr(`var', "]", "", .)
-    qui cap replace `var' = subinstr(`var', `"""', "", .)
-    label var `var' ""
-}
-
-restore, not
-
-if "`exportexcel'" != "" {
-    putexcel set "`saveas'", replace
-}
-
-** Label data using data dictionary
-if "`nolabel'" == "" {
-    local labelthis ""
-    qui ds
-    local varlist `r(varlist)'
-    preserve
-        clear
-        local year `recentyear'
-		local url_acs_table_changes "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html"
-		local click_acs_table_changes "{browse "`url_acs_table_changes'":ACS Table & Geography Changes}"
-		display as yellow "Variables labeled using data dictionary for `year'. If you requested data for multiple years,"
-		display as yellow `"check the `click_acs_table_changes' on the Census Bureau website."'
-        local product = subinstr("`productdir'", "/", "", .)
-        qui cap confirm file "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta"
-        if _rc {
-            qui jsonio kv, file("https://api.census.gov/data/`year'/acs/acs`dataset'`productdir'/variables.json") elem("(/variables/)(.*)(label)(.*)")
-            qui dis "https://api.census.gov/data/`year'/acs/acs`dataset'`productdir'/variables.json"
-            qui drop if inlist(key, "/variables/for/label", "/variables/in/label")
-            qui replace key = subinstr(key, "/variables/", "", .)
-            qui replace key = subinstr(key, "/label", "", .)
-            qui rename key estimateID
-            qui rename value estimateLabel
-            qui compress
-            qui save "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta", replace
-        }
-        qui use "`cachepath'/acs`product'variables_`dataset'yr_`year'.dta", clear
-		qui replace estimateLabel = subinstr(estimateLabel, 					///
-									 "(in `year' inflation-adjusted dollars)", 	///
-									 "(in nominal dollars)", 					///
-									 1)
-        local i = 0
-        foreach estimate in `varlist' {
-            local i = `i' + 1
-            qui levelsof estimateLabel if estimateID == upper("`estimate'")
-            local label`i' `r(levels)'
-            local estimate`i' "`estimate'"
-        }
-    restore
-    forvalues j = 1/`i' {
-        if strlen("`label`j''") > 80 {
-            dis as yellow "Label truncated. See notes for `estimate`j''"
-        }
-        qui label var `estimate`j'' "`label`j''"
-        qui notes `estimate`j'': `label`j''
-    }
-}
-
-** Replace missing values with "."
-foreach var of varlist _all {
-	qui replace `var' = "." if inlist(`var', "null", "-222222222", "-666666666")
-}
-
-** Destring, sort, order
-qui destring _all, replace
-sort `sort'
-order `order'
-
-** Restring state and county fips with leading zeros
-qui cap tostring state, format(%02.0f) replace
-qui cap tostring county, format(%03.0f) replace
-
-** Add labels to MOE vars
-foreach var of varlist _all {
-	
-	// Works for detailed, subject, and collapsed tables
-	if ustrregexm("`var'", "[0-9]m$") == 1 {
-		local est_var = ustrregexra("`var'", "(?<=[0-9])m$", "e")
-		notes _fetch est_var_note : `est_var' 1
-		local moe_var_note = ustrregexra("`est_var_note'", "^Estimate", "MOE")
-		quietly label var `var' "`moe_var_note'"
-		quietly note `var': `moe_var_note'
+	quietly {
+		
+		use `temp_data', clear
+		
+		// drop junk variables
+		foreach junk_var in *_*ma *_*ea v* {
+			capture  drop `junk_var'
+		}	   
+		
+		// remove JSON stuff
+		ds year, not
+		foreach var of varlist `r(varlist)' {
+			 replace `var' = ustrregexra(`var', "(\])|(\[)|(null)", "")
+		}
+		
+		// destring all except geo order
+		ds `geo_order', not
+		destring `r(varlist)', replace
+		
+		// replace annotation values with missing 
+		ds, has(type numeric)
+		foreach var of varlist `r(varlist)' {
+			 replace `var' = . if `var' <= -222222222
+		}
+		
+		// put year and geo vars first, and sort
+		capture confirm variable geo_id
+		local geoid = cond(_rc == 0, "geo_id", "")
+		order year `geo_order' `geoid' name
+		sort year `geo_order' `geoid'
+		
+		// remove labels from a few vars
+		foreach var of varlist year `geoid' name {
+			label variable `var'
+		}
+		
+		// remove JSON junk from geo var labels
+		foreach var of varlist `geo_order' {
+			local lbl : variable label `var'
+			local lbl = subinstr(`"`lbl'"', `"""', "", .)
+			local lbl = ustrregexra(`"`lbl'"', "(\])|(\[)|(null)", "")
+			label variable `var' `"`lbl'"'
+		}
+		
+		// remove MOEs (present by default if a table is requested) if noerror
+		if `is_table' & "`noerror'" != "" {
+			drop *_*m
+		}
 	}
 	
-	// Needed for data profiles, which also contain "pe" and "pm"
-	if ustrregexm("`var'", "[0-9]pm$") == 1 {
-		local est_var = ustrregexra("`var'", "(?<=[0-9])pm$", "pe")
-		notes _fetch est_var_note : `est_var' 1
-		local moe_var_note = ustrregexra("`est_var_note'", "^Percent Estimate", "Percent MOE")
-		quietly label var `var' "`moe_var_note'"
-		quietly note `var': `moe_var_note'
+	if "`nolabel'" == "" {
+		
+		// check if label .do data file exists, run catalog if not
+		local product_lower = strlower("`product'")
+		capture confirm file "`cachepath'/acs_dict_`max_year'_`sample'yr_`product_lower'_do.dta"
+		if _rc != 0 & "`nolabel'" == "" {
+			display as result "{p}{it:Loading data dictionary. This may take a few moments. Data dictionary will be cached for faster future access.}{p_end}"
+		    quietly _getcensus_catalog, year(`max_year') sample(`sample') 					///
+										product("`product'") cachepath("`cachepath'")
+		}
+
+		// label
+		// first make a list of variables in memory
+		quietly ds
+		local vars = ustrregexra("`r(varlist)'", " ", "|")
+		preserve
+		quietly {
+			// load cached do data file
+			use "`cachepath'/acs_dict_`max_year'_`sample'yr_`product_lower'_do.dta", clear
+			// keep only rows matching variable list
+			keep if ustrregexm(variable, "`vars'")
+			keep do
+			// output a temporary .do file
+			tempfile temp_do
+			outfile using "`temp_do'.do", noquote replace
+		}
+		restore
+		// run the temporary do file
+		quietly do "`temp_do'.do"
+		display as result "{p}Variables labeled using data dictionary for `max_year'.{p_end}"
+		if wordcount("`years'") > 1 {
+			display as result `"{p}You requested data for multiple years. Check the {browse "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html":ACS Table & Geography Changes} on the Census Bureau website.{p_end}"'
+		}
+		// vars_truncated is a c_local from the catalog program
+		if "`vars_truncated'" == "1" {		
+			display as result "{p}One or more variable labels were truncated. See the variable {help notes} for full descriptions.{p_end}"
+		}
 	}
-}
+	
+	
+	// export results ---------------------------------------------------------
+	
+	if "`saveas'" != "" {
+		
+		// strip file extension
+		local saveas = ustrregexra("`saveas'", "\.(.*)$", "") 
+		
+		// export to stata
+		save "`saveas'.dta", `replace'
+		
+			if "`exportexcel'" != "" {
+			
+			// check file doesn't already exist if no replace
+			if "`replace'" == "" {
+				capture confirm file "`saveas'.xlsx"
+				if _rc == 0 {
+					display as error "file `saveas'.xlsx already exists"
+					exit 602
+				}
+			}
+		
+			// export variable labels to excel
+			if "`nolabel'" == "" {
+			    quietly putexcel set "`saveas'.xlsx", sheet("acs_`sample'yr") `replace'
+				local i 1
+				foreach var of varlist _all {
+					// extract variable description from notes (so not truncated)
+					// if no note, use variable label 
+					// if no label, use variable name
+					notes _fetch var_note : `var' 1
+					local var_note = ustrregexra("`var_note'", "Variable: ", "")
+					local var_lbl : variable label `var'
+					local var_header = cond("`var_note'" != "", "`var_note'", "`var_lbl'")
+					local var_header = cond("`var_header'" == "", "`var'", "`var_header'")
+					// find column index
+					local col_1 = strupper(word("`c(alpha)'", floor((`i' - 1) / 26)))
+					local col_2 = strupper(word("`c(alpha)'", mod(`i' - 1 , 26) + 1))
+					local col = "`col_1'" + "`col_2'"
+					// export variable label
+					quietly putexcel `col'1 = "`var_header'"
+					local ++i
+				}
+			}
+			
+			// export data to excel
+			local start_cell = cond("`nolabel'" == "", "A2", "A1")
+			export excel using "`saveas'.xlsx", 								///
+						 cell(`start_cell') sheet("acs_`sample'yr", modify) 	///
+						 firstrow(variables)
+		}
+	}
 
-** Export using putexcel (so that we can export variable names)
-if "`exportexcel'" != "" {
-    qui ds
-    local i = 1
-    foreach var in `r(varlist)' {
-        local varlabel "``var'[note1]'"
-        if "`varlabel'" == "" {
-            local varlabel: variable label `var'
-        }
-        if "`varlabel'" == "" {
-            local varlabel "`var'"
-        }
-        
-        local colnum1 = floor((`i'-1)/26)
-        local colnum2 = mod(`i'-1, 26) + 1
-        local col1 = upper(word("`c(alpha)'", `colnum1'))
-        local col2 = upper(word("`c(alpha)'", `colnum2'))
-        local col = "`col1'`col2'"
-        
-        qui putexcel `col'1 = ("`varlabel'")
-        local i = `i' + 1
-    }
-}
-
-** Save and export
-if "`saveas'" != "" {
-	local dest_dir = c(pwd)
-    qui saveold `saveas'.dta, replace
-	dis as yellow `"Results saved as `dest_dir'/`saveas'.dta."'
-    if "`exportexcel'" != "" {
-        qui export excel using "`saveas'.xlsx", cell(A2) sheetmodify firstrow(var)
-		dis as yellow `"Results saved as `dest_dir'/`saveas'.xlsx."'
-    }
-}
-
-cap erase `temp'.dta // should delete automatically but it doesn't
-dis "For a discussion of how to interpret negative margins of error, see {browse www.census.gov/data/developers/data-sets/acs-1year/notes-on-acs-estimate-and-annotation-values.html:here}."
-// note if there is an error earlier, this command won't run and won't delete the temp file
+	`browse'
 
 end
 
-* END --------------------------------------------------------------------------
 

@@ -1,0 +1,61 @@
+VERSION 16.0
+
+POSITION . . 510 210
+
+
+// Lists ----------------------------------------------------------------------
+
+LIST keyword_descrip_list
+BEGIN
+  "Number and percent of population in poverty; overall, by age, and by race"
+  "Population by income-to-poverty ratio"
+  "Characteristics of the population at various income-to-poverty ratios"
+  "Median household income, overall and by race of householder"
+  "Percent of households participating in SNAP and characteristics of participating households"
+  "Number and percent of population covered by Medicaid, overall and by age"
+  "Housing characteristics, including housing costs"
+  "Detailed renter housing cost burden"
+  "Detailed homeowner housing cost burden"
+  "Median household income and family poverty status, by housing tenure"
+  "Nativity of children, by age and parent's natvity"
+  "Children by poverty status and parent's nativity"
+END
+
+LIST keyword_list
+BEGIN
+  "pov"
+  "povratio"
+  "povratio_char"
+  "medinc"
+  "snap"
+  "medicaid"
+  "housing_overview"
+  "costburden_renters"
+  "costburden_owners"
+  "tenure_inc"
+  "kids_nativity"
+  "kids_pov_parents_nativity"
+END
+
+
+// Main tab -------------------------------------------------------------------
+
+DIALOG main, label("Choose a keyword by its description")
+BEGIN
+  LISTBOX  cb_keyword   10  10  500  200 ,           ///
+                contents(keyword_descrip_list)       ///
+                values(keyword_list)
+END
+
+OK ok1
+CANCEL can1
+
+
+// Command --------------------------------------------------------------------
+
+PROGRAM command
+BEGIN
+  put main.cb_keyword
+END
+
+
