@@ -25,7 +25,7 @@ getcensus requires Stata version 13.1 or later.
 
 ## About
 
-To learn more about getcensus, please visit the getcensus documentation at [link-tbd](link-tbd). 
+To learn more about getcensus, please visit the getcensus documentation at [centeronbudget.github.io/getcensus/](https://centeronbudget.github.io/getcensus/). 
 
 getcensus uses the Census Bureau Data API but is not endorsed or
 certified by the Census Bureau.
@@ -42,5 +42,5 @@ State Priorities Partnership members may email the CBPP Data Team or contact us 
 getcensus is a project of the [Center on Budget and Policy Priorities](http://www.cbpp.org), a nonpartisan research and policy institute. 
 
 It is developed and maintained by [Claire Zippel](https://www.cbpp.org/about/our-staff/claire-zippel) and [Matt Saenz](https://www.cbpp.org/about/our-staff/matt-saenz). It was created by [Raheem Chaudhry](https://github.com/raheem03) and [Vincent
-Palacios](https://github.com/vincentpalacios). Contributors include: [Lori Zakalik](https://github.com/lzak88).
+Palacios](https://github.com/vincentpalacios). Contributors include [Lori Zakalik](https://github.com/lzak88).
 
