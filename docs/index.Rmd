@@ -3,16 +3,17 @@ title: "getcensus"
 output: 
   html_document:
     theme: paper
+    css: "style.css"
     toc: true
     toc_float: true
     collapsed: FALSE
-    
 ---
 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
-                      message = FALSE)
+                      message = FALSE,
+                      cache = TRUE)
 library(tidyverse)
 library(readxl)
 library(kableExtra)
@@ -160,7 +161,7 @@ overwritten.
 
 **product(**<i>string</i>**)** will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. Default is DT. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. If both **product()** and **table()** are specified with **getcensus catalog**, **product()** is ignored and the appropriate product type is determined by the contents of **table()**.
 
-```{r}
+```{r product}
 options(knitr.kable.NA = "")
 
 tribble(
@@ -192,9 +193,9 @@ tribble(
 
 A list of geographies supported by **getcensus** can be found below. For some geographies, users may specify an abbreviation rather than the full name. The Options column indicates whether **statefips()** or **countyfips()** may be specified with a given geography. **Bold** indicates the option is required with a given geography.
 
-```{r, echo=FALSE}
-
-read_excel("dev/doc_tables.xlsx", sheet = "geographies") %>%
+```{r geographies}
+options(knitr.kable.NA = "")
+read_excel("doc_tables.xlsx", sheet = "geographies") %>%
   rename(" " = 1) %>%
   kbl() %>%
   kable_styling(position = "left",
@@ -210,8 +211,9 @@ Geographic components are division of a geographic unit by certain criteria. **g
 
 An example: `getcensus [variable IDs], geography(state) geocomponents(H0 C0)` will return two observations for each state: one for the portion of the state not in a metropolitan statistical area ("H0"), and one for the portion of the state in a metropolitan statistical area ("C0").
 
-```{r, echo=FALSE}
-read_excel("dev/doc_tables.xlsx", sheet = "geocomponents") %>%
+```{r geocomponents}
+options(knitr.kable.NA = "")
+read_excel("doc_tables.xlsx", sheet = "geocomponents") %>%
   rename(" " = 1) %>%
   kbl() %>%
   kable_styling(position = "left",
@@ -230,8 +232,9 @@ read_excel("dev/doc_tables.xlsx", sheet = "geocomponents") %>%
 
 Users may use a keyword to retrieve a curated set of variables.
 
-```{r}
-read_excel("dev/doc_tables.xlsx", sheet = "keywords") %>%
+```{r keywords}
+options(knitr.kable.NA = "")
+read_excel("doc_tables.xlsx", sheet = "keywords") %>%
   kbl() %>%
   kable_styling(position = "left",
                 bootstrap_options = "striped",
@@ -243,7 +246,7 @@ read_excel("dev/doc_tables.xlsx", sheet = "keywords") %>%
 
 # Examples
 
-## Variables, tables, and keywords
+### Variables, tables, and keywords
 
 Single table
 ```
@@ -265,7 +268,7 @@ Keyword
 ```
 getcensus medinc
 ```
-## Years and samples
+### Years and samples
 
 Single year (default is most recent available)
 ```
@@ -281,7 +284,7 @@ Samples (default is 1)
 getcensus B19013, sample(5)
 getcensus B19013, sample(3) year(2013)
 ```
-## Geographies
+### Geographies
 
 Types (default is state)
 ```
@@ -308,7 +311,7 @@ getcensus B19013, geocomponents(H0)
 getcensus B19013, geocomponents(01 43) statefips(13)
 getcensus B19013, sample(5) geography(us) geocomponents(92)
 ```
-## Catalog
+### Catalog
 
 All variables in tables of a given product type
 ```
@@ -329,7 +332,7 @@ getcensus catalog, search(educational attainment) table(S1701)
 
 The getcensus dialog box provides full access to the program in an easy-to-use, interactive format. Open the dialog box by typing `getcensus` without arguments, or by typing `db getcensus`. 
 
-<img src="dev/dialog_box.png" align="center" width="350" style="border:0.75px solid #0C61A4;"/>
+<img src="dialog_box.png" alt="Screenshot of getcensus Stata dialog box" align="center" width="350" style="border:0.75px solid #0C61A4;"/>
 
 
 # Getting Help
@@ -341,15 +344,15 @@ Report a bug by filing an issue on GitHub [here](https://github.com/CenterOnBudg
 
 # About 
 
-**getcensus** is a project of the [Center on Budget and Policy Priorities](http://www.cbpp.org), a nonpartisan research and policy institute.
+**getcensus** is a project of the [Center on Budget and Policy Priorities](https://www.cbpp.org), a nonpartisan research and policy institute.
 
-<img src="https://www.cbpp.org/sites/all/themes/custom/cbpp/logo.png" align="center" width="200"/>
+<a href="https://www.cbpp.org"><img src="https://www.cbpp.org/sites/all/themes/custom/cbpp/logo.png" alt="Center on Budget and Policy Priorities logo" align="center" width="200"/></a>
 
-## License
+### License
 
 [Full license](https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE)
 
-## Contributors
+### Contributors
 
 **getcensus** is developed and maintained by [Claire Zippel](https://www.cbpp.org/about/our-staff/claire-zippel) and [Matt Saenz](https://www.cbpp.org/about/our-staff/matt-saenz). It was created by [Raheem Chaudhry](https://github.com/raheem03) and [Vincent
 Palacios](https://github.com/vincentpalacios). Contributors include: [Lori Zakalik](https://github.com/lzak88).
