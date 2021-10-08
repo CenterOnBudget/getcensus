@@ -3,12 +3,19 @@ title: "getcensus"
 output: 
   html_document:
     theme: paper
-    css: "style.css"
+    css: ["style.css", "clipboard.css"]
     toc: true
     toc_float: true
     collapsed: FALSE
 ---
 
+<!-- source: https://github.com/r-lib/pkgdown/pull/415/files --> 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+
+```{js, code=xfun::read_utf8("clipboard_plugin.js"), echo=FALSE}
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
