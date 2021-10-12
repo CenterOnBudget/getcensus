@@ -1,39 +1,19 @@
-/* source: https://github.com/r-lib/pkgdown/pull/415/files */
-
-function changeTooltipMessage(element, msg) {
-  var tooltipOriginalTitle=element.getAttribute('data-original-title');
-  element.setAttribute('data-original-title', msg);
-  $(element).tooltip('show');
-  element.setAttribute('data-original-title', tooltipOriginalTitle);
-}
+/* adapted from https://github.com/r-lib/pkgdown/blob/master/inst/assets/BS4/pkgdown.js */
 
 if(Clipboard.isSupported()) {
   $(document).ready(function() {
-    var copyButton = "<button type='button' class='btn btn-primary btn-copy-ex' type = 'submit' title='Copy to clipboard' aria-hidden='true' data-toggle='tooltip' data-placement='left auto' data-trigger='hover' data-clipboard-copy><i class='fa fa-copy' aria-hidden='true'></i></button>";
+    var copyButton = "<button type='button' class='btn btn-primary btn-copy-ex' type = mit' title='Copy to clipboard' aria-hidden='true' data-placementft auto' data-trigger='hover' data-clipboard-copy><i class='glyphicon glyphicon-copy' -hidden='true'></i></button>";
     
-    /* cz modified line below with "pre" */
     $("pre").addClass("hasCopyButton");
 
     // Insert copy buttons:
     $(copyButton).prependTo(".hasCopyButton");
-
-    // Initialize tooltips:
-    $('.btn-copy-ex').tooltip({container: 'body'});
 
     // Initialize clipboard:
     var clipboardBtnCopies = new Clipboard('[data-clipboard-copy]', {
       text: function(trigger) {
         return trigger.parentNode.textContent;
       }
-    });
-
-    clipboardBtnCopies.on('success', function(e) {
-      changeTooltipMessage(e.trigger, 'Copied!');
-      e.clearSelection();
-    });
-
-    clipboardBtnCopies.on('error', function() {
-      changeTooltipMessage(e.trigger,'Press Ctrl+C or Command+C to copy');
     });
   });
 }
