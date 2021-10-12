@@ -2,18 +2,24 @@
 title: "getcensus"
 output: 
   html_document:
+    includes:
+      in_header: header.html
     theme: paper
-    css: "style.css"
-    toc: true
-    toc_float: true
+    css: ["style.css", "clipboard.css"]
+    toc: TRUE
+    toc_float: TRUE
     collapsed: FALSE
 ---
 
 
+
+```{js, code=xfun::read_utf8("clipboard_plugin.js"), echo=FALSE}
+```
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE,
-                      cache = TRUE)
+                      cache = FALSE)
 library(tidyverse)
 library(readxl)
 library(kableExtra)
@@ -43,8 +49,9 @@ If you are new to American Community Survey data, the Census Bureau's handbook [
 
 Install **getcensus** with:
 
-    net install getcensus, from("https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src") replace
-
+```
+net install getcensus, from("https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src") replace
+```
 
 To update your installation of **getcensus** to the latest version, run:
 
@@ -161,7 +168,7 @@ overwritten.
 
 **product(**<i>string</i>**)** will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. Default is DT. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. If both **product()** and **table()** are specified with **getcensus catalog**, **product()** is ignored and the appropriate product type is determined by the contents of **table()**.
 
-```{r product}
+```{r product, cache=TRUE}
 options(knitr.kable.NA = "")
 
 tribble(
@@ -193,7 +200,7 @@ tribble(
 
 A list of geographies supported by **getcensus** can be found below. For some geographies, users may specify an abbreviation rather than the full name. The Options column indicates whether **statefips()** or **countyfips()** may be specified with a given geography. **Bold** indicates the option is required with a given geography.
 
-```{r geographies}
+```{r geographies, cache=TRUE}
 options(knitr.kable.NA = "")
 read_excel("doc_tables.xlsx", sheet = "geographies") %>%
   rename(" " = 1) %>%
@@ -211,7 +218,7 @@ Geographic components are division of a geographic unit by certain criteria. **g
 
 An example: `getcensus [variable IDs], geography(state) geocomponents(H0 C0)` will return two observations for each state: one for the portion of the state not in a metropolitan statistical area ("H0"), and one for the portion of the state in a metropolitan statistical area ("C0").
 
-```{r geocomponents}
+```{r geocomponents, cache=TRUE}
 options(knitr.kable.NA = "")
 read_excel("doc_tables.xlsx", sheet = "geocomponents") %>%
   rename(" " = 1) %>%
@@ -232,7 +239,7 @@ read_excel("doc_tables.xlsx", sheet = "geocomponents") %>%
 
 Users may use a keyword to retrieve a curated set of variables.
 
-```{r keywords}
+```{r keywords, cache=TRUE}
 options(knitr.kable.NA = "")
 read_excel("doc_tables.xlsx", sheet = "keywords") %>%
   kbl() %>%
