@@ -47,8 +47,14 @@ If you are new to American Community Survey data, the Census Bureau's handbook [
 
 # Getting Started
 
-Install **getcensus** with:
+Install **getcensus** with:[^2]
 
+```
+ssc install getcensus
+
+```
+
+[^2]: The GitHub version of the package may occasionally be more up-to-date than the SSC version. You can install **getcensus** from GitHub by running:
 ```
 net install getcensus, from("https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src") replace
 ```
