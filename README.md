@@ -9,7 +9,7 @@ getcensus is a Stata package to load American Community Survey (ACS) estimates f
 
 Install getcensus with:
 
-    net install getcensus, from("https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src") replace
+    ssc install getcensus
 
 
 To update your installation of getcensus to the latest version, run:
