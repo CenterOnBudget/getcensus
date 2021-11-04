@@ -4,22 +4,23 @@ output:
   html_document:
     includes:
       in_header: header.html
+      after_body: footer.html
     theme: paper
-    css: ["style.css", "clipboard.css"]
-    toc: TRUE
-    toc_float: TRUE
-    collapsed: FALSE
+    css: ["css/styles.css", "css/clipboard_buttons.css"]
+    mathjax: null
+    toc: true
+    toc_float: true
 ---
 
 
 
-```{js, code=xfun::read_utf8("clipboard_plugin.js"), echo=FALSE}
+```{js, code=xfun::read_utf8("js/clipboard_buttons.js"), echo=FALSE, cache=FALSE}
 ```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE,
-                      cache = FALSE)
+                      cache = TRUE)
 library(tidyverse)
 library(readxl)
 library(kableExtra)
@@ -36,7 +37,7 @@ The Census Bureau publishes thousands of data tables on the web at [data.census.
 
 To obtain data from the API, you will need to know the table ID and variable ID of the data point you are interested in. Each table that the Census Bureau publishes on data.census.gov has a unique table ID, and each data point within a table has a unique variable ID. For instance, table S1701, [Poverty status in the past 12 months](https://data.census.gov/cedsci/table?tid=ACSST1Y2019.S1701&hidePreview=true), contains the estimated number of people in poverty. The variable ID for this data point is S1701_C02_001. 
 
-To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a [keyword](#keywords) to __getcensus__. If a list of variable IDs is specified, the variables must come from tables that share the same product type (Data Profile, Subject Table, Comparison Profile, or Detailed Table). By default, **getcensus** retrieves both estimates and their margins of error, so users should not suffix variable IDs with "E" (for estimate) or "M" (for margin of error). In the Stata dataset loaded by **getcensus**, the variable names are the ACS variable IDs. Variable labels contain the ACS variable's description and a variable note contains the name of the ACS variable's table. If the option __nolabel__ is specified, this metadata will not be included.
+To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a [keyword](#keywords) to **getcensus**. If a list of variable IDs is specified, the variables must come from tables that share the same product type (Data Profile, Subject Table, Comparison Profile, or Detailed Table). By default, **getcensus** retrieves both estimates and their margins of error, so users should not suffix variable IDs with "E" (for estimate) or "M" (for margin of error). In the Stata dataset loaded by **getcensus**, the variable names are the ACS variable IDs. Variable labels contain the ACS variable's description and a variable note contains the name of the ACS variable's table. If the option **nolabel** is specified, this metadata will not be included.
 
 Users rarely know offhand the variable ID or table ID of the data points they would like to retrieve. **getcensus catalog** allows users to access the API data dictionaries. For instance, `getcensus catalog, product(ST)` will load into memory a dataset containing, for every variable in the subject tables ("ST"): the variable ID, the variable's description, and the name of the variable's table.
 
@@ -174,7 +175,7 @@ overwritten.
 
 **product(**<i>string</i>**)** will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. Default is DT. For information about ACS tables and product types, see [this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. If both **product()** and **table()** are specified with **getcensus catalog**, **product()** is ignored and the appropriate product type is determined by the contents of **table()**.
 
-```{r product, cache=TRUE}
+```{r product}
 options(knitr.kable.NA = "")
 
 tribble(
@@ -206,7 +207,7 @@ tribble(
 
 A list of geographies supported by **getcensus** can be found below. For some geographies, users may specify an abbreviation rather than the full name. The Options column indicates whether **statefips()** or **countyfips()** may be specified with a given geography. **Bold** indicates the option is required with a given geography.
 
-```{r geographies, cache=TRUE}
+```{r geographies}
 options(knitr.kable.NA = "")
 read_excel("doc_tables.xlsx", sheet = "geographies") %>%
   rename(" " = 1) %>%
@@ -215,7 +216,7 @@ read_excel("doc_tables.xlsx", sheet = "geographies") %>%
                 bootstrap_options = "striped",
                 fixed_thead = TRUE) %>%
   footnote(symbol = c("only 5-year estimates are available for this geography",
-                      "only 5-year estimates are available when __statefips()__ is specified with this geography"))
+                      "only 5-year estimates are available when **statefips()** is specified with this geography"))
 ```
 
 ## Geographic components
@@ -224,7 +225,7 @@ Geographic components are division of a geographic unit by certain criteria. **g
 
 An example: `getcensus [variable IDs], geography(state) geocomponents(H0 C0)` will return two observations for each state: one for the portion of the state not in a metropolitan statistical area ("H0"), and one for the portion of the state in a metropolitan statistical area ("C0").
 
-```{r geocomponents, cache=TRUE}
+```{r geocomponents}
 options(knitr.kable.NA = "")
 read_excel("doc_tables.xlsx", sheet = "geocomponents") %>%
   rename(" " = 1) %>%
@@ -245,7 +246,7 @@ read_excel("doc_tables.xlsx", sheet = "geocomponents") %>%
 
 Users may use a keyword to retrieve a curated set of variables.
 
-```{r keywords, cache=TRUE}
+```{r keywords}
 options(knitr.kable.NA = "")
 read_excel("doc_tables.xlsx", sheet = "keywords") %>%
   kbl() %>%
@@ -345,7 +346,7 @@ getcensus catalog, search(educational attainment) table(S1701)
 
 The getcensus dialog box provides full access to the program in an easy-to-use, interactive format. Open the dialog box by typing `getcensus` without arguments, or by typing `db getcensus`. 
 
-<img src="dialog_box.png" alt="Screenshot of getcensus Stata dialog box" align="center" width="350" style="border:0.75px solid #0C61A4;"/>
+<img src="images/dialog_box.png" alt="Screenshot of getcensus Stata dialog box" align="center" width="350" style="border:0.75px solid #0C61A4;"/>
 
 
 # Getting Help

@@ -2,7 +2,7 @@
 
 if(Clipboard.isSupported()) {
   $(document).ready(function() {
-    var copyButton = "<button type='button' class='btn btn-primary btn-copy-ex' type = mit' title='Copy to clipboard' aria-hidden='true' data-placementft auto' data-trigger='hover' data-clipboard-copy><i class='glyphicon glyphicon-copy' -hidden='true'></i></button>";
+    var copyButton = "<button type='button' class='btn btn-primary btn-copy-ex' title='Copy to clipboard' aria-label='Copy to clipboard' data-toggle='tooltip' data-trigger='hover' data-clipboard-copy><i class='glyphicon glyphicon-copy'></i></button>";
     
     $("pre").addClass("hasCopyButton");
 

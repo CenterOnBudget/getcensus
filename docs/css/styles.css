@@ -37,3 +37,16 @@ a {
   color: #0076bf
 }
 
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+    background-color: #0076bf;
+    border-color: #0076bf;
+}
+
+.btn-primary {
+  background-color: #0076bf;
+}
+
+.btn-primary.active, .btn-primary.active:hover, .btn-primary.active:focus {
+  background-color: #0076bf;  
+}
+
