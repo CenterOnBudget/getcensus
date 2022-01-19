@@ -1,229 +1,224 @@
-* TUTORIAL: getcensus (v 0.1.1)
-
-/* 
-
-For additional getcensus documentation, visit: 
-https://centeronbudget.github.io/getcensus/ 
-
-*/
-
-* 1. Install getcensus ---------------------------------------------------------
+* TUTORIAL: getcensus 
 
 
-* Install getcensus by running the following command:
+																				
+* 1. Installation -------------------------------------------------------------
 
-net install getcensus, from("https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src")
+* Install getcensus with:
 
-
-* Now, check to see if Stata can locate getcensus:
-
-which getcensus
+ssc install getcensus
 
 
-* 2. Obtain a Census API key ---------------------------------------------------
 
+* 2. Set up Census Bureau API key ---------------------------------------------
 
-/*
+																				/*
+Sign up for an API key here:
 
-Sign up for a key here:
 https://api.census.gov/data/key_signup.html
 
-Now, direct getcensus to your API key by:
 
-A) Adding the following line of code to your profile.do
-   global censuskey "YOUR_KEY_HERE"
+Store your API key to avoid specifying the key() option each time you use 
+getcensus by either: 
 
-B) Including the following line at the top of any .do file using getcensus
-   global censuskey "YOUR_KEY_HERE"
+	Adding the following line of code to your profile.do
 
-Learn more about your profile.do here:
-https://www.stata.com/support/faqs/programming/profile-do-file/
+			global censuskey "your-api-key-here"
+			
+	   Learn about where to find your profile.do here: 
+	   https://www.stata.com/support/faqs/programming/profile-do-file/
 
-*/
-
-
-* 3. Check out the help file ---------------------------------------------------
-
-
-help getcensus
+	Including the following line at the top of any .do file using getcensus
+			global censuskey "your-api-key-here" 
+																				*/
 
 
-* 4. Try out some basic queries ------------------------------------------------
+* 3. Help file and online documentation ---------------------------------------
+																				/*
+View the help file:												
+																				*/
+	help getcensus
+																				/*	
+Visit the online documentation:
+
+	https://centeronbudget.github.io/getcensus/
+																				*/
 
 
-* Retrieve a single estimate, number in poverty by state
+* 8. Search the API data dictionary -------------------------------------------
 
-getcensus b17001_002, clear
-
-
-* Retreive more than one estimate (all estimates must be from the same table type)
-
-getcensus B17001_001 b17001_002, clear
+																				/*
+To find the variable ID or table ID of the data points you're interested in, 
+use getcensus catalog to search the API data dictionaries.
 
 
-* Retrieve a full table, median household income by state
+Use table() all estimates in a table
+																				*/
+getcensus catalog, table(S1701) clear
 
+																				/*
+Use search() and product() to find estimates and tables matching a search term 
+within a given product type.
+																				*/
+getcensus catalog, search(poverty) product(ST) clear
+
+
+										
+* 4. Basic queries ------------------------------------------------------------
+
+																				/* 
+Retrieve a table
+																				*/
 getcensus B19013, clear
 
+																				/* 
+Retrieve a single estimate
+																				*/
+getcensus S1701_C02_001, clear
 
-* Specify a year
+																				/* 
+Retrieve more than one estimate 
+	Estimates can be from different tables, as long as those tables are of the
+	same product type (e.g., detailed table)
+																				*/
+getcensus S1701_C02_001 S1701_C03_001, clear
 
-getcensus B19013, year(2016) clear
-
-
-* Specify a geography
-
-getcensus B19013, geography(county) clear
-
-
-* Specify a year and a geography
-
-getcensus B19013, year(2015) geography(county) clear
-
-
-* Specify 3 years: 2015, 2016, and 2017
-
-getcensus B19013, years(2015/2017) clear
-
-
-* Specify 5 states by listing state FIPS codes in the geoids() option
-
-getcensus B19013, geoids(24 51 11 48 06) clear
-
-
-/*
-
-Retreive the table for all counties in those 5 states by specifying
-county in the geography() option and listing the state FIPS codes in the 
-statefips() option
-
-You can use statefips() rather than geoids() when your georgraphy() is
-state or a sub-geography of state
-
-*/
-
-getcensus B19013, geography(county) statefips(24 51 11 48 06) clear
-
-
-/*
- 
-Use geoids() to retrieve data on specific statistical geographic areas
-
-When geoids() is a sub-geography of state and includes state or county code,
-state code should be specified in statefips() and county code should be 
-specified in countyfips()
-
-geoids() should only contain the last component of the GEOID. 
-
-*/
-
-getcensus B19013, sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100) clear
-
-
-* Specify a geocomponent (a geographic unit defined by certain criteria)
-
-getcensus B19013, geography(state) geocomponents(H0) clear
-
-
-/*
-
+																				/* 
 Use one of getcensus' 12 built-in keywords to retrieve a curated set of
-estimates. Keyword "snap" retrieves data on SNAP participation overall and
-by poverty status, income, disability status, family composition, and family
-work effort.
+estimates. 
 
-*/
-
+A list of keywords can be found in the help file:
+	help getcensus##keywords
+	
+The keyword "snap" retrieves data on the percent of households 
+participating in SNAP and characteristics of participating households.
+																				*/
 getcensus snap, clear
 
 
 
-* 5. Use the getcensus dialog box to form a query ---------------------------
+* 5. Options ------------------------------------------------------------------
 
-/*
+																				/* 
+By default, getcensus retrieves 1-year estimates for states for the most recent 
+available year.
 
-The dialog box provides full access to the program in an easy-to-use
-interactive format.
 
-*/
+Specify a year
+																				*/
+getcensus B19013, year(2018) clear
 
-getcensus
+																				/* 
+Specify a range of years
+																				*/
+getcensus B19013, years(2017/2019) clear
 
-* or
+																				/* 
+Specify a sample (1-, 3-, or 5-year estimates)
+																				*/
+getcensus B19013, sample(5) clear
 
-db getcensus
+																				/* 
+Specify a geography
+																				*/
+getcensus B19013, geography(county) clear
+
+																				/* 
+Specify a year and a geography
+																				*/
+getcensus B19013, year(2018) geography(county) clear
+
+																				/* 
+Specify states by listing state FIPS codes in the statefips() option
+																				*/
+getcensus B19013, statefips(11)
+getcensus B19013, statefips(24 51 11) clear
+
+																				/*
+Retreive the table for all counties within states by specifying 'county' in the 
+geography() option and listing state FIPS codes in the statefips() option
+																				*/
+getcensus B19013, geography(county) statefips(24 51 11 48 06) clear
+																				/*
+You can use statefips() with any geography that is nested within a state.
+A list of those geographies can be found in the help file:
+	help getcensus##geographies
+																				
+																				
+Use geoids() to retrieve data on a specific geographic unit
+
+geoids() should only contain the last component of the GEOID. If the geography 
+is nested within a state, the state code portion of the GEOID should be 
+specified in statefips(). 
+																				*/
+getcensus B19013, geography(county) statefips(24) geoids(005 510)
+																				/*
+If the geography is nested with a county, the county code should be specified 
+in countyfips().
+																				*/
+getcensus B19013, sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100) clear
+
+																				/*
+Use geocomponent() to retrieve data for geographic components, which are 
+divisions of a geography by certain criteria (e.g., in metropolitan area, rural)
+
+A list of geographic component codes can be found in the help file:
+	help getcensus##geographies
+																				*/
+getcensus B19013, geography(state) geocomponents(H0) clear
+
 
 
 * 6. Export data as Stata or Excel file  ---------------------------------------
 
+																				/*
+To export data in Stata's native format, .dta, use the saveas() option. 
+																				
+Specify a file name to save the data in your current working directory. (Don't 
+include a file extension.)
+																				*/
+getcensus B19013, saveas("getcensus_tutorial") clear 
+																				/*
+Specify a file path to save the data somewhere else. (Don't include a file 
+extension.)
+																				*/
+* getcensus B19013, saveas("my_drive/folder/getcensus_tutorial") clear
 
-/*
-
-To export data in Stata's native format, .dta, use the saveas() option.
-The file will be exported to your current working directory.
-
-*/
-
-cd // Current working directory
-
-getcensus B19013, saveas("getcensus_tutorial") clear  // Don't include file extension
-
-
-/* 
-To export data as an Excel spreadsheet, add the exportexcel option.
-This saves a .xls/.xlsx  file in your working directory.
-*/
-
-getcensus B19013, saveas("getcensus_tutorial") exportexcel clear
+																				/*
+To also export data as an Excel spreadsheet, add the exportexcel option.
+																				*/
+getcensus B19013, saveas("getcensus_tutorial") exportexcel clear 
 
 
-* 7. Enter interactive mode ----------------------------------------------------
 
+* 7. Dialog box ---------------------------------------------------------------
 
-* Select one option from each section and then click "Retrieve my data"
+																				/*
+The getcensus dialog box provides full access to the program in an easy-to-use 
+interactive format.
 
+To open the dialog box, run:
+																				*/
 getcensus
 
 
-* 8. Use catalog mode to search the data dictionary ----------------------------
+
+* 8. Getting help --------------------------------------------------------------
+
+																				/*
+View the help file:												
+																				*/
+	help getcensus
+																				/*	
+Visit the online documentation:
+
+	https://centeronbudget.github.io/getcensus/
+
+	
+If you think you've found a bug, file an issue on GitHub:
+
+	https://www.github.com/CenterOnBudget/getcensus/issues
+																				*/
 
 
-* Find all estimates and tables whose names include "poverty"
-
-getcensus catalog, search(poverty) clear
-
-
-* Find all estimates associated with table S1701
-
-getcensus catalog, table(S1701) clear
-
-
-* 9. Getting Help --------------------------------------------------------------
-
-/* 
-
-If you are having trouble installing getcensus, report your issue here:
-https://github.com/CenterOnBudget/getcensus/issues 
-
-*/
-
-/*
-
-Remember to check out getcensus' helpfile if you get stuck. You can access
-it by running:
-
-*/
-
-help getcensus
-
-/*
-
-For further getcensus documentation, visit: 
-https://centeronbudget.github.io/getcensus/
-
-*/
-
-* That's it! -------------------------------------------------------------------
-
-* End of script ----------------------------------------------------------------
-
+																				
