@@ -1,6 +1,6 @@
-# 2.0.0
+## 2.0.0
 
-## New features
+### New features
 
 -   **Support for 12 geographic areas:**
 
@@ -22,7 +22,7 @@
 
 -   **Dialog box**: When getcensus is called without arguments, a dialog box opens. The dialog box provides access to all getcensus functionality. This replaces the limited getcensus "interactive mode", which operated through the Results window. Alternatively, users may call the getcensus dialog box by typing `db getcensus`.
 
-## Breaking changes
+### Breaking changes
 
 -   In `geography()`, "bg" replaces "block" to refer to the "block group" geography. "Block" is a distinct census geography for which ACS estimates are not available.
 
@@ -40,7 +40,7 @@
 
     -   **medicaid** now includes the percent, as well as the number, of individuals covered by Medicaid or other means-tested coverage (overall and by age group).
 
-## Other changes
+### Other changes
 
 -   `sample()` replaces `dataset()`, as it is more consistent with ACS terminology. Also, in the future `getcensus` may support other Census datasets, such as the decennial census and population estimates, so we'd like to preserve the `dataset()` option for future development. For now, the `dataset()` option is retained for compatibility; if specified, its contents are copied into `sample()`.
 
@@ -54,11 +54,11 @@
 
 -   A rewritten help file provides more information on supported geographies and geographic components, includes more links to Census Bureau resources, and is more clearly organized.
 
-## Under the hood
+### Under the hood
 
 getcensus version 2.0.0 is a full refactor of the program. Contributors should review [dev/README.md](https://github.com/CenterOnBudget/getcensus/tree/master/dev#readme).
 
-# 1.1.0
+## 1.1.0
 
 **Main program**
 
@@ -66,7 +66,7 @@ getcensus version 2.0.0 is a full refactor of the program. Contributors should r
 -   Improved and stricter handling of errors when user passes unsupported year-dataset or year-product combinations
 -   Some cleanup related to deprecation of `product` option
 
-# 1.0.0
+## 1.0.0
 
 **Main program**
 
@@ -83,7 +83,7 @@ getcensus version 2.0.0 is a full refactor of the program. Contributors should r
 -   Several typo fixes and minor edits
 -   Add link to GitHub page
 
-# 0.1.2
+## 0.1.2
 
 **Main program**
 
@@ -94,7 +94,7 @@ getcensus version 2.0.0 is a full refactor of the program. Contributors should r
 
 -   Several minor edits and typo fixes
 
-# 0.1.1
+## 0.1.1
 
 **Main program**
 
