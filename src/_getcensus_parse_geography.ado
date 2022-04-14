@@ -7,7 +7,18 @@ program define _getcensus_parse_geography, sclass
 	sreturn clear
 	
 	capture confirm file "`cachepath'/_getcensus_geo_args.dta"
-	if _rc != 0 {
+	if _rc == 0 {
+		preserve
+		use "`cachepath'/_getcensus_geo_args.dta", clear
+		// check if the dataset needs to be updated, and if so, regenerate it
+		local date_generated = date("`c(filedate)'", "D M Y hm")
+		local date_updated = date("2022-04-14", "YMD")
+		if `date_generated' <= `date_updated' {
+			local update_geo_args "y"
+		}
+		restore
+	}
+	if _rc != 0 | "`update_geo_args'" != "" {
 		findfile "_getcensus_geo_args.ado"
 		preserve
 		import delimited using "`r(fn)'", varnames(1) stringcols(_all) clear

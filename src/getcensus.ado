@@ -607,6 +607,8 @@ program define getcensus
 		if `is_table' & "`noerror'" != "" {
 			drop *_*m
 		}
+		
+		compress
 	}
 	
 	if "`nolabel'" == "" {
