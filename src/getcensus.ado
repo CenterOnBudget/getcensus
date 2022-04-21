@@ -687,7 +687,7 @@ program define getcensus
 					local col_2 = strupper(word("`c(alpha)'", mod(`i' - 1 , 26) + 1))
 					local col = "`col_1'" + "`col_2'"
 					// export variable label
-					quietly putexcel `col'1 = "`var_header'"
+					quietly putexcel `col'1 = ("`var_header'")
 					local ++i
 				}
 			}
