@@ -111,10 +111,9 @@ into memory a dataset containing, for every variable in the subject tables
 ("ST"): the variable ID, the variable's description, and the name of the 
 variable's table. 
 
-If you are new to American Community Survey data, the handbook "Understanding 
-and Using American Community Survey Data: What All Data Users Need to Know" is 
-the best place to start. It is available on the Census Bureau website 
-[here](https://www.census.gov/programs-surveys/acs/guidance/handbooks/general.html).
+If you are new to American Community Survey data, the Census Bureau's handbook 
+[Understanding and Using American Community Survey Data: What All Data Users Need to Know](https://www.census.gov/programs-surveys/acs/guidance/handbooks/general.html) 
+is the best place to start.
 
 _getcensus uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau._
 
@@ -142,7 +141,7 @@ and 2019).
 estimates, 3 for three-year estimates (2012-2013 only), or 5 for five-year 
 estimates. Default is 1. One-year estimates are only available for geographic 
 areas with more than 65,000 residents; see 
-[this page](https://www.census.gov/programs-surveys/acs/guidance/estimates.html) 
+[When to Use 1-year or 5-year Estimates](https://www.census.gov/programs-surveys/acs/guidance/estimates.html) 
 on the Census Bureau website.
 
 {phang}
@@ -151,15 +150,15 @@ data. Default is state. See
 {help getcensus##geographies:Supported Geographies}. 
 
 {phang}
-{opt key(string)} specifies your Census Bureau API key. If you do not have an 
-API key, you may acquire one 
-[here](https://api.census.gov/data/key_signup.html). To avoid specifying 
-__key()__ each time {bf:getcensus} is used, store your API key in a global 
-{help macro} named _censuskey_ in your profile.do. Learn about where to find 
-your profile.do 
-[here](https://www.stata.com/support/faqs/programming/profile-do-file/). If you 
-are unfamiliar with global macros, simply type
-{it:global censuskey "your-api-key-here"} into your profile.do. 
+{opt key(string)} specifies your Census Bureau API key. If you do not have an
+API key, you may acquire at 
+[https://api.census.gov/data/key_signup.html](https://api.census.gov/data/key_signup.html)
+. To avoid specifying __key()__ each time {bf:getcensus} is used, store your API 
+key in a global {help macro} named _censuskey_ in your profile.do. Learn about 
+where to find your profile.do in the 
+[profile.do FAQ](https://www.stata.com/support/faqs/programming/profile-do-file/) 
+on the Stata website. If you are unfamiliar with global macros, simply type 
+{it:global censuskey "your-api-key-here"} into your profile.do.
 
 {phang}
 __nolabel__ specifies that retrieved data should not be labeled with 
@@ -195,15 +194,16 @@ completes.
 
 {phang}
 {opt statefips(string)} Two-digit FIPS codes of state(s) to retrieve. Default is 
-usually all. A listing of state FIPS codes can be found 
-[here](https://www.nrcs.usda.gov/wps/portal/nrcs/detail/?cid=nrcs143_013696). 
+usually all. A listing of state FIPS codes can be found on the 
+[FIPS Codes page](https://www.census.gov/library/reference/code-lists/ansi.html#state) 
+on the Census Bureau website. 
 
 {phang}
-{opt countyfips(string)} Three-digit FIPS codes of counties to retrieve. A list 
-of county FIPS codes by year can be found 
-[here](https://www.census.gov/geographies/reference-files.2019.html) 
-on the Census Bureau website. Note that county FIPS codes may change between 
-years; see 
+{opt countyfips(string)} Three-digit FIPS codes of counties to retrieve. A list
+of county FIPS codes by year can be found on the 
+[Geography Reference Files page](https://www.census.gov/geographies/reference-files.html) 
+on the Census Bureau website. Note that county FIPS codes may change 
+between years; see 
 [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) 
 on the Census Bureau website. 
 
@@ -238,7 +238,7 @@ geographic components available on the Census Bureau API; see
 {opt product(string)} will load the API data dictionary for variables in tables 
 of a given product type, as specified with a two-letter abbreviation. Default is 
 DT. For information about ACS tables and product types, see 
-[this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) 
+[Table IDs Explained](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) 
 on the Census Bureau website. If both __product()__ and __table()__ are 
 specified with __getcensus catalog__, __product()__ is ignored and the 
 appropriate product type is determined by the contents of __table()__.
@@ -253,7 +253,7 @@ appropriate product type is determined by the contents of __table()__.
 {phang}
 {opt table(string)} will load the API data dictionary for a given table. For 
 information about ACS tables and product types, see 
-[this page](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) 
+[Table IDs Explained](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) 
 on the Census Bureau website. If both __product()__ and __table()__ are 
 specified with __getcensus catalog__, __product()__ is ignored and the 
 appropriate product type is determined by the contents of __table()__.
@@ -484,8 +484,8 @@ Authors
 
 __getcensus__ is a project of the 
 [Center on Budget and Policy Priorities](http://www.cbpp.org), a nonpartisan 
-research and policy institute. It is developed and maintained by Claire Zippel 
-and Matt Saenz. It was created by Raheem Chaudhry and Vincent Palacios. 
-Contributors include Lori Zakalik.
+research and policy institute. It is maintained by Claire Zippel and was 
+developed by Claire Zippel and Matt Saenz. getcensus was created by Raheem 
+Chaudhry and Vincent Palacios. Contributors include Lori Zakalik.
  
 ***/
