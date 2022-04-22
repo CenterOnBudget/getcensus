@@ -1,6 +1,9 @@
-* v 2.0.0
+*! version 2.0.1
+*! getcensus internal program
 
 program define _getcensus_parse_geography, sclass
+
+	version 13.1
 
 	syntax anything(name=geography), [cachepath(string)]
 	
@@ -11,9 +14,8 @@ program define _getcensus_parse_geography, sclass
 		preserve
 		use "`cachepath'/_getcensus_geo_args.dta", clear
 		// check if the dataset needs to be updated, and if so, regenerate it
-		local date_generated = date("`c(filedate)'", "D M Y hm")
-		local date_updated = date("2022-04-14", "YMD")
-		if `date_generated' <= `date_updated' {
+		local version : data label 
+		if "`version'" != "v 2.0.1" {
 			local update_geo_args "y"
 		}
 		restore
@@ -22,6 +24,7 @@ program define _getcensus_parse_geography, sclass
 		findfile "_getcensus_geo_args.ado"
 		preserve
 		import delimited using "`r(fn)'", varnames(1) stringcols(_all) clear
+		label data "v 2.0.1"
 		save "`cachepath'/_getcensus_geo_args.dta", replace
 		restore
 	}

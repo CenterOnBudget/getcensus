@@ -1,7 +1,10 @@
-* v 2.0.0
+*! version 2.0.1
+*! getcensus internal program
 
 program define _getcensus_catalog
 
+	version 13.1
+	
 	syntax , year(integer) sample(integer) [product(string)]	///
 			 [table(string) search(string)]						///
 			 cachepath(string) [load browse]
