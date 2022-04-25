@@ -1,19 +1,8 @@
-* v 2.0.0
-
-* for dev testing
-/*
-cd "${ghpath}/getcensus/src"
-capture program drop getcensus
-capture program drop _getcensus_expand_keyword
-capture program drop _getcensus_catalog
-capture program drop _getcensus_parse_geography
-run "_getcensus_expand_keyword.ado"
-run "_getcensus_catalog.ado"
-run "_getcensus_parse_geography.ado"
-**/
-
+*! version 2.0.1
 
 program define getcensus
+
+	version 13.1
 
 	syntax [anything(name=estimates)], 									///
 		   [YEARs(string) SAMPle(integer 1)]							///
@@ -500,6 +489,16 @@ program define getcensus
 		// make API call
 		capture noisily {
 			import delimited "`api_url'", stringcols(_all) varnames(1) stripquotes(yes) clear
+			
+			// check if an invalid API key message was returned
+			quietly ds
+			local v1 = word("`r(varlist)'", 1)
+			quietly assert !ustrregexm(`v1', "Invalid Key", 1)
+		}
+		if _rc == 9 {
+			display as error `"{p}You have entered an invalid or unactivated API key. If you do not have a key, you may acquire one {browse "https://api.census.gov/data/key_signup.html":here}.{p_end}"'
+			clear
+			exit
 		}
 		
 		// if unsuccessful, list possible reasons and provide link to API call
@@ -607,6 +606,8 @@ program define getcensus
 		if `is_table' & "`noerror'" != "" {
 			drop *_*m
 		}
+		
+		compress
 	}
 	
 	if "`nolabel'" == "" {
@@ -688,7 +689,7 @@ program define getcensus
 					local col_2 = strupper(word("`c(alpha)'", mod(`i' - 1 , 26) + 1))
 					local col = "`col_1'" + "`col_2'"
 					// export variable label
-					quietly putexcel `col'1 = "`var_header'"
+					quietly putexcel `col'1 = ("`var_header'")
 					local ++i
 				}
 			}

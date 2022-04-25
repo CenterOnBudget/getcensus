@@ -6,7 +6,7 @@ state,,state
 county,co,state county
 county subdivision,cousub,state county countysubdivision
 tract,,state county tract
-block group,bg,state county blockgroup
+block group,bg,state county tract blockgroup
 place,,state place
 alaska native regional corporation,anrc,state alaskanativeregionalcorporation
 american indian area/alaska native area/hawaiian home land,aiannh,americanindianareaalaskanativear
