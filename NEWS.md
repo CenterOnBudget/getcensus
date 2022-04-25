@@ -1,3 +1,10 @@
+## 2.0.1
+
+- Geographic identifier variables are now returned in an appropriate str format ([#57](https://github.com/CenterOnBudget/getcensus/issues/57))
+
+- getcensus now throws an informative error message when the API key is invalid ([#56](https://github.com/CenterOnBudget/getcensus/issues/56))
+
+
 ## 2.0.0
 
 ### New features
