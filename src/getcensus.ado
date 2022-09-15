@@ -94,7 +94,7 @@ program define getcensus
 	local release_date = cond(`sample' == 1, 					///
 							  td(15sep`this_year'), 			///
 							  td(8dec`this_year'))
-	local max_avail_year = cond(td(`today') > `release_date',	///
+	local max_avail_year = cond(td(`today') >= `release_date',	///
 								`this_year' - 1,				///
 								`this_year' - 2)
 	if `max_year' > `max_avail_year' {
