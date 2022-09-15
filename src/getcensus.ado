@@ -1,4 +1,4 @@
-*! version 2.0.1
+*! version 2.1.0
 
 program define getcensus
 
@@ -22,7 +22,7 @@ program define getcensus
 	
 	// defaults
 	if "`years'" == "" {
-		local years 2019
+		local years 2021
 	}
 	
 
@@ -77,9 +77,9 @@ program define getcensus
 	// check min year is available for given sample
 	local min_avail_year = cond(`sample' == 1, 2005, 2009)
 	if `sample' == 3 {
-		capture numlist "`years'", range(>=2012 <=2013)
+		capture numlist "`years'", range(>=2007 <=2013)
 		if _rc != 0 {
-			display as error "{p}3-year ACS estimates are available for 2012 and 2013.{p_end}"
+			display as error "{p}3-year ACS estimates are available for 2007 to 2013.{p_end}"
 			exit
 		}
 	}
@@ -92,8 +92,8 @@ program define getcensus
 	local today = "`c(current_date)'" 
 	local this_year = year(td(`today'))
 	local release_date = cond(`sample' == 1, 					///
-							  td(17sep`this_year'), 			///
-							  td(10dec`this_year'))
+							  td(15sep`this_year'), 			///
+							  td(8dec`this_year'))
 	local max_avail_year = cond(td(`today') > `release_date',	///
 								`this_year' - 1,				///
 								`this_year' - 2)

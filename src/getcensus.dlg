@@ -1,4 +1,4 @@
-*! dialog for getcensus version 2.0.1
+*! dialog for getcensus version 2.1.0
 
 VERSION 13.1
 
@@ -276,7 +276,7 @@ BEGIN
 
   // disable sample if not available for year -----
 
-  if main.ed_yr.isNumlistInRange(2012, 2013) {
+  if main.ed_yr.isNumlistInRange(2007, 2013) {
     call main.rb_samp3.enable
   }
   else {

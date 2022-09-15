@@ -1,3 +1,10 @@
+## 2.1.0
+
+- getcensus now defaults to `year(2021)` to retrieve data for 2021
+
+- getcensus allows 3-year estimates for all years available on the API: 2007 to 2013
+
+
 ## 2.0.1
 
 - Geographic identifier variables are now returned in an appropriate str format ([#57](https://github.com/CenterOnBudget/getcensus/issues/57))
