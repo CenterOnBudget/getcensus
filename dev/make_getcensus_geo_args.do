@@ -1,5 +1,5 @@
 
-cd "${ghpath}/getcensus"
+* cd "${ghpath}/getcensus"
 
 import excel "dev/getcensus_geo_args.xlsx", firstrow clear 	// manually created 
 

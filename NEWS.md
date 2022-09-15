@@ -1,4 +1,4 @@
-## 2.1.0
+## 2.1.0 (development version on GitHub)
 
 - getcensus now defaults to `year(2021)` to retrieve data for 2021
 

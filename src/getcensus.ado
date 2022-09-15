@@ -22,7 +22,7 @@ program define getcensus
 	
 	// defaults
 	if "`years'" == "" {
-		local years 2021
+		local years = 2021
 	}
 	
 
@@ -59,9 +59,9 @@ program define getcensus
 	local years = ustrregexra("`years'", "-", "/")
 	numlist "`years'",  sort
 	local years = "`r(numlist)'"
-	// special handling for 2020
+	// special handling for 2020, for which 1-year estimates were not released
 	if `sample' == 1 & ustrregexm("`years'", "2020") {
-	    display as error `"{p}Standard 1-year ACS estimates for 2020 will not be released. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases/2020.html":2020 ACS Data Release} page on the Census Bureau website.{p_end}"'
+	    display as error `"{p}Standard 1-year ACS estimates for 2020 are not available. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases/2020.html":2020 ACS Data Release} page on the Census Bureau website.{p_end}"'
 		exit 
 	}
 	if wordcount("`years'") > 1 {
@@ -75,7 +75,6 @@ program define getcensus
 	}
 
 	// check min year is available for given sample
-	local min_avail_year = cond(`sample' == 1, 2005, 2009)
 	if `sample' == 3 {
 		capture numlist "`years'", range(>=2007 <=2013)
 		if _rc != 0 {
@@ -83,20 +82,14 @@ program define getcensus
 			exit
 		}
 	}
+	local min_avail_year = cond(`sample' == 1, 2005, 2009)
 	if `min_year' < `min_avail_year' {
 		display as error "{p}`sample'-year ACS estimates are available for `min_avail_year' and later.{p_end}"
 		exit
 	}
 
 	// check max year is available for given sample
-	local today = "`c(current_date)'" 
-	local this_year = year(td(`today'))
-	local release_date = cond(`sample' == 1, 					///
-							  td(15sep`this_year'), 			///
-							  td(8dec`this_year'))
-	local max_avail_year = cond(td(`today') >= `release_date',	///
-								`this_year' - 1,				///
-								`this_year' - 2)
+	local max_avail_year = cond(`sample' == 1, 2021, 2020)
 	if `max_year' > `max_avail_year' {
 		display as error `"{p}`sample'-year ACS estimates for `max_year' have not yet been released. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases.html":ACS data release page} on the Census website.{p_end}"'
 		exit

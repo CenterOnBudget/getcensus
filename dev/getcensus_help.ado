@@ -33,7 +33,7 @@ Search the API data dictionary
 {synopthdr}
 {synoptline}
 {syntab:Main}
-{synopt:{opth year:s(numlist)}}year(s) to retrieve; default is 2021.
+{synopt:{opth year:s(numlist)}}year(s) to retrieve; default is most recent available.
 {p_end}
 {synopt:{opt samp:le(integer)}}1, 3, or 5; default is {opt sample(1)}.
 {p_end}
@@ -126,8 +126,8 @@ Options
 
 {phang}
 {opth years(numlist)} specifies the years (or endyears, if multiyear estimates 
-are requested) of the sample to be retrieved. Defaults is the latest available 
-year. If multiple years are requested, data for all years requested will be 
+are requested) of the sample to be retrieved. Defaults is the most recent 
+available. If multiple years are requested, data for all years requested will be 
 appended together. Users requesting multiple years should be aware that not all 
 ACS estimates are available for all years, and table specifications and 
 geographies may change between years; see 
