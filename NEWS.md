@@ -1,8 +1,8 @@
-## 2.1.0 (development version on GitHub)
+## 2.1.0
 
 - getcensus now defaults to `year(2021)` to retrieve data for 2021
 
-- getcensus allows 3-year estimates for all years available on the API: 2007 to 2013
+- getcensus now allows 3-year estimates for all years available on the API: 2007 to 2013
 
 
 ## 2.0.1

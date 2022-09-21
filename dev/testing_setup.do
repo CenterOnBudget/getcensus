@@ -11,7 +11,7 @@ run "_getcensus_catalog.ado"
 run "_getcensus_parse_geography.ado"
 
 //*
-cd "${ghpath}/getcensus/dev"
-run "make_getcensus_geo_args.do"
-run "make_help_file.do"
+cd "${ghpath}/getcensus/"
+run "dev/make_getcensus_geo_args.do"
+run "dev/make_help_file.do"
 **/
