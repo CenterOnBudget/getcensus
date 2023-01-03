@@ -1,4 +1,4 @@
-*! version 2.1.0
+*! version 2.1.1
 
 program define getcensus
 
@@ -89,7 +89,7 @@ program define getcensus
 	}
 
 	// check max year is available for given sample
-	local max_avail_year = cond(`sample' == 1, 2021, 2020)
+	local max_avail_year = cond(`sample' == 1, 2021, 2021)
 	if `max_year' > `max_avail_year' {
 		display as error `"{p}`sample'-year ACS estimates for `max_year' have not yet been released. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases.html":ACS data release page} on the Census website.{p_end}"'
 		exit

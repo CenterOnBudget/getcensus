@@ -1,4 +1,4 @@
-*! version 2.1.0
+*! version 2.1.1
 *! getcensus internal program
 
 program define _getcensus_expand_keyword, sclass

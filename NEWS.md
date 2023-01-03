@@ -1,3 +1,7 @@
+## 2.1.1
+
+- getcensus now supports 2021 5-year estimates
+
 ## 2.1.0
 
 - getcensus now defaults to `year(2021)` to retrieve data for 2021
