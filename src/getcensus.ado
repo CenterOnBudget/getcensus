@@ -287,7 +287,7 @@ program define getcensus
       local geo_order "metropolitanmicropolitanstatisti"
     }
     if `multiple_years' {
-      display as error "{p}getcensus currently does not support retrieving 5-year estimates for {bf:geography(metro)} if multiple years are requested and 2021 is one of the requested years. This will be fixed in a future release.{p_end}"
+      display as error "{p}getcensus currently does not support retrieving 5-year estimates for {bf:geography({it:metro})} if multiple years are requested and 2021 is one of the requested years. This will be fixed in a future release.{p_end}"
       exit 198
     }
   }
