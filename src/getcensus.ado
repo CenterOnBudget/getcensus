@@ -59,17 +59,23 @@ program define getcensus
 	local years = ustrregexra("`years'", "-", "/")
 	numlist "`years'",  sort
 	local years = "`r(numlist)'"
+  
 	// special handling for 2020, for which 1-year estimates were not released
 	if `sample' == 1 & ustrregexm("`years'", "2020") {
 	    display as error `"{p}Standard 1-year ACS estimates for 2020 are not available. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases/2020.html":2020 ACS Data Release} page on the Census Bureau website.{p_end}"'
 		exit 
 	}
-	if wordcount("`years'") > 1 {
+  
+   // flag if multiple years requested
+  local multiple_years = wordcount("`years'") > 1
+  
+  // find min and max years
+	if `multiple_years' {
 		local years_list = ustrregexra("`years'", " ", ",")
 		local max_year = max(`years_list')
 		local min_year = min(`years_list')
 	}
-	if wordcount("`years'") == 1 {
+	if !`multiple_years' {
 		local max_year `years'
 		local min_year `years'
 	}
@@ -114,7 +120,7 @@ program define getcensus
 	if ustrregexm("`estimates'", "catalog", 1) {
 		
 		// search only the most recent year specified
-		if wordcount("`years") > 1 {
+		if `multiple_years' {
 			display as result "{p}{bf:getcensus catalog} searches only one year at a time. Using most recent year in {bf:years()}, `max_year'.{p_end}"
 		}
 
@@ -273,6 +279,18 @@ program define getcensus
 	local geo_full_name "`s(geo_full_name)'"
 	local geo_order "`s(geo_order)'"	// used to order variables later
 	sreturn clear
+  
+  // fix label changed in 2021 5-year
+  if "`geography'" == "metro" & `sample' == 5 & `max_year' == 2021 {
+    if !`multiple_years' {
+      local geo_full_name "metropolitan/micropolitan statistical area"
+      local geo_order "metropolitanmicropolitanstatisti"
+    }
+    if `multiple_years' {
+      display as error "{p}getcensus currently does not support retrieving 5-year estimates for {bf:geography(metro)} if multiple years are requested and 2021 is one of the requested years. This will be fixed in a future release.{p_end}"
+      exit 198
+    }
+  }
 
 	// replace unspecified geoid and statefips with wildcard
 	if "`geoids'" == "" {
@@ -499,7 +517,7 @@ program define getcensus
 		if _rc != 0 | c(N) == 0 {
 			display as error "{p}The Census Bureau API did not return data for `year'.{p_end}"
 			display as error "{p}This may have happened because:{p_end}" 
-			display as error "{phang}{c 149}  Table ID or variable IDs are invalid or are not available for the requested year.{p_end}" 
+			display as error "{phang}{c 149}  Table ID or variable IDs are invalid or are not available for the requested year or geography.{p_end}" 
 			if "`geoids'" != "*" {
 				display as error "{phang}{c 149}  GEOIDs are invalid, or are not available for the requested sample and/or year.{p_end}"
 			}
@@ -633,7 +651,7 @@ program define getcensus
 		// run the temporary do file
 		quietly do "`temp_do'.do"
 		display as result "{p}Variables labeled using data dictionary for `max_year'.{p_end}"
-		if wordcount("`years'") > 1 {
+		if `multiple_years' {
 			display as result `"{p}You requested data for multiple years. Check the {browse "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html":ACS Table & Geography Changes} on the Census Bureau website.{p_end}"'
 		}
 		// vars_truncated is a c_local from the catalog program
