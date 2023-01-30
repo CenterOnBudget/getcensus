@@ -412,18 +412,13 @@ program define getcensus
 	// prep for API call ------------------------------------------------------
 
 	// check API key is supplied
-	if "`key'" != "" {
-		display as result "{p}To avoid needing to specify {bf:key()}, store your API key in a global macro named {it:censuskey} in your profile.do. See the {help getcensus:help file} for instructions.{p_end}"
-	}
-	if "`key'" == "" {
-		if "$censuskey" == "" {
-			display as error `"{p}You must provide an API key to {bf:key()} or have defined a global macro named {it:censuskey} that contains your API key. To acquire an API key, register {browse "https://api.census.gov/data/key_signup.html":here}.{p_end}"'
-			exit
-		}
-		if "$censuskey" != "" {
-			local key "$censuskey"
-		}
-	}
+  local has_api_key = "`key'" != "" | "$censuskey" != ""
+  if !`has_api_key' {
+    display as result "{p}You have not provided an API key. Without a key, you are limited to 500 API queries per day. To use an API key, specify {bf:key()} or store your API key in a global macro named {it:censuskey} in your profile.do.{p_end}"
+  }
+  if `has_api_key' {
+    local key = cond("`key'" != "", "`key'", "$censuskey")
+  }
 
 	// add suffix(es) to estimate ids
 	if `is_estimate' {
@@ -499,7 +494,7 @@ program define getcensus
 		local api_url_base "https://api.census.gov/data/`year'/acs/acs`sample'`product_dir'"
 		local api_url_get "?get=`api_variables'NAME"
 		local api_url_geo "`geo_predicate'"
-		local api_url_key "&key=`key'"
+		local api_url_key = cond(`has_api_key', "&key=`key'", "")
 		local api_url "`api_url_base'`api_url_get'`api_url_geo'`api_url_key'"
 		
 		// for messages, whether to display link to API call or text of call
@@ -515,7 +510,7 @@ program define getcensus
 			quietly assert !ustrregexm(`v1', "Invalid Key", 1)
 		}
 		if _rc == 9 {
-			display as error `"{p}You have entered an invalid or unactivated API key. If you do not have a key, you may acquire one {browse "https://api.census.gov/data/key_signup.html":here}.{p_end}"'
+			display as error `"{p}You have entered an invalid or inactive API key. If you do not have a key, you may acquire one {browse "https://api.census.gov/data/key_signup.html":here}.{p_end}"'
 			clear
 			exit
 		}
