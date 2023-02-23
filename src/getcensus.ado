@@ -340,11 +340,14 @@ program define getcensus
 		exit 198
 	}
   // statefips can't be specified with ZCTA after 2019/2020
-  if "`geography'" == "zcta" & "`statefips'" != "*" {
+  if "`geography'" == "zcta" {
     local first_unsupported_year = cond("`product'" == "ST", 2019, 2020)
-    if  `max_year' >= `first_unsupported_year' {
-      display as error "{p}Starting with the `first_unsupported_year' 5-year estimates, {bf:statefips()} may not be specified with {bf:geography({it:zcta})} for the product type you have requested.{p_end}"
-      exit 198
+    if `max_year' >= `first_unsupported_year' {
+      if "`statefips'" != "*" {
+        display as error "{p}Starting with the `first_unsupported_year' 5-year estimates, {bf:statefips()} may not be specified with {bf:geography({it:zcta})} for the product type you have requested.{p_end}"
+        exit 198
+      }
+      local geo_order "zipcodetabulationarea"
     }
   }
 	if inlist("`geography'", "cousub", "tract", "bg", "elsd", "scsd", "unsd", 	///
