@@ -97,7 +97,10 @@ program define getcensus
 	// check max year is available for given sample
 	local max_avail_year = cond(`sample' == 1, 2021, 2021)
 	if `max_year' > `max_avail_year' {
-		display as error `"{p}`sample'-year ACS estimates for `max_year' have not yet been released. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases.html":ACS data release page} on the Census website.{p_end}"'
+		display as error "{p}Cannot fetch `sample'-year ACS estimates for `max_year'.{p_end}"
+    display as error "{p}This may be because:{p_end}"
+    display as error "{phang}{c 149}  You need to update getcensus. To update, run {stata ado update getcensus, update}.{p_end}" 
+    display as error `"{phang}{c 149}  The `max_year' `sample'-year estimates have not yet been released. Check the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases.html":ACS data release page} on the Census Bureau website.{p_end}"'
 		exit
 	}
 
