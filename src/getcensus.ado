@@ -659,7 +659,7 @@ program define getcensus
 		}
 		// vars_truncated is a c_local from the catalog program
 		if "`vars_truncated'" == "1" {		
-			display as result "{p}One or more variable labels were truncated. See the variable {help notes} for full descriptions.{p_end}"
+			display as result "{p}One or more variable labels were truncated. For full descriptions, {stata notes:list the variable notes}.{p_end}"
 		}
 	}
 	
