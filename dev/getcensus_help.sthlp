@@ -160,11 +160,11 @@ data. Default is state. See
 
 {phang}
 {opt key(string)} specifies your Census Bureau API key. If you do not have an
-API key, you may acquire at 
-{browse "https://api.census.gov/data/key_signup.html":https://api.census.gov/data/key_signup.html}
-. To avoid specifying {bf:key()} each time {bf:getcensus} is used, store your API 
-key in a global {help macro} named {it:censuskey} in your profile.do. Learn about 
-where to find your profile.do in the 
+API key, you may acquire one at 
+{browse "https://api.census.gov/data/key_signup.html"}. To avoid specifying 
+{bf:key()} each time {bf:getcensus} is used, store your API key in a global 
+{help macro} named {it:censuskey} in your profile.do. Learn about where to find 
+your profile.do in the 
 {browse "https://www.stata.com/support/faqs/programming/profile-do-file/":profile.do FAQ} 
 on the Stata website. If you are unfamiliar with global macros, simply type 
 {it:global censuskey "your-api-key-here"} into your profile.do.
