@@ -48,3 +48,4 @@ rsconnect/
 # Quarto folder
 /.quarto/
 /_site/
+/site/
