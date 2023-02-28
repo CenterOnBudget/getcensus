@@ -1,0 +1,114 @@
+---
+title: "Examples"
+---
+
+# Variables, Tables, and Keywords
+
+Single table
+
+``` stata
+getcensus S2701
+```
+
+Single variable
+
+``` stata
+getcensus B19013_001
+```
+
+Multiple variables from a single table
+
+``` stata
+getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057
+```
+
+Multiple variables from more than one table
+
+``` stata
+getcensus S1701_C03_001 S2701_C05_001
+```
+
+Keyword
+
+``` stata
+getcensus medinc
+```
+
+# Years and Samples
+
+Single year (default is most recent available)
+
+``` stata
+getcensus B19013, year(2010)
+```
+
+Multiple years
+
+
+``` stata
+getcensus B19013, years(2018/2019)
+getcensus B19013, years(2010 2015 2019)
+```
+
+Samples (default is 1)
+
+``` stata
+getcensus B19013, sample(5)
+getcensus B19013, sample(3) year(2013)
+```
+
+# Geographies
+
+Types (default is state)
+
+``` stata
+getcensus B19013, geography(us)
+getcensus B19013, geography(county)
+getcensus B19013, sample(5) geography(sldu) statefips(26)
+```
+
+Within a state or set of states
+
+``` stata
+getcensus B19013, statefips(11)
+getcensus B19013, geography(county) statefips(04)
+getcensus B19013, geography(congressional district) statefips(24 51)
+getcensus B19013, sample(5) geography(metro) statefips(06)
+```
+
+With specific GEOIDs
+
+``` stata
+getcensus B19013, geography(metro) geoids(47900)
+getcensus B19013, geography(county) statefips(24) geoids(005 510)
+getcensus B19013, sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)
+```
+
+Geographic components
+
+``` stata
+getcensus B19013, geocomponents(H0)
+getcensus B19013, geocomponents(01 43) statefips(13)
+getcensus B19013, sample(5) geography(us) geocomponents(92)
+```
+
+# Catalog
+
+All variables in tables of a given product type
+
+``` stata
+getcensus catalog, product(DP)
+```
+
+Variables from a single table
+
+``` stata
+getcensus catalog, table(S0901)
+```
+
+Variables matching a search term
+
+``` stata
+getcensus catalog, search(children) product(ST)
+getcensus catalog, search(educational attainment) table(S1701)
+```
