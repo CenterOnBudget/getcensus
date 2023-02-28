@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.90">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>getcensus - Options</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./geographies.html" rel="next">
+<link href="./syntax.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-76S419M6JZ"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Options</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">getcensus</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/CenterOnBudget/getcensus/" title="GitHub" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">About</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link">Getting Started</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syntax.html" class="sidebar-item-text sidebar-link">Syntax</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./options.html" class="sidebar-item-text sidebar-link active">Options</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographies.html" class="sidebar-item-text sidebar-link">Supported Geographies</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">Other Features</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./keywords.html" class="sidebar-item-text sidebar-link">Keywords</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dialog-box.html" class="sidebar-item-text sidebar-link">Dialog Box</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples.html" class="sidebar-item-text sidebar-link">Examples</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./news.html" class="sidebar-item-text sidebar-link">News</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./authors.html" class="sidebar-item-text sidebar-link">Authors</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://github.com/CenterOnBudget/getcensus/issues/new/choose" class="sidebar-item-text sidebar-link">Get Help</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#main" id="toc-main" class="nav-link active" data-scroll-target="#main">Main</a></li>
+  <li><a href="#geography-options" id="toc-geography-options" class="nav-link" data-scroll-target="#geography-options">Geography Options</a></li>
+  <li><a href="#catalog-options" id="toc-catalog-options" class="nav-link" data-scroll-target="#catalog-options">Catalog Options</a></li>
+  <li><a href="#advanced-options" id="toc-advanced-options" class="nav-link" data-scroll-target="#advanced-options">Advanced Options</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Options</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="main" class="level2">
+<h2 class="anchored" data-anchor-id="main">Main</h2>
+<p><code><strong><u>year</u>s(</strong><i>numlist</i><strong>)</strong></code> specifies the years (or endyears, if multiyear estimates are requested) of the sample to be retrieved. Defaults is the most recent available. If multiple years are requested, data for all years requested will be appended together. Users requesting multiple years should be aware that not all ACS estimates are available for all years, and table specifications and geographies may change between years; see <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html">ACS Table &amp; Geography Changes</a> on the Census Bureau website. Users may deviate from <em>numlist</em> conventions and separate ranges with “-” rather than “/” (e.g., “2017-2019” for 2017, 2018 and 2019).</p>
+<p><code><strong><u>samp</u>le(</strong><i>integer</i><strong>)</strong></code> specifies the sample to retrieve: 1 for 1-year estimates, 3 for 3-year estimates (2007-2013 only), or 5 for 5-year estimates. Default is 1. 1-year estimates are only available for geographic areas with more than 65,000 residents; see <a href="https://www.census.gov/programs-surveys/acs/guidance/estimates.html">When to Use 1-year or 5-year Estimates</a> on the Census Bureau website.</p>
+<p><code><strong><u>geo</u>graphy(</strong><i>string</i><strong>)</strong></code> specifies the geographic unit for which to retrieve data. Default is state. See <a href="./geographies.html">Supported Geographies</a>.</p>
+<p><code><strong>key(</strong><i>string</i><strong>)</strong></code> specifies your Census Bureau API key. If you do not have an API key, you may acquire one at <a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a>. To avoid specifying <code>key()</code> each time getcensus is used, store your API key in a global macro named <em>censuskey</em> in your profile.do. Learn about where to find your profile.do in the <a href="https://www.stata.com/support/faqs/programming/profile-do-file/">profile.do FAQ</a> on the Stata website. If you are unfamiliar with global macros, simply type <code>global censuskey "your-api-key-here"</code> into your profile.do.</p>
+<p><code><strong><u>nolab</u>el(</strong><i>string</i><strong>)</strong></code> specifies that retrieved data should not be labeled with associated metadata from the API data dictionary. If this option is not specified, the dataset will include variable labels containing the variable description and variable notes containing the name of the variable’s table.</p>
+<p><code><strong><u>noerr</u>or</strong></code> specifies that getcensus should not retrieve margins of error associated with estimates.</p>
+<p><code><strong>saveas(</strong><i>filename</i><strong>)</strong></code> causes retrieved data to be saved under the name <em>filename</em> as a Stata dataset.</p>
+<p><code><strong><u>ex</u>portexcel</strong></code> if <code>saveas()</code> is specified, causes retrieved data to also be exported to an Excel spreadsheet.</p>
+<p><strong><code>replace</code></strong> if <code>saveas()</code> is specified, allows existing files to be overwritten.</p>
+<p><strong><code>clear</code></strong> causes the data in memory to be replaced, even if the current data have not been saved to disk.</p>
+<p><strong><code>browse</code></strong> opens retrieved data in the Data Editor after getcensus completes.</p>
+</section>
+<section id="geography-options" class="level2">
+<h2 class="anchored" data-anchor-id="geography-options">Geography Options</h2>
+<p><code><strong><u>st</u>atefips(</strong><i>string</i><strong>)</strong></code> Two-digit FIPS codes of state(s) to retrieve. Default is usually all. A listing of state FIPS codes can be found on the <a href="https://www.census.gov/library/reference/code-lists/ansi.html#state">FIPS Codes</a> page on the Census Bureau website.</p>
+<p><code><strong><u>co</u>untyfips(</strong><i>string</i><strong>)</strong></code> Three-digit FIPS codes of counties to retrieve. A list of county FIPS codes by year can be found on the <a href="https://www.census.gov/geographies/reference-files.html">Geography Reference Files</a> page on the Census Bureau website. Note that county FIPS codes may change between years; see <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html">ACS Table &amp; Geography Changes</a> on the Census Bureau website.</p>
+<p><code><strong><u>geoid</u>s(</strong><i>string</i><strong>)</strong></code> GEOID(s) of geographies to retrieve. Default is usually all. GEOIDs are numeric codes that uniquely identify all geographic areas for which the Census Bureau tabulates data; see <a href="https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html">Understanding Geographic Identifiers</a> on the Census Bureau website. Many geography types have GEOIDs that are made up of several components. Only the last component should be specified in <code>geoids()</code>. The state code component of the GEOID should be specified in <code>statefips()</code>. If the GEOID includes a county code, it should be specified in <code>countyfips()</code>. See <a href="./examples.html#geographies">Examples</a>. Note that GEOIDs and geography definitions may change between years; see <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html">ACS Table &amp; Geography Changes</a> on the Census Bureau website. getcensus supports most, but not all, geographies supported by the ACS API; see <a href="./geographies.html">Supported Geographies</a>.</p>
+<p><code><strong><u>geocomp</u>onents(</strong><i>string</i><strong>)</strong></code> Geographic component codes of the geographic components to retrieve. Geographic components are division of a geographic unit by certain criteria, such as rural, urban, in metropolitan statistical area, and not in metropolitan statistical area. getcensus does not support all geographic components available on the Census Bureau API; see <a href="./geographies.html#geographic-components">Supported Geographies</a>.</p>
+</section>
+<section id="catalog-options" class="level2">
+<h2 class="anchored" data-anchor-id="catalog-options">Catalog Options</h2>
+<p><code><strong><u>pr</u>oduct(</strong><i>string</i><strong>)</strong></code> will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. Default is DT. For information about ACS tables and product types, see <a href="https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html">Table IDs Explained</a> on the Census Bureau website. If both <code>product()</code> and <code>table()</code> are specified with <code>getcensus catalog</code>, <code>product()</code> is ignored and the appropriate product type is determined by the contents of <code>table()</code>.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Abbreviation</th>
+<th style="text-align: left;">Product type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">DP</td>
+<td style="text-align: left;">Data Profile</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ST</td>
+<td style="text-align: left;">Subject Table</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CP</td>
+<td style="text-align: left;">Comparison Profile</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DT</td>
+<td style="text-align: left;">Detailed Table</td>
+</tr>
+</tbody>
+</table>
+<p><code><strong><u>t</u>able(</strong><i>string</i><strong>)</strong></code> will load the API data dictionary for a given table. For information about ACS tables and product types, see <a href="https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html">Table IDs Explained</a> on the Census Bureau website. If both <code>product()</code> and <code>table()</code> are specified with <code>getcensus catalog</code>, <code>product()</code> is ignored and the appropriate product type is determined by the contents of <code>table()</code>.</p>
+<p><code><strong>search(</strong><i>string</i><strong>)</strong></code> will load the API data dictionary for variables whose descriptions match a given search term, such as “children”, “poverty”, or “veteran”. A regular expression may be specified to <code>search()</code>.</p>
+</section>
+<section id="advanced-options" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-options">Advanced Options</h2>
+<p><code><strong><u>cache</u>path(</strong><i>string</i><strong>)</strong></code> getcensus caches API data dictionaries for future retrieval. By default, these files are saved in application support (<code>~/AppData/Local/</code> on Windows and <code>~/Library/Application Support</code> on Mac). To save these files elsewhere, pass your desired location to <code>cachepath()</code>.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp(/https:\/\/centeronbudget\.github\.io\/getcensus\//);
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./syntax.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Syntax</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./geographies.html" class="pagination-link">
+        <span class="nav-page-text">Supported Geographies</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+      <div class="nav-footer-center">
+        <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE">Copyright © 2019 Center on Budget and Policy Priorities</a>
+  </li>  
+</ul>
+      </div>
+  </div>
+</footer>
+
+
+
+</body></html>

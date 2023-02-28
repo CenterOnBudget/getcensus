@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.90">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>getcensus - News</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./authors.html" rel="next">
+<link href="./examples.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-76S419M6JZ"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">News</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">getcensus</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/CenterOnBudget/getcensus/" title="GitHub" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">About</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link">Getting Started</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syntax.html" class="sidebar-item-text sidebar-link">Syntax</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./options.html" class="sidebar-item-text sidebar-link">Options</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographies.html" class="sidebar-item-text sidebar-link">Supported Geographies</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">Other Features</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./keywords.html" class="sidebar-item-text sidebar-link">Keywords</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dialog-box.html" class="sidebar-item-text sidebar-link">Dialog Box</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples.html" class="sidebar-item-text sidebar-link">Examples</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./news.html" class="sidebar-item-text sidebar-link active">News</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./authors.html" class="sidebar-item-text sidebar-link">Authors</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://github.com/CenterOnBudget/getcensus/issues/new/choose" class="sidebar-item-text sidebar-link">Get Help</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">News</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+<div class="cell-output-display">
+
+<h2 class="anchored">2.1.1</h2>
+<ul>
+<li>getcensus now supports 2021 5-year estimates</li>
+</ul>
+<h2 class="anchored">2.1.0</h2>
+<ul>
+<li>
+<p>getcensus now defaults to <code>year(2021)</code> to retrieve data for 2021</p>
+</li>
+<li>
+<p>getcensus now allows 3-year estimates for all years available on the API: 2007 to 2013</p>
+</li>
+</ul>
+<h2 class="anchored">2.0.1</h2>
+<ul>
+<li>
+<p>Geographic identifier variables are now returned in an appropriate str format (<a href="https://github.com/CenterOnBudget/getcensus/issues/57">#57</a>)</p>
+</li>
+<li>
+<p>getcensus now throws an informative error message when the API key is invalid (<a href="https://github.com/CenterOnBudget/getcensus/issues/56">#56</a>)</p>
+</li>
+</ul>
+<h2 class="anchored">2.0.0</h2>
+<h3 class="anchored">New features</h3>
+<ul>
+<li>
+<p><strong>Support for 12 geographic areas:</strong></p>
+<ul>
+<li>alaska native regional corporation</li>
+<li>american indian area/alaska native area/hawaiian home land</li>
+<li>combined statistical area</li>
+<li>state legislative district (lower chamber)</li>
+<li>state legislative district (upper chamber)</li>
+<li>new england city and town area</li>
+<li>combined new england city and town area</li>
+<li>urban area, school district (elementary)</li>
+<li>school district (secondary)</li>
+<li>public use microdata area</li>
+<li>zip code tabulation area</li>
+</ul>
+<p>Users may specify the full name or an abbreviation to <code>geography()</code>.</p>
+</li>
+<li>
+<p><strong>Additional metadata</strong>: The name of each variable’s table is saved as a variable note. Different tables have different universes which are described in the table name rather than the variable names, and it is important for users to be aware of the universe for a given estimate, especially as users may be retrieving variables from multiple tables. The table name note may not appear for all years and product types, as occasionally this field is missing from the API data dictionaries.</p>
+</li>
+<li>
+<p><strong>Dialog box</strong>: When getcensus is called without arguments, a dialog box opens. The dialog box provides access to all getcensus functionality. This replaces the limited getcensus “interactive mode”, which operated through the Results window. Alternatively, users may call the getcensus dialog box by typing <code>db getcensus</code>.</p>
+</li>
+</ul>
+<h3 class="anchored">Breaking changes</h3>
+<ul>
+<li>
+<p>In <code>geography()</code>, “bg” replaces “block” to refer to the “block group” geography. “Block” is a distinct census geography for which ACS estimates are not available.</p>
+</li>
+<li>
+<p>In <code>geography()</code>, “unsd” replaces “sch” to refer to the “unified school district” geography. With the addition of elementary and secondary school district as supported geographies (see above), “sch” is too ambiguous.</p>
+</li>
+<li>
+<p>The <code>nolabel</code> option’s abbreviation is now <code>nolab</code>, which is consistent with Stata’s built-in programs.</p>
+</li>
+<li>
+<p>Keywords:</p>
+<ul>
+<li>
+<p><strong>pop</strong> has been removed.</p>
+</li>
+<li>
+<p><strong>pov</strong> and <strong>povrate</strong> have been combined into <strong>pov</strong>.</p>
+</li>
+<li>
+<p><strong>snap</strong> now includes variables on the percent of SNAP-participating households with a person aged 60 or older. The variable ID for median income among SNAP-participating households has been corrected.</p>
+</li>
+<li>
+<p><strong>medicaid</strong> now includes the percent, as well as the number, of individuals covered by Medicaid or other means-tested coverage (overall and by age group).</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 class="anchored">Other changes</h3>
+<ul>
+<li>
+<p><code>sample()</code> replaces <code>dataset()</code>, as it is more consistent with ACS terminology. Also, in the future <code>getcensus</code> may support other Census datasets, such as the decennial census and population estimates, so we’d like to preserve the <code>dataset()</code> option for future development. For now, the <code>dataset()</code> option is retained for compatibility; if specified, its contents are copied into <code>sample()</code>.</p>
+</li>
+<li>
+<p>getcensus now more thoroughly checks the availability and validity of users’ requests before sending them to the API. This means users can expect more (informative) error messages from getcensus, and fewer failed API calls.</p>
+</li>
+<li>
+<p>getcensus now prints API call URLs to the Results pane without “&gt;” preceding each line break, for easier copy-pasting into a web browser.</p>
+</li>
+<li>
+<p>When one or more variable labels have been truncated, a single message is displayed rather than a message for each truncated label.</p>
+</li>
+<li>
+<p>In the help file and error messages, data points are now referred to as “variables” rather than estimates. This is consistent with the Census Bureau’s API documentation and <a href="https://www.census.gov/data/developers/guidance/api-user-guide.html">user guide</a>. It also avoids confusion (“1-year estimates”, “estimate” versus “margin of error”).</p>
+</li>
+<li>
+<p>A rewritten help file provides more information on supported geographies and geographic components, includes more links to Census Bureau resources, and is more clearly organized.</p>
+</li>
+</ul>
+<h3 class="anchored">Under the hood</h3>
+<p>getcensus version 2.0.0 is a full refactor of the program. Contributors should review <a href="https://github.com/CenterOnBudget/getcensus/tree/master/dev#readme">dev/README.md</a>.</p>
+<h2 class="anchored">1.1.0</h2>
+<p><strong>Main program</strong></p>
+<ul>
+<li>Add explicit support for data years 2005-2009</li>
+<li>Improved and stricter handling of errors when user passes unsupported year-dataset or year-product combinations</li>
+<li>Some cleanup related to deprecation of <code>product</code> option</li>
+</ul>
+<h2 class="anchored">1.0.0</h2>
+<p><strong>Main program</strong></p>
+<ul>
+<li>Add geographic component (e.g. metro/non-metro) option (<a href="https://github.com/CenterOnBudget/getcensus/issues/11">#11</a>)</li>
+<li>Label margin of error variables (<a href="https://github.com/CenterOnBudget/getcensus/issues/12">#12</a>)</li>
+<li>Clarify handling of mixed-up <code>geoid</code> and <code>statefips</code> options (<a href="https://github.com/CenterOnBudget/getcensus/issues/18">#18</a>)</li>
+<li>New keywords to easily retrieve poverty ratio tables (<a href="https://github.com/CenterOnBudget/getcensus/issues/21">#21</a>)</li>
+<li>Label variables using data dictionary for most recent data year requested by user (<a href="https://github.com/CenterOnBudget/getcensus/issues/24">#24</a>)</li>
+</ul>
+<p><strong>Help file</strong></p>
+<ul>
+<li>Clarify usage of <code>product</code> option (<a href="https://github.com/CenterOnBudget/getcensus/issues/14">#14</a>)</li>
+<li>Correct description of <code>cache</code> option and rename to <code>cachepath</code></li>
+<li>Several typo fixes and minor edits</li>
+<li>Add link to GitHub page</li>
+</ul>
+<h2 class="anchored">0.1.2</h2>
+<p><strong>Main program</strong></p>
+<ul>
+<li>Fix issue <a href="https://github.com/CenterOnBudget/getcensus/issues/13">#13</a></li>
+<li>When <code>saveas</code> option used, new message tells users the path to the saved files. (<a href="https://github.com/CenterOnBudget/getcensus/issues/15">#15</a>)</li>
+</ul>
+<p><strong>Documentation</strong></p>
+<ul>
+<li>Several minor edits and typo fixes</li>
+</ul>
+<h2 class="anchored">0.1.1</h2>
+<p><strong>Main program</strong></p>
+<ul>
+<li>New keywords to retreive data on housing, children’s nativity</li>
+<li>Preserve left-padded zeros in state and county FIPS codes</li>
+<li>Fix issues <a href="https://github.com/CenterOnBudget/getcensus/issues/1">#1</a>, <a href="https://github.com/CenterOnBudget/getcensus/issues/2">#2</a>, <a href="https://github.com/CenterOnBudget/getcensus/issues/4">#4</a>, <a href="https://github.com/CenterOnBudget/getcensus/issues/5">#5</a></li>
+</ul>
+<p><strong>Help file</strong></p>
+<ul>
+<li>Add required Census Bureau non-endorsement disclaimer</li>
+<li>Link to FIPS code and GEOID lookup documents</li>
+<li>Add usage note related to housing keywords</li>
+<li>Update maintainer info</li>
+</ul>
+
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp(/https:\/\/centeronbudget\.github\.io\/getcensus\//);
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./examples.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Examples</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./authors.html" class="pagination-link">
+        <span class="nav-page-text">Authors</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+      <div class="nav-footer-center">
+        <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE">Copyright © 2019 Center on Budget and Policy Priorities</a>
+  </li>  
+</ul>
+      </div>
+  </div>
+</footer>
+
+
+
+</body></html>
