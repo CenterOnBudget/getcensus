@@ -1,0 +1,96 @@
+---
+title: "Syntax"
+toc-depth: 3
+---
+
+# Retrieve ACS Data
+
+## Syntax
+
+``` stata
+getcensus {variable IDs, table ID, or keyword} [, options]
+```
+
+|              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+|----------------|--------------------------------------------------------|
+| Variable IDs | If a list of variable IDs is specified, the variables must come from tables that share the same product type (Data Profile, Subject Table, Comparison Profile, or Detailed Table). For information about ACS tables and product types, see [Table IDs Explained](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. Do not not suffix variable IDs with "E" (for estimate) or "M" (for margin of error). |
+| Table ID     | Only a single table ID may be specified.                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Keyword      | A curated set of variables. See [Keywords](keywords.qmd).                                                                                                                                                                                                                                                                                                                                                                                                                          |
+: {tbl-colwidths="[20,80]"}
+
+## Options
+
+For a complete description of options, see [Options](options.qmd).
+
+### Main
+
+<code>**<u>year</u>s(**<i>numlist</i>**)**</code> year(s) to retrieve; default is the most recent available.
+
+<code>**<u>samp</u>le(**<i>integer</i>**)**</code> 1, 3, or 5; default is 1.
+
+<code>**<u>geo</u>graphy(**<i>string</i>**)**</code> geography to retrieve; default is state.
+
+<code>**key(**<i>string</i>**)**</code> your Census Bureau API key.
+
+<code>**<u>nolab</u>el(**<i>string</i>**)**</code> do not label variables with associated metadata from the API data dictionary.
+
+<code>**<u>noerr</u>or**</code> do not retrieve margins of error associated with estimates.
+
+<code>**saveas(**<i>filename</i>**)**</code> save retrieved data as a Stata dataset.
+
+<code>**<u>ex</u>portexcel**</code> if `saveas()` is specified, also save retrieved data as an Excel spreadsheet. 
+
+**`replace`** if `saveas()` is specified, overwrite existing files.
+
+**`clear`** replace the data in memory, even if the current data have not been saved to disk.
+
+**`browse`** browse the retrieved data in the Data Editor after getcensus completes.
+
+### Geography Options
+
+<code>**<u>st</u>atefips(**<i>string</i>**)**</code> state FIPS codes of states to retrieve; default is usually all.
+
+<code>**<u>co</u>untyfips(**<i>string</i>**)**</code> county FIPS codes of counties to retrieve; default is usually all.
+
+<code>**<u>geoid</u>s(**<i>string</i>**)**</code> GEOIDs of geographies to retrieve; default is usually all.
+
+<code>**<u>geocomp</u>onents(**<i>string</i>**)**</code> geographic component codes of geographies to retrieve.
+
+
+### Advanced Options
+
+<code>**<u>cache</u>path(**<i>string</i>**)**</code> customize where getcensus caches API data dictionaries.
+
+
+# Search the API Data Dictionary
+
+## Syntax
+
+``` stata
+getcensus catalog [, options]
+```
+
+## Options
+
+For a complete description of options, see [Options](options.qmd).
+
+### Main
+
+<code>**<u>year</u>s(**<i>numlist</i>**)**</code> year(s) to retrieve; default is latest available.
+
+<code>**<u>samp</u>le(**<i>integer</i>**)**</code> 1, 3, or 5; default is 1.
+
+<code>**<u>pr</u>oduct(**<i>string</i>**)**</code> load the API data dictionary for estimates of given product type.
+
+<code>**<u>t</u>able(**<i>string</i>**)**</code> load the API data dictionary for estimates in a given table.
+
+<code>**search(**<i>string</i>**)**</code> load the API data dictionary for estimates with descriptions matching a search term.
+
+**`clear`** replace the data in memory, even if the current data have not been saved to disk.
+
+**`browse`** browse the retrieved data in the Data Editor after getcensus completes.
+
+### Advanced Options
+
+<code>**<u>cache</u>path(**<i>string</i>**)**</code> customize where getcensus caches API data dictionaries.
+

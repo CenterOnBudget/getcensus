@@ -1,0 +1,39 @@
+---
+title: "Getting Started"
+---
+
+
+# Installation
+
+Install getcensus from SSC with:
+
+``` stata
+ssc install getcensus
+```
+
+getcensus requires Stata version 13.1 or later.
+
+The GitHub version of the package may occasionally be more up-to-date than the SSC version. You can install getcensus from GitHub by running:
+
+``` stata
+net install getcensus, from("https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/src") replace
+```
+
+
+
+# API Key
+
+To use getcensus, you will need a Census Bureau API key. One can be acquired free at <https://api.census.gov/data/key_signup.html>. Remember to activate your API key before attempting to use it.
+
+
+# Updating
+
+To update your installation of getcensus to the latest version, run:
+
+``` stata
+ado update getcensus, update
+```
+
+A list of changes in each release can be found in [News](news.qmd).
+
+

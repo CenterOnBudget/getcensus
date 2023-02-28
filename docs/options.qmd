@@ -1,0 +1,57 @@
+---
+title: "Options"
+---
+
+# Main
+
+<code>**<u>year</u>s(**<i>numlist</i>**)**</code> specifies the years (or endyears, if multiyear estimates are requested) of the sample to be retrieved. Defaults is the most recent available. If multiple years are requested, data for all years requested will be appended together. Users requesting multiple years should be aware that not all ACS estimates are available for all years, and table specifications and geographies may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website. Users may deviate from *numlist* conventions and separate ranges with "-" rather than "/" (e.g., "2017-2019" for 2017, 2018 and 2019).
+
+<code>**<u>samp</u>le(**<i>integer</i>**)**</code> specifies the sample to retrieve: 1 for 1-year estimates, 3 for 3-year estimates (2007-2013 only), or 5 for 5-year estimates. Default is 1. 1-year estimates are only available for geographic areas with more than 65,000 residents; see [When to Use 1-year or 5-year Estimates](https://www.census.gov/programs-surveys/acs/guidance/estimates.html) on the Census Bureau website.
+
+<code>**<u>geo</u>graphy(**<i>string</i>**)**</code> specifies the geographic unit for which to retrieve data. Default is state. See [Supported Geographies](geographies.qmd).
+
+<code>**key(**<i>string</i>**)**</code> specifies your Census Bureau API key. If you do not have an API key, you may acquire one at <https://api.census.gov/data/key_signup.html>. To avoid specifying `key()` each time getcensus is used, store your API key in a global macro named *censuskey* in your profile.do. Learn about where to find your profile.do in the [profile.do FAQ](https://www.stata.com/support/faqs/programming/profile-do-file/) on the Stata website. If you are unfamiliar with global macros, simply type `global censuskey "your-api-key-here"` into your profile.do.
+
+<code>**<u>nolab</u>el(**<i>string</i>**)**</code> specifies that retrieved data should not be labeled with associated metadata from the API data dictionary. If this option is not specified, the dataset will include variable labels containing the variable description and variable notes containing the name of the variable's table.
+
+<code>**<u>noerr</u>or**</code> specifies that getcensus should not retrieve margins of error associated with estimates.
+
+<code>**saveas(**<i>filename</i>**)**</code> causes retrieved data to be saved under the name *filename* as a Stata dataset.
+
+<code>**<u>ex</u>portexcel**</code> if `saveas()` is specified, causes retrieved data to also be exported to an Excel spreadsheet.
+
+**`replace`** if `saveas()` is specified, allows existing files to be overwritten.
+
+**`clear`** causes the data in memory to be replaced, even if the current data have not been saved to disk.
+
+**`browse`** opens retrieved data in the Data Editor after getcensus completes.
+
+# Geography Options
+
+<code>**<u>st</u>atefips(**<i>string</i>**)**</code> Two-digit FIPS codes of state(s) to retrieve. Default is usually all. A listing of state FIPS codes can be found on the [FIPS Codes](https://www.census.gov/library/reference/code-lists/ansi.html#state) page on the Census Bureau website.
+
+<code>**<u>co</u>untyfips(**<i>string</i>**)**</code> Three-digit FIPS codes of counties to retrieve. A list of county FIPS codes by year can be found on the [Geography Reference Files](https://www.census.gov/geographies/reference-files.html) page on the Census Bureau website. Note that county FIPS codes may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website.
+
+<code>**<u>geoid</u>s(**<i>string</i>**)**</code> GEOID(s) of geographies to retrieve. Default is usually all. GEOIDs are numeric codes that uniquely identify all geographic areas for which the Census Bureau tabulates data; see [Understanding Geographic Identifiers](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html) on the Census Bureau website. Many geography types have GEOIDs that are made up of several components. Only the last component should be specified in `geoids()`. The state code component of the GEOID should be specified in `statefips()`. If the GEOID includes a county code, it should be specified in `countyfips()`. See [Examples](examples.qmd#geographies). Note that GEOIDs and geography definitions may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website. getcensus supports most, but not all, geographies supported by the ACS API; see [Supported Geographies](geographies.qmd).
+
+<code>**<u>geocomp</u>onents(**<i>string</i>**)**</code> Geographic component codes of the geographic components to retrieve. Geographic components are division of a geographic unit by certain criteria, such as rural, urban, in metropolitan statistical area, and not in metropolitan statistical area. getcensus does not support all geographic components available on the Census Bureau API; see [Supported Geographies](geographies.qmd#geographic-components).
+
+# Catalog Options
+
+<code>**<u>pr</u>oduct(**<i>string</i>**)**</code> will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. Default is DT. For information about ACS tables and product types, see [Table IDs Explained](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. If both `product()` and `table()` are specified with `getcensus catalog`, `product()` is ignored and the appropriate product type is determined by the contents of `table()`.
+
+| Abbreviation | Product type       |
+|:-------------|:-------------------|
+| DP           | Data Profile       |
+| ST           | Subject Table      |
+| CP           | Comparison Profile |
+| DT           | Detailed Table     |
+
+
+<code>**<u>t</u>able(**<i>string</i>**)**</code> will load the API data dictionary for a given table. For information about ACS tables and product types, see [Table IDs Explained](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. If both `product()` and `table()` are specified with `getcensus catalog`, `product()` is ignored and the appropriate product type is determined by the contents of `table()`.
+
+<code>**search(**<i>string</i>**)**</code> will load the API data dictionary for variables whose descriptions match a given search term, such as "children", "poverty", or "veteran". A regular expression may be specified to `search()`.
+
+# Advanced Options
+
+<code>**<u>cache</u>path(**<i>string</i>**)**</code> getcensus caches API data dictionaries for future retrieval. By default, these files are saved in application support (`~/AppData/Local/` on Windows and `~/Library/Application Support` on Mac). To save these files elsewhere, pass your desired location to `cachepath()`.

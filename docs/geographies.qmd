@@ -1,0 +1,79 @@
+---
+title: "Supported Geographies"
+---
+
+```{r}
+#| include: false
+library(readxl)
+library(dplyr)
+library(stringr)
+library(knitr)
+library(kableExtra)
+options(knitr.kable.NA = "")
+options(knitr.table.format = "html")
+```
+
+# Geographies
+
+getcensus supports most, but not all, geographies supported by the Census Bureau API.[^1] Users who are requesting data for multiple years should be aware that ACS geography definitions may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website.
+
+[^1]: For access to all geographies and geographic components on the Census Bureau API, try the [censusapi](https://ideas.repec.org/c/boc/bocode/s458618.html) Stata package by Jesse Wursten.
+
+A list of geographies supported by getcensus can be found below. For some geographies, users may specify an abbreviation rather than the full name. The Options column indicates whether `statefips()` or `countyfips()` may be specified with a given geography. Bold indicates the option is required with a given geography.
+
+```{r}
+read_excel(
+  "resources/doc_tables.xlsx", 
+  sheet = "geographies", 
+  .name_repair = "minimal"
+  ) %>%
+  rename(" " = 1) %>%
+  kable(table.attr = "class='table table-sm'", escape = FALSE) %>%
+  footnote(
+    symbol = 
+      c("only 5-year estimates are available for this geography",
+        "only 5-year estimates are available when <code>statefips()</code> is specified with this geography"),
+    escape = FALSE
+  ) %>%
+  column_spec(1, width = "5%")
+```
+
+# Geographic Components
+
+Geographic components are division of a geographic unit by certain criteria. getcensus does not support all geographic components available on the Census Bureau API.[^2]
+
+[^2]: See [footnote 1](#fn1).
+
+An example: `getcensus [variable IDs], geography(state) geocomponents(H0 C0)` will return two observations for each state: one for the portion of the state not in a metropolitan statistical area ("H0"), and one for the portion of the state in a metropolitan statistical area ("C0").
+
+```{r geocomponents}
+read_excel(
+  "resources/doc_tables.xlsx", 
+  sheet = "geocomponents", 
+  range = cell_cols("A:B") 
+) %>%
+  kable(
+    caption = "Available with <code>geography()</code> <em>us</em>, <em>region</em>, <em>division</em>, or <em>state</em>",
+    table.attr = "class='table table-sm' style='width: 100%; '",
+    escape = FALSE
+  ) 
+
+read_excel(
+  "resources/doc_tables.xlsx", 
+  sheet = "geocomponents", 
+  range = cell_cols("D:F"),
+  .name_repair = "minimal"
+)  %>%
+  rename(" " = 1) %>%
+  kable(
+    caption = "Available with <code>geography(<em>us</em>)</code> only",
+    table.attr = "class='table table-sm' style='width: 100%; xxx'", 
+    escape = FALSE
+  ) %>%
+  footnote(
+    symbol = 
+      c("only 5-year estimates are available for this geographic component",
+        "1-year estimates are not avaialble for this geographic component"),
+    escape = FALSE
+  )
+```

@@ -1,0 +1,60 @@
+project:
+  type: website
+  output-dir: docs
+
+
+website:
+  title: getcensus
+  site-url: https://centeronbudget.github.io/getcensus/
+  repo-url: https://github.com/CenterOnBudget/getcensus/
+  repo-branch: docs
+  google-analytics: "G-76S419M6JZ"
+  page-navigation: true
+  page-footer:
+    center:
+      - text: "Copyright &copy; 2019 Center on Budget and Policy Priorities"
+        href: https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE
+  sidebar:
+    style: floating
+    search: true
+    collapse-level: 1
+    tools:
+      - icon: github
+        text: "GitHub"
+        href:  https://github.com/CenterOnBudget/getcensus/
+    contents:
+      - text: "About"
+        href: index.qmd
+      - getting-started.qmd
+      - syntax.qmd
+      - options.qmd
+      - geographies.qmd
+      - section: "Other Features"
+        contents:
+          - keywords.qmd
+          - dialog-box.qmd
+      - examples.qmd
+      - news.qmd
+      - authors.qmd
+      - text: "Get Help"
+        href: https://github.com/CenterOnBudget/getcensus/issues/new/choose
+
+
+format:
+  html:
+    theme:
+      - cosmo
+      - styles.scss
+    toc: true
+    code-copy: true
+    link-external-icon: true
+    link-external-newwindow: true
+    footnotes-hover: true
+    callout-appearance: minimal
+    shift-heading-level-by: 1
+
+
+execute:
+  echo: false
+  message: false
+

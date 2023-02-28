@@ -1,0 +1,7 @@
+---
+title: "Dialog Box"
+---
+
+The getcensus dialog box provides full access to the program in an easy-to-use, interactive format. Open the dialog box by typing `getcensus` without arguments, or by typing `db getcensus`.
+
+<img src="resources/dialog_box.png" alt="Screenshot of getcensus Stata dialog box" width="50%" style="border:0.75px solid #808080;"/>
