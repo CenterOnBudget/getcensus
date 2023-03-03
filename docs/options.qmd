@@ -2,6 +2,9 @@
 title: "Options"
 ---
 
+<!-- Do not open in RStudio Visual Markdown Editor -->
+
+
 # Main
 
 <code>**<u>year</u>s(**<i>numlist</i>**)**</code> specifies the years (or endyears, if multiyear estimates are requested) of the sample to be retrieved. Defaults is the most recent available. If multiple years are requested, data for all years requested will be appended together. Users requesting multiple years should be aware that not all ACS estimates are available for all years, and table specifications and geographies may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website. Users may deviate from *numlist* conventions and separate ranges with "-" rather than "/" (e.g., "2017-2019" for 2017, 2018 and 2019).

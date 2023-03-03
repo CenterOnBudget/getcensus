@@ -1,3 +1,10 @@
+## 2.1.2
+
+-   Fixed an issue where getcensus could not retrieve 2021 5-year estimates for metropolitan/micropolitan statistical areas ([#61](https://github.com/CenterOnBudget/getcensus/issues/61)). However, retrieving multiple years of 5-year estimates for `geography(metro)` if 2021 is one of the requested years is *not* supported at this time. For example, `getcensus B19013, years(2012 2021) sample(5) geography(metro)` will throw an error. This will be fixed in a future release.
+-   getcensus now throws an informative error if `statefips()` is specified with `geography(zcta)` for data years/samples where the Census Bureau API does not support retrieving data for zip code tabulation areas within specific states ([#63](https://github.com/CenterOnBudget/getcensus/issues/63)). 
+-   Supplying an API key is now optional ([#62](https://github.com/CenterOnBudget/getcensus/issues/62)). 
+-   If an unsupported year is requested, users are prompted to try updating getcensus in addition to checking the ACS data release schedule ([#64](https://github.com/CenterOnBudget/getcensus/issues/64)). 
+
 ## 2.1.1
 
 - getcensus now supports 2021 5-year estimates

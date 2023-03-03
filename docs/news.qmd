@@ -2,6 +2,4 @@
 title: "News"
 ---
 
-```{r}
-htmltools::includeMarkdown("https://raw.githubusercontent.com/CenterOnBudget/getcensus/master/NEWS.md")
-```
+{{< include ../NEWS.md >}}

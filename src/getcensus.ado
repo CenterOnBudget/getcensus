@@ -1,4 +1,4 @@
-*! version 2.1.1
+*! version 2.1.2
 
 program define getcensus
 
@@ -59,17 +59,23 @@ program define getcensus
 	local years = ustrregexra("`years'", "-", "/")
 	numlist "`years'",  sort
 	local years = "`r(numlist)'"
+  
 	// special handling for 2020, for which 1-year estimates were not released
 	if `sample' == 1 & ustrregexm("`years'", "2020") {
 	    display as error `"{p}Standard 1-year ACS estimates for 2020 are not available. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases/2020.html":2020 ACS Data Release} page on the Census Bureau website.{p_end}"'
 		exit 
 	}
-	if wordcount("`years'") > 1 {
+  
+   // flag if multiple years requested
+  local multiple_years = wordcount("`years'") > 1
+  
+  // find min and max years
+	if `multiple_years' {
 		local years_list = ustrregexra("`years'", " ", ",")
 		local max_year = max(`years_list')
 		local min_year = min(`years_list')
 	}
-	if wordcount("`years'") == 1 {
+	if !`multiple_years' {
 		local max_year `years'
 		local min_year `years'
 	}
@@ -91,7 +97,10 @@ program define getcensus
 	// check max year is available for given sample
 	local max_avail_year = cond(`sample' == 1, 2021, 2021)
 	if `max_year' > `max_avail_year' {
-		display as error `"{p}`sample'-year ACS estimates for `max_year' have not yet been released. See the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases.html":ACS data release page} on the Census website.{p_end}"'
+		display as error "{p}Cannot fetch `sample'-year ACS estimates for `max_year'.{p_end}"
+    display as error "{p}This may be because:{p_end}"
+    display as error "{phang}{c 149}  You need to update getcensus. To update, run {stata ado update getcensus, update}.{p_end}" 
+    display as error `"{phang}{c 149}  The `max_year' `sample'-year estimates have not yet been released. Check the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases.html":ACS data release page} on the Census Bureau website.{p_end}"'
 		exit
 	}
 
@@ -114,7 +123,7 @@ program define getcensus
 	if ustrregexm("`estimates'", "catalog", 1) {
 		
 		// search only the most recent year specified
-		if wordcount("`years") > 1 {
+		if `multiple_years' {
 			display as result "{p}{bf:getcensus catalog} searches only one year at a time. Using most recent year in {bf:years()}, `max_year'.{p_end}"
 		}
 
@@ -273,6 +282,18 @@ program define getcensus
 	local geo_full_name "`s(geo_full_name)'"
 	local geo_order "`s(geo_order)'"	// used to order variables later
 	sreturn clear
+  
+  // fix label changed in 2021 5-year
+  if "`geography'" == "metro" & `sample' == 5 & `max_year' == 2021 {
+    if !`multiple_years' {
+      local geo_full_name "metropolitan/micropolitan statistical area"
+      local geo_order "metropolitanmicropolitanstatisti"
+    }
+    if `multiple_years' {
+      display as error "{p}getcensus currently does not support retrieving 5-year estimates for {bf:geography({it:metro})} if multiple years are requested and 2021 is one of the requested years. This will be fixed in a future release.{p_end}"
+      exit 198
+    }
+  }
 
 	// replace unspecified geoid and statefips with wildcard
 	if "`geoids'" == "" {
@@ -318,6 +339,17 @@ program define getcensus
 		display as error "{p}{bf:statefips()} may not be specified with {bf:geography({it:`geo_full_name'})}.{p_end}"
 		exit 198
 	}
+  // statefips can't be specified with ZCTA after 2019/2020
+  if "`geography'" == "zcta" {
+    local first_unsupported_year = cond("`product'" == "ST", 2019, 2020)
+    if `max_year' >= `first_unsupported_year' {
+      if "`statefips'" != "*" {
+        display as error "{p}Starting with the `first_unsupported_year' 5-year estimates, {bf:statefips()} may not be specified with {bf:geography({it:zcta})} for the product type you have requested.{p_end}"
+        exit 198
+      }
+      local geo_order "zipcodetabulationarea"
+    }
+  }
 	if inlist("`geography'", "cousub", "tract", "bg", "elsd", "scsd", "unsd", 	///
 			  "sldu", "sldl") &											///
 	   (("`statefips'" == "*") | (wordcount("`statefips'") > 1)) {
@@ -386,18 +418,13 @@ program define getcensus
 	// prep for API call ------------------------------------------------------
 
 	// check API key is supplied
-	if "`key'" != "" {
-		display as result "{p}To avoid needing to specify {bf:key()}, store your API key in a global macro named {it:censuskey} in your profile.do. See the {help getcensus:help file} for instructions.{p_end}"
-	}
-	if "`key'" == "" {
-		if "$censuskey" == "" {
-			display as error `"{p}You must provide an API key to {bf:key()} or have defined a global macro named {it:censuskey} that contains your API key. To acquire an API key, register {browse "https://api.census.gov/data/key_signup.html":here}.{p_end}"'
-			exit
-		}
-		if "$censuskey" != "" {
-			local key "$censuskey"
-		}
-	}
+  local has_api_key = "`key'" != "" | "$censuskey" != ""
+  if !`has_api_key' {
+    display as result "{p}You have not provided an API key. Without a key, you are limited to 500 API queries per day. To use an API key, specify {bf:key()} or store your API key in a global macro named {it:censuskey} in your profile.do.{p_end}"
+  }
+  if `has_api_key' {
+    local key = cond("`key'" != "", "`key'", "$censuskey")
+  }
 
 	// add suffix(es) to estimate ids
 	if `is_estimate' {
@@ -473,7 +500,7 @@ program define getcensus
 		local api_url_base "https://api.census.gov/data/`year'/acs/acs`sample'`product_dir'"
 		local api_url_get "?get=`api_variables'NAME"
 		local api_url_geo "`geo_predicate'"
-		local api_url_key "&key=`key'"
+		local api_url_key = cond(`has_api_key', "&key=`key'", "")
 		local api_url "`api_url_base'`api_url_get'`api_url_geo'`api_url_key'"
 		
 		// for messages, whether to display link to API call or text of call
@@ -489,7 +516,7 @@ program define getcensus
 			quietly assert !ustrregexm(`v1', "Invalid Key", 1)
 		}
 		if _rc == 9 {
-			display as error `"{p}You have entered an invalid or unactivated API key. If you do not have a key, you may acquire one {browse "https://api.census.gov/data/key_signup.html":here}.{p_end}"'
+			display as error `"{p}You have entered an invalid or inactive API key. If you do not have a key, you may acquire one {browse "https://api.census.gov/data/key_signup.html":here}.{p_end}"'
 			clear
 			exit
 		}
@@ -499,7 +526,7 @@ program define getcensus
 		if _rc != 0 | c(N) == 0 {
 			display as error "{p}The Census Bureau API did not return data for `year'.{p_end}"
 			display as error "{p}This may have happened because:{p_end}" 
-			display as error "{phang}{c 149}  Table ID or variable IDs are invalid or are not available for the requested year.{p_end}" 
+			display as error "{phang}{c 149}  Table ID or variable IDs are invalid or are not available for the requested year or geography.{p_end}" 
 			if "`geoids'" != "*" {
 				display as error "{phang}{c 149}  GEOIDs are invalid, or are not available for the requested sample and/or year.{p_end}"
 			}
@@ -633,12 +660,12 @@ program define getcensus
 		// run the temporary do file
 		quietly do "`temp_do'.do"
 		display as result "{p}Variables labeled using data dictionary for `max_year'.{p_end}"
-		if wordcount("`years'") > 1 {
+		if `multiple_years' {
 			display as result `"{p}You requested data for multiple years. Check the {browse "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html":ACS Table & Geography Changes} on the Census Bureau website.{p_end}"'
 		}
 		// vars_truncated is a c_local from the catalog program
 		if "`vars_truncated'" == "1" {		
-			display as result "{p}One or more variable labels were truncated. See the variable {help notes} for full descriptions.{p_end}"
+			display as result "{p}One or more variable labels were truncated. For full descriptions, {stata notes:list the variable notes}.{p_end}"
 		}
 	}
 	

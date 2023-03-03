@@ -18,4 +18,3 @@ getcensus is maintained by [Claire Zippel](https://www.cbpp.org/about/our-staff/
 # License
 
 getcensus is licensed under the MIT License. [View the license on GitHub](https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE).
-

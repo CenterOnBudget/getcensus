@@ -151,11 +151,11 @@ data. Default is state. See
 
 {phang}
 {opt key(string)} specifies your Census Bureau API key. If you do not have an
-API key, you may acquire at 
-[https://api.census.gov/data/key_signup.html](https://api.census.gov/data/key_signup.html)
-. To avoid specifying __key()__ each time {bf:getcensus} is used, store your API 
-key in a global {help macro} named _censuskey_ in your profile.do. Learn about 
-where to find your profile.do in the 
+API key, you may acquire one at 
+{browse "https://api.census.gov/data/key_signup.html"}. To avoid specifying 
+__key()__ each time {bf:getcensus} is used, store your API key in a global 
+{help macro} named _censuskey_ in your profile.do. Learn about where to find 
+your profile.do in the 
 [profile.do FAQ](https://www.stata.com/support/faqs/programming/profile-do-file/) 
 on the Stata website. If you are unfamiliar with global macros, simply type 
 {it:global censuskey "your-api-key-here"} into your profile.do.
@@ -303,7 +303,7 @@ given geography.
 {col 5}*{col 8}tract{col 68}{bf:statefips}, countyfips
 {col 5}*{col 8}block group{col 53}bg{col 68}{bf:statefips}, {bf:countyfips}
 {col 8}place{col 68}statefips
-{col 5}*{col 8}zip code tabulation area{col 53}zcta{col 68}statefips
+{col 5}*{col 8}zip code tabulation area{col 53}zcta{col 68}statefips{c 134}
 {col 5}*{col 8}state legislative district (upper chamber){col 53}sldu{col 68}{bf:statefips}
 {col 5}*{col 8}state legislative district (lower chamber){col 53}sldl{col 68}{bf:statefips}
 {col 8}congressional district{col 53}cd{col 68}statefips
@@ -323,6 +323,7 @@ given geography.
     {hline 85}
     {it:*  only 5-year estimates are available for this geography.}
     {it:{c 42}{c 42} only 5-year estimates are available when {bf:statefips()} is specified with this geography.}
+    {it:{c 134}  may not be specified starting with the 2020 5-year estimates (2019 for subject tables).}
 
 
 {marker geocomp}{...}

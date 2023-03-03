@@ -12,3 +12,5 @@ generate geo_order = cond(geo_hierarchy != "", 					///
 keep geo_names geo_abbrvs geo_order
 
 export delimited using "src/_getcensus_geo_args.ado", replace
+
+clear

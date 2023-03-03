@@ -1,4 +1,4 @@
-*! version 2.1.1
+*! version 2.1.2
 *! getcensus internal program
 
 program define _getcensus_parse_geography, sclass
