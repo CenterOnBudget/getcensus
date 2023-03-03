@@ -16,7 +16,7 @@ To obtain data from the API, you will need to know the table ID and variable ID 
 
 To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a [keyword](keywords.qmd) to getcensus. For instance, `getcensus S1701_C02_001` will load variable S1701_C02_001, the estimated number of people in poverty. `getcensus S1701` will load all variables in table S1701, Poverty status in the past 12 months.
 
-By default, getcensus retrieves both estimates and their margins of error[^2] and attaches metadata from the API data dictionary to the dataset in the form of variable labels and notes.[^3]
+By default, getcensus retrieves both estimates and their margins of error[^2] and attaches metadata from the API data dictionary to the dataset in the form of variable labels and notes.[^3] 
 
 [^2]: If the option `noerror` is specified, getcensus will retrieve estimates only; see [Options](options.qmd).
 

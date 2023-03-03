@@ -6,6 +6,7 @@ title: "Supported Geographies"
 #| include: false
 library(readxl)
 library(dplyr)
+library(stringr)
 library(knitr)
 library(kableExtra)
 options(knitr.kable.NA = "")

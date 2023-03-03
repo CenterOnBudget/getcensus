@@ -12,7 +12,7 @@ options(knitr.kable.NA = "")
 options(knitr.table.format = "html")
 ```
 
-Users may use a keyword to retrieve a curated set of variables.
+Users may use a keyword to retrieve a curated set of variables. 
 
 ```{r}
 read_excel("resources/doc_tables.xlsx", sheet = "keywords") %>%

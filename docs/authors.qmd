@@ -4,14 +4,16 @@ toc: false
 ---
 
 ::: {layout="[70,30]"}
+
 **getcensus** is a project of the [Center on Budget and Policy Priorities](https://www.cbpp.org), a nonpartisan research and policy institute.
 
-<img src="resources/cbpp-logo.png" align="middle" width="50%"/>
+<img src="resources/cbpp-logo.png" alt="" align="middle" width="50%"/>
+
 :::
 
 # Contributors
 
-getcensus is developed and maintained by [Claire Zippel](https://www.cbpp.org/about/our-staff/claire-zippel). It was created by [Raheem Chaudhry](https://github.com/raheem03) and [Vincent Palacios](https://github.com/vincentpalacios). Contributors include [Stephanie Hingtgen](https://www.cbpp.org/about/our-staff/stephanie-hingtgen), [Matt Saenz](https://github.com/matt-saenz), and [Lori Zakalik](https://github.com/lzak88) .
+getcensus is maintained by [Claire Zippel](https://www.cbpp.org/about/our-staff/claire-zippel). It was developed by Claire Zippel and [Matt Saenz](https://github.com/matt-saenz), and created by [Raheem Chaudhry](https://github.com/raheem03) and [Vincent Palacios](https://github.com/vincentpalacios). Contributors include: [Lori Zakalik](https://github.com/lzak88).
 
 # License
 
