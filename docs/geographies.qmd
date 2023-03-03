@@ -6,7 +6,6 @@ title: "Supported Geographies"
 #| include: false
 library(readxl)
 library(dplyr)
-library(stringr)
 library(knitr)
 library(kableExtra)
 options(knitr.kable.NA = "")
@@ -18,6 +17,10 @@ options(knitr.table.format = "html")
 getcensus supports most, but not all, geographies supported by the Census Bureau API.[^1] Users who are requesting data for multiple years should be aware that ACS geography definitions may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website.
 
 [^1]: For access to all geographies and geographic components on the Census Bureau API, try the [censusapi](https://ideas.repec.org/c/boc/bocode/s458618.html) Stata package by Jesse Wursten.
+
+::: {.callout-warning appearance="simple"}
+getcensus does not currently support retrieving 5-year estimates for metropolitan/micropolitan statistical areas if multiple years are requested and 2021 is one of the requested years. This will be fixed in a future release.
+:::
 
 A list of geographies supported by getcensus can be found below. For some geographies, users may specify an abbreviation rather than the full name. The Options column indicates whether `statefips()` or `countyfips()` may be specified with a given geography. Bold indicates the option is required with a given geography.
 
@@ -32,7 +35,8 @@ read_excel(
   footnote(
     symbol = 
       c("only 5-year estimates are available for this geography",
-        "only 5-year estimates are available when <code>statefips()</code> is specified with this geography"),
+        "only 5-year estimates are available when <code>statefips()</code> is specified with this geography",
+        "may not be specified starting with the 2020 5-year estimates (2019 for subject tables)"),
     escape = FALSE
   ) %>%
   column_spec(1, width = "5%")

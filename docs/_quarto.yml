@@ -7,7 +7,6 @@ website:
   title: getcensus
   site-url: https://centeronbudget.github.io/getcensus/
   repo-url: https://github.com/CenterOnBudget/getcensus/
-  repo-branch: docs
   google-analytics: "G-76S419M6JZ"
   page-navigation: true
   page-footer:
@@ -36,21 +35,22 @@ website:
       - examples.qmd
       - news.qmd
       - authors.qmd
-      - text: "Get Help"
-        href: https://github.com/CenterOnBudget/getcensus/issues/new/choose
-
 
 format:
   html:
     theme:
       - cosmo
       - styles.scss
+    grid:
+      sidebar-width: 300px
+      body-width: 9000px
+      margin-width: 100px
+      gutter-width: 2.5em
     toc: true
+    toc-location: left
     code-copy: true
-    link-external-icon: true
-    link-external-newwindow: true
     footnotes-hover: true
-    callout-appearance: minimal
+    callout-appearance: simple
     shift-heading-level-by: 1
 
 
@@ -58,3 +58,6 @@ execute:
   echo: false
   message: false
 
+editor_options:
+  markdown:
+    canonical: true

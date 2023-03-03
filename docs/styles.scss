@@ -1,62 +1,30 @@
 /*-- scss:defaults --*/
 
-$code-color: #00769e;
+$code-color: #003B4F;
 $code-block-bg: #f8f8f8;
 
 
 /*-- scss:rules --*/
 
-/* headings */
+#title-block-header {
+  margin-block-end: 2rem;
+}
 
 .sidebar-title {
   font-size: 1.6rem;
 }
 
-header#title-block-header {
-  margin-bottom: 3rem;
-}
-
-h1.title {
-  font-size: 2.5rem;
-}
-
-h3, h4 {
-  margin-bottom: 0.8rem;
-}
-
-/* code */
-
-div.sourceCode {
-  border-radius: 0px;
-}
-
-pre code {
-  line-height: 1.2rem;
-}
-
-code.sourceCode > span {
-  color: $code-color;
-}
-
-code span.kw {
-  color: inherit;
-  font-weight: inherit;
-}
-
-code span.st {
-  color: inherit;
-}
-
-code span.fu {
-  color: inherit;
-}
-
-/* tables */
-
+// Tables
 .table {
   width: auto;
 }
-
+thead {
+  border-top-style: none !important;
+}
+table > caption {
+  text-align: left;
+  border-top-style: none !important;
+}
 .table > tfoot > tr > td {
   font-size: 0.9rem;
   border-top-style: none;
@@ -64,22 +32,15 @@ code span.fu {
   padding: 0.25rem 0.25rem !important;
 }
 
-table > caption {
-  text-align: left;
-  border-top-style: none !important;
+// Get rid of syntax highlighting
+code span.kw {
+  color: inherit;
+  font-weight: inherit;
 }
-
-thead {
-  border-top-style: none !important;
+code span.st {
+  color: inherit;
 }
-
-/* misc */
-
-li[role="doc-endnote"] {
-  margin-bottom: 0.4rem;
-}
-
-.aa-Autocomplete .aa-Form, .aa-DetachedFormContainer .aa-Form {
-  border-radius: 0px;
+code span.fu {
+  color: inherit;
 }
 
