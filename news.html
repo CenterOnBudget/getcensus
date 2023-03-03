@@ -165,17 +165,26 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
   <a href="./authors.html" class="sidebar-item-text sidebar-link">Authors</a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="https://github.com/CenterOnBudget/getcensus/issues/new/choose" class="sidebar-item-text sidebar-link">Get Help</a>
-  </div>
-</li>
     </ul>
     </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#section" id="toc-section" class="nav-link active" data-scroll-target="#section">2.1.2</a></li>
+  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1">2.1.1</a></li>
+  <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2">2.1.0</a></li>
+  <li><a href="#section-3" id="toc-section-3" class="nav-link" data-scroll-target="#section-3">2.0.1</a></li>
+  <li><a href="#section-4" id="toc-section-4" class="nav-link" data-scroll-target="#section-4">2.0.0</a></li>
+  <li><a href="#section-5" id="toc-section-5" class="nav-link" data-scroll-target="#section-5">1.1.0</a></li>
+  <li><a href="#section-6" id="toc-section-6" class="nav-link" data-scroll-target="#section-6">1.0.0</a></li>
+  <li><a href="#section-7" id="toc-section-7" class="nav-link" data-scroll-target="#section-7">0.1.2</a></li>
+  <li><a href="#section-8" id="toc-section-8" class="nav-link" data-scroll-target="#section-8">0.1.1</a></li>
+  </ul>
+</nav>
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -197,43 +206,41 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 
 </header>
 
-<div class="cell">
-<div class="cell-output-display">
-
-<h2 class="anchored">2.1.2</h2>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section">2.1.2</h3>
 <ul>
 <li>Fixed an issue where getcensus could not retrieve 2021 5-year estimates for metropolitan/micropolitan statistical areas (<a href="https://github.com/CenterOnBudget/getcensus/issues/61">#61</a>). However, retrieving multiple years of 5-year estimates for <code>geography(metro)</code> if 2021 is one of the requested years is <em>not</em> supported at this time. For example, <code>getcensus B19013, years(2012 2021) sample(5) geography(metro)</code> will throw an error. This will be fixed in a future release.</li>
 <li>getcensus now throws an informative error if <code>statefips()</code> is specified with <code>geography(zcta)</code> for data years/samples where the Census Bureau API does not support retrieving data for zip code tabulation areas within specific states (<a href="https://github.com/CenterOnBudget/getcensus/issues/63">#63</a>).</li>
 <li>Supplying an API key is now optional (<a href="https://github.com/CenterOnBudget/getcensus/issues/62">#62</a>).</li>
 <li>If an unsupported year is requested, users are prompted to try updating getcensus in addition to checking the ACS data release schedule (<a href="https://github.com/CenterOnBudget/getcensus/issues/64">#64</a>).</li>
 </ul>
-<h2 class="anchored">2.1.1</h2>
+</section>
+<section id="section-1" class="level3">
+<h3 class="anchored" data-anchor-id="section-1">2.1.1</h3>
 <ul>
 <li>getcensus now supports 2021 5-year estimates</li>
 </ul>
-<h2 class="anchored">2.1.0</h2>
+</section>
+<section id="section-2" class="level3">
+<h3 class="anchored" data-anchor-id="section-2">2.1.0</h3>
 <ul>
-<li>
-<p>getcensus now defaults to <code>year(2021)</code> to retrieve data for 2021</p>
-</li>
-<li>
-<p>getcensus now allows 3-year estimates for all years available on the API: 2007 to 2013</p>
-</li>
+<li><p>getcensus now defaults to <code>year(2021)</code> to retrieve data for 2021</p></li>
+<li><p>getcensus now allows 3-year estimates for all years available on the API: 2007 to 2013</p></li>
 </ul>
-<h2 class="anchored">2.0.1</h2>
+</section>
+<section id="section-3" class="level3">
+<h3 class="anchored" data-anchor-id="section-3">2.0.1</h3>
 <ul>
-<li>
-<p>Geographic identifier variables are now returned in an appropriate str format (<a href="https://github.com/CenterOnBudget/getcensus/issues/57">#57</a>)</p>
-</li>
-<li>
-<p>getcensus now throws an informative error message when the API key is invalid (<a href="https://github.com/CenterOnBudget/getcensus/issues/56">#56</a>)</p>
-</li>
+<li><p>Geographic identifier variables are now returned in an appropriate str format (<a href="https://github.com/CenterOnBudget/getcensus/issues/57">#57</a>)</p></li>
+<li><p>getcensus now throws an informative error message when the API key is invalid (<a href="https://github.com/CenterOnBudget/getcensus/issues/56">#56</a>)</p></li>
 </ul>
-<h2 class="anchored">2.0.0</h2>
-<h3 class="anchored">New features</h3>
+</section>
+<section id="section-4" class="level3">
+<h3 class="anchored" data-anchor-id="section-4">2.0.0</h3>
+<section id="new-features" class="level4">
+<h4 class="anchored" data-anchor-id="new-features">New features</h4>
 <ul>
-<li>
-<p><strong>Support for 12 geographic areas:</strong></p>
+<li><p><strong>Support for 12 geographic areas:</strong></p>
 <ul>
 <li>alaska native regional corporation</li>
 <li>american indian area/alaska native area/hawaiian home land</li>
@@ -247,78 +254,56 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <li>public use microdata area</li>
 <li>zip code tabulation area</li>
 </ul>
-<p>Users may specify the full name or an abbreviation to <code>geography()</code>.</p>
-</li>
-<li>
-<p><strong>Additional metadata</strong>: The name of each variable’s table is saved as a variable note. Different tables have different universes which are described in the table name rather than the variable names, and it is important for users to be aware of the universe for a given estimate, especially as users may be retrieving variables from multiple tables. The table name note may not appear for all years and product types, as occasionally this field is missing from the API data dictionaries.</p>
-</li>
-<li>
-<p><strong>Dialog box</strong>: When getcensus is called without arguments, a dialog box opens. The dialog box provides access to all getcensus functionality. This replaces the limited getcensus “interactive mode”, which operated through the Results window. Alternatively, users may call the getcensus dialog box by typing <code>db getcensus</code>.</p>
-</li>
+<p>Users may specify the full name or an abbreviation to <code>geography()</code>.</p></li>
+<li><p><strong>Additional metadata</strong>: The name of each variable’s table is saved as a variable note. Different tables have different universes which are described in the table name rather than the variable names, and it is important for users to be aware of the universe for a given estimate, especially as users may be retrieving variables from multiple tables. The table name note may not appear for all years and product types, as occasionally this field is missing from the API data dictionaries.</p></li>
+<li><p><strong>Dialog box</strong>: When getcensus is called without arguments, a dialog box opens. The dialog box provides access to all getcensus functionality. This replaces the limited getcensus “interactive mode”, which operated through the Results window. Alternatively, users may call the getcensus dialog box by typing <code>db getcensus</code>.</p></li>
 </ul>
-<h3 class="anchored">Breaking changes</h3>
+</section>
+<section id="breaking-changes" class="level4">
+<h4 class="anchored" data-anchor-id="breaking-changes">Breaking changes</h4>
 <ul>
-<li>
-<p>In <code>geography()</code>, “bg” replaces “block” to refer to the “block group” geography. “Block” is a distinct census geography for which ACS estimates are not available.</p>
-</li>
-<li>
-<p>In <code>geography()</code>, “unsd” replaces “sch” to refer to the “unified school district” geography. With the addition of elementary and secondary school district as supported geographies (see above), “sch” is too ambiguous.</p>
-</li>
-<li>
-<p>The <code>nolabel</code> option’s abbreviation is now <code>nolab</code>, which is consistent with Stata’s built-in programs.</p>
-</li>
-<li>
-<p>Keywords:</p>
+<li><p>In <code>geography()</code>, “bg” replaces “block” to refer to the “block group” geography. “Block” is a distinct census geography for which ACS estimates are not available.</p></li>
+<li><p>In <code>geography()</code>, “unsd” replaces “sch” to refer to the “unified school district” geography. With the addition of elementary and secondary school district as supported geographies (see above), “sch” is too ambiguous.</p></li>
+<li><p>The <code>nolabel</code> option’s abbreviation is now <code>nolab</code>, which is consistent with Stata’s built-in programs.</p></li>
+<li><p>Keywords:</p>
 <ul>
-<li>
-<p><strong>pop</strong> has been removed.</p>
-</li>
-<li>
-<p><strong>pov</strong> and <strong>povrate</strong> have been combined into <strong>pov</strong>.</p>
-</li>
-<li>
-<p><strong>snap</strong> now includes variables on the percent of SNAP-participating households with a person aged 60 or older. The variable ID for median income among SNAP-participating households has been corrected.</p>
-</li>
-<li>
-<p><strong>medicaid</strong> now includes the percent, as well as the number, of individuals covered by Medicaid or other means-tested coverage (overall and by age group).</p>
-</li>
+<li><p><strong>pop</strong> has been removed.</p></li>
+<li><p><strong>pov</strong> and <strong>povrate</strong> have been combined into <strong>pov</strong>.</p></li>
+<li><p><strong>snap</strong> now includes variables on the percent of SNAP-participating households with a person aged 60 or older. The variable ID for median income among SNAP-participating households has been corrected.</p></li>
+<li><p><strong>medicaid</strong> now includes the percent, as well as the number, of individuals covered by Medicaid or other means-tested coverage (overall and by age group).</p></li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h3 class="anchored">Other changes</h3>
+</section>
+<section id="other-changes" class="level4">
+<h4 class="anchored" data-anchor-id="other-changes">Other changes</h4>
 <ul>
-<li>
-<p><code>sample()</code> replaces <code>dataset()</code>, as it is more consistent with ACS terminology. Also, in the future <code>getcensus</code> may support other Census datasets, such as the decennial census and population estimates, so we’d like to preserve the <code>dataset()</code> option for future development. For now, the <code>dataset()</code> option is retained for compatibility; if specified, its contents are copied into <code>sample()</code>.</p>
-</li>
-<li>
-<p>getcensus now more thoroughly checks the availability and validity of users’ requests before sending them to the API. This means users can expect more (informative) error messages from getcensus, and fewer failed API calls.</p>
-</li>
-<li>
-<p>getcensus now prints API call URLs to the Results pane without “&gt;” preceding each line break, for easier copy-pasting into a web browser.</p>
-</li>
-<li>
-<p>When one or more variable labels have been truncated, a single message is displayed rather than a message for each truncated label.</p>
-</li>
-<li>
-<p>In the help file and error messages, data points are now referred to as “variables” rather than estimates. This is consistent with the Census Bureau’s API documentation and <a href="https://www.census.gov/data/developers/guidance/api-user-guide.html">user guide</a>. It also avoids confusion (“1-year estimates”, “estimate” versus “margin of error”).</p>
-</li>
-<li>
-<p>A rewritten help file provides more information on supported geographies and geographic components, includes more links to Census Bureau resources, and is more clearly organized.</p>
-</li>
+<li><p><code>sample()</code> replaces <code>dataset()</code>, as it is more consistent with ACS terminology. Also, in the future <code>getcensus</code> may support other Census datasets, such as the decennial census and population estimates, so we’d like to preserve the <code>dataset()</code> option for future development. For now, the <code>dataset()</code> option is retained for compatibility; if specified, its contents are copied into <code>sample()</code>.</p></li>
+<li><p>getcensus now more thoroughly checks the availability and validity of users’ requests before sending them to the API. This means users can expect more (informative) error messages from getcensus, and fewer failed API calls.</p></li>
+<li><p>getcensus now prints API call URLs to the Results pane without “&gt;” preceding each line break, for easier copy-pasting into a web browser.</p></li>
+<li><p>When one or more variable labels have been truncated, a single message is displayed rather than a message for each truncated label.</p></li>
+<li><p>In the help file and error messages, data points are now referred to as “variables” rather than estimates. This is consistent with the Census Bureau’s API documentation and <a href="https://www.census.gov/data/developers/guidance/api-user-guide.html">user guide</a>. It also avoids confusion (“1-year estimates”, “estimate” versus “margin of error”).</p></li>
+<li><p>A rewritten help file provides more information on supported geographies and geographic components, includes more links to Census Bureau resources, and is more clearly organized.</p></li>
 </ul>
-<h3 class="anchored">Under the hood</h3>
+</section>
+<section id="under-the-hood" class="level4">
+<h4 class="anchored" data-anchor-id="under-the-hood">Under the hood</h4>
 <p>getcensus version 2.0.0 is a full refactor of the program. Contributors should review <a href="https://github.com/CenterOnBudget/getcensus/tree/master/dev#readme">dev/README.md</a>.</p>
-<h2 class="anchored">1.1.0</h2>
+</section>
+</section>
+<section id="section-5" class="level3">
+<h3 class="anchored" data-anchor-id="section-5">1.1.0</h3>
 <p><strong>Main program</strong></p>
 <ul>
 <li>Add explicit support for data years 2005-2009</li>
 <li>Improved and stricter handling of errors when user passes unsupported year-dataset or year-product combinations</li>
 <li>Some cleanup related to deprecation of <code>product</code> option</li>
 </ul>
-<h2 class="anchored">1.0.0</h2>
+</section>
+<section id="section-6" class="level3">
+<h3 class="anchored" data-anchor-id="section-6">1.0.0</h3>
 <p><strong>Main program</strong></p>
 <ul>
-<li>Add geographic component (e.g. metro/non-metro) option (<a href="https://github.com/CenterOnBudget/getcensus/issues/11">#11</a>)</li>
+<li>Add geographic component (e.g.&nbsp;metro/non-metro) option (<a href="https://github.com/CenterOnBudget/getcensus/issues/11">#11</a>)</li>
 <li>Label margin of error variables (<a href="https://github.com/CenterOnBudget/getcensus/issues/12">#12</a>)</li>
 <li>Clarify handling of mixed-up <code>geoid</code> and <code>statefips</code> options (<a href="https://github.com/CenterOnBudget/getcensus/issues/18">#18</a>)</li>
 <li>New keywords to easily retrieve poverty ratio tables (<a href="https://github.com/CenterOnBudget/getcensus/issues/21">#21</a>)</li>
@@ -331,7 +316,9 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <li>Several typo fixes and minor edits</li>
 <li>Add link to GitHub page</li>
 </ul>
-<h2 class="anchored">0.1.2</h2>
+</section>
+<section id="section-7" class="level3">
+<h3 class="anchored" data-anchor-id="section-7">0.1.2</h3>
 <p><strong>Main program</strong></p>
 <ul>
 <li>Fix issue <a href="https://github.com/CenterOnBudget/getcensus/issues/13">#13</a></li>
@@ -341,7 +328,9 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <ul>
 <li>Several minor edits and typo fixes</li>
 </ul>
-<h2 class="anchored">0.1.1</h2>
+</section>
+<section id="section-8" class="level3">
+<h3 class="anchored" data-anchor-id="section-8">0.1.1</h3>
 <p><strong>Main program</strong></p>
 <ul>
 <li>New keywords to retreive data on housing, children’s nativity</li>
@@ -356,10 +345,8 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <li>Update maintainer info</li>
 </ul>
 
-</div>
-</div>
 
-
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -493,22 +480,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       });
     }
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var filterRegex = new RegExp(/https:\/\/centeronbudget\.github\.io\/getcensus\//);
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-          // target, if specified
-          link.setAttribute("target", "_blank");
-          // default icon
-          link.classList.add("external");
-      }
-    }
 });
 </script>
 <nav class="page-navigation">

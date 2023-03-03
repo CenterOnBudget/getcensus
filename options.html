@@ -165,17 +165,9 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
   <a href="./authors.html" class="sidebar-item-text sidebar-link">Authors</a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="https://github.com/CenterOnBudget/getcensus/issues/new/choose" class="sidebar-item-text sidebar-link">Get Help</a>
-  </div>
-</li>
     </ul>
     </div>
-</nav>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+    <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
@@ -185,6 +177,9 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
   <li><a href="#advanced-options" id="toc-advanced-options" class="nav-link" data-scroll-target="#advanced-options">Advanced Options</a></li>
   </ul>
 </nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -206,6 +201,7 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 
 </header>
 
+<!-- Do not open in RStudio Visual Markdown Editor -->
 <section id="main" class="level2">
 <h2 class="anchored" data-anchor-id="main">Main</h2>
 <p><code><strong><u>year</u>s(</strong><i>numlist</i><strong>)</strong></code> specifies the years (or endyears, if multiyear estimates are requested) of the sample to be retrieved. Defaults is the most recent available. If multiple years are requested, data for all years requested will be appended together. Users requesting multiple years should be aware that not all ACS estimates are available for all years, and table specifications and geographies may change between years; see <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html">ACS Table &amp; Geography Changes</a> on the Census Bureau website. Users may deviate from <em>numlist</em> conventions and separate ranges with “-” rather than “/” (e.g., “2017-2019” for 2017, 2018 and 2019).</p>
@@ -398,22 +394,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       });
     }
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var filterRegex = new RegExp(/https:\/\/centeronbudget\.github\.io\/getcensus\//);
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-          // target, if specified
-          link.setAttribute("target", "_blank");
-          // default icon
-          link.classList.add("external");
-      }
-    }
 });
 </script>
 <nav class="page-navigation">

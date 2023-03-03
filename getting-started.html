@@ -228,25 +228,21 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
   <a href="./authors.html" class="sidebar-item-text sidebar-link">Authors</a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="https://github.com/CenterOnBudget/getcensus/issues/new/choose" class="sidebar-item-text sidebar-link">Get Help</a>
-  </div>
-</li>
     </ul>
     </div>
-</nav>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+    <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
   <li><a href="#installation" id="toc-installation" class="nav-link active" data-scroll-target="#installation">Installation</a></li>
   <li><a href="#api-key" id="toc-api-key" class="nav-link" data-scroll-target="#api-key">API Key</a></li>
   <li><a href="#updating" id="toc-updating" class="nav-link" data-scroll-target="#updating">Updating</a></li>
+  <li><a href="#getting-help" id="toc-getting-help" class="nav-link" data-scroll-target="#getting-help">Getting Help</a></li>
   </ul>
 </nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -278,13 +274,17 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 </section>
 <section id="api-key" class="level2">
 <h2 class="anchored" data-anchor-id="api-key">API Key</h2>
-<p>To use getcensus, you will need a Census Bureau API key. One can be acquired free at <a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a>. Remember to activate your API key before attempting to use it.</p>
+<p>We recommend using getcensus with an API key, which can acquired free at <a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a>. Remember to activate your API key before attempting to use it. Without an API key, queries are limited to 500 per day per IP address.</p>
 </section>
 <section id="updating" class="level2">
 <h2 class="anchored" data-anchor-id="updating">Updating</h2>
 <p>To update your installation of getcensus to the latest version, run:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ado update getcensus, update</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>A list of changes in each release can be found in <a href="./news.html">News</a>.</p>
+</section>
+<section id="getting-help" class="level2">
+<h2 class="anchored" data-anchor-id="getting-help">Getting Help</h2>
+<p>If you think you’ve found a bug in getcensus, or have an idea for a new feature, please file a GitHub issue at <a href="https://github.com/CenterOnBudget/getcensus/issues/" class="uri">https://github.com/CenterOnBudget/getcensus/issues/</a>. You’ll need a free GitHub account, which you can obtain at <a href="https://github.com/join" class="uri">https://github.com/join</a>.</p>
 
 
 </section>
@@ -421,22 +421,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       });
     }
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var filterRegex = new RegExp(/https:\/\/centeronbudget\.github\.io\/getcensus\//);
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-          // target, if specified
-          link.setAttribute("target", "_blank");
-          // default icon
-          link.classList.add("external");
-      }
-    }
 });
 </script>
 <nav class="page-navigation">

@@ -168,17 +168,9 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
   <a href="./authors.html" class="sidebar-item-text sidebar-link">Authors</a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="https://github.com/CenterOnBudget/getcensus/issues/new/choose" class="sidebar-item-text sidebar-link">Get Help</a>
-  </div>
-</li>
     </ul>
     </div>
-</nav>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+    <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
@@ -186,6 +178,9 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
   <li><a href="#geographic-components" id="toc-geographic-components" class="nav-link" data-scroll-target="#geographic-components">Geographic Components</a></li>
   </ul>
 </nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -210,6 +205,16 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <section id="geographies" class="level2">
 <h2 class="anchored" data-anchor-id="geographies">Geographies</h2>
 <p>getcensus supports most, but not all, geographies supported by the Census Bureau API.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Users who are requesting data for multiple years should be aware that ACS geography definitions may change between years; see <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html">ACS Table &amp; Geography Changes</a> on the Census Bureau website.</p>
+<div class="callout callout-style-simple callout-warning">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>getcensus does not currently support retrieving 5-year estimates for metropolitan/micropolitan statistical areas if multiple years are requested and 2021 is one of the requested years. This will be fixed in a future release.</p>
+</div>
+</div>
+</div>
 <p>A list of geographies supported by getcensus can be found below. For some geographies, users may specify an abbreviation rather than the full name. The Options column indicates whether <code>statefips()</code> or <code>countyfips()</code> may be specified with a given geography. Bold indicates the option is required with a given geography.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -282,7 +287,7 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
    <td style="text-align:left;width: 5%; "> * </td>
    <td style="text-align:left;"> zip code tabulation area </td>
    <td style="text-align:left;"> zcta </td>
-   <td style="text-align:left;"> statefips </td>
+   <td style="text-align:left;"> statefips<sup>‡</sup> </td>
   </tr>
   <tr>
    <td style="text-align:left;width: 5%; "> * </td>
@@ -374,6 +379,8 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <sup>*</sup> only 5-year estimates are available for this geography</td></tr>
 <tr><td style="padding: 0; " colspan="100%">
 <sup>†</sup> only 5-year estimates are available when <code>statefips()</code> is specified with this geography</td></tr>
+<tr><td style="padding: 0; " colspan="100%">
+<sup>‡</sup> may not be specified starting with the 2020 5-year estimates (2019 for subject tables)</td></tr>
 </tfoot>
 </table>
 
@@ -649,22 +656,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       });
     }
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var filterRegex = new RegExp(/https:\/\/centeronbudget\.github\.io\/getcensus\//);
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-          // target, if specified
-          link.setAttribute("target", "_blank");
-          // default icon
-          link.classList.add("external");
-      }
-    }
 });
 </script>
 <nav class="page-navigation">

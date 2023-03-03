@@ -164,17 +164,9 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
   <a href="./authors.html" class="sidebar-item-text sidebar-link">Authors</a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="https://github.com/CenterOnBudget/getcensus/issues/new/choose" class="sidebar-item-text sidebar-link">Get Help</a>
-  </div>
-</li>
     </ul>
     </div>
-</nav>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+    <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
@@ -183,6 +175,9 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
   <li><a href="#searching-the-api-data-dictionary-with-getcensus" id="toc-searching-the-api-data-dictionary-with-getcensus" class="nav-link" data-scroll-target="#searching-the-api-data-dictionary-with-getcensus">Searching the API Data Dictionary with getcensus</a></li>
   </ul>
 </nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -218,7 +213,16 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <section id="searching-the-api-data-dictionary-with-getcensus" class="level2">
 <h2 class="anchored" data-anchor-id="searching-the-api-data-dictionary-with-getcensus">Searching the API Data Dictionary with getcensus</h2>
 <p>Users rarely know offhand the variable ID or table ID of the data points they would like to retrieve. <strong>getcensus catalog</strong> allows users to access the API data dictionaries. For instance, <code>getcensus catalog, product(ST)</code> will load into memory a dataset containing, for every variable in the ACS subject tables (“ST”): the variable ID, the variable’s description, and the name of the variable’s table.</p>
-<p><em>Disclaimer: getcensus uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.</em></p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>getcensus uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.</p>
+</div>
+</div>
+</div>
 
 
 </section>
@@ -363,22 +367,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       });
     }
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var filterRegex = new RegExp(/https:\/\/centeronbudget\.github\.io\/getcensus\//);
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-          // target, if specified
-          link.setAttribute("target", "_blank");
-          // default icon
-          link.classList.add("external");
-      }
-    }
 });
 </script>
 <nav class="page-navigation">
