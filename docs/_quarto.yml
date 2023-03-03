@@ -43,7 +43,7 @@ format:
       - styles.scss
     grid:
       sidebar-width: 300px
-      body-width: 9000px
+      body-width: 900px
       margin-width: 100px
       gutter-width: 2.5em
     toc: true
