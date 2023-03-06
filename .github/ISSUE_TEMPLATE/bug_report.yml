@@ -1,0 +1,39 @@
+name: Bug Report
+description: File a bug report
+labels: bug
+assignees:
+  - czippel
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for using getcensus. We are always happy to hear feedback from our users.
+  - type: textarea
+    attributes:
+      label: Bug description
+      description: |
+        Please describe the bug and include a minimal reproducible example. Be sure to redact your Census Bureau API key. 
+      placeholder: |
+        You can include a code block like this:
+        ```
+        getcensus B19013
+        ```
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Operating system
+      description: Please select the operating system you're using.
+      options:
+        - Windows
+        - Mac OS X
+        - Linux
+  - type: checkboxes
+    attributes:
+      label: getcensus version
+      description: |
+        Before submitting this issue, please be sure you've installed the latest version of getcensus by running `ado update getcensus, update`.
+      options:
+        - label: I'm using the lastest version of getcensus.
+    validations:
+      required: true
