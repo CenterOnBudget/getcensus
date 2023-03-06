@@ -13,7 +13,7 @@ toc: false
 
 # Contributors
 
-getcensus is maintained by [Claire Zippel](https://www.cbpp.org/about/our-staff/claire-zippel). It was developed by Claire Zippel and [Matt Saenz](https://github.com/matt-saenz), and created by [Raheem Chaudhry](https://github.com/raheem03) and [Vincent Palacios](https://github.com/vincentpalacios). Contributors include: [Lori Zakalik](https://github.com/lzak88).
+getcensus is maintained by [Claire Zippel](https://www.cbpp.org/about/our-staff/claire-zippel). It was developed by Claire Zippel and [Matt Saenz](https://github.com/matt-saenz), and created by [Raheem Chaudhry](https://github.com/raheem03) and [Vincent Palacios](https://github.com/vincentpalacios). Contributors include [Stephanie Hingtgen](https://www.cbpp.org/about/our-staff/stephanie-hingtgen) and [Lori Zakalik](https://github.com/lzak88).
 
 # License
 
