@@ -19,7 +19,7 @@ getcensus supports most, but not all, geographies supported by the Census Bureau
 
 [^1]: For access to all geographies and geographic components on the Census Bureau API, try the [censusapi](https://ideas.repec.org/c/boc/bocode/s458618.html) Stata package by Jesse Wursten.
 
-::: {.callout-warning appearance="simple"}
+::: {.callout-warning}
 getcensus does not currently support retrieving 5-year estimates for metropolitan/micropolitan statistical areas if multiple years are requested and 2021 is one of the requested years. This will be fixed in a future release.
 :::
 
@@ -32,7 +32,7 @@ read_excel(
   .name_repair = "minimal"
   ) %>%
   rename(" " = 1) %>%
-  kable(table.attr = "class='table table-sm'", escape = FALSE) %>%
+  kable(table.attr = "data-quarto-disable-processing='true' class='table table-sm'", escape = FALSE) %>%
   footnote(
     symbol = 
       c("only 5-year estimates are available for this geography",
@@ -59,7 +59,7 @@ read_excel(
 ) %>%
   kable(
     caption = "Available with <code>geography()</code> <em>us</em>, <em>region</em>, <em>division</em>, or <em>state</em>",
-    table.attr = "class='table table-sm' style='width: 100%; '",
+    table.attr = "data-quarto-disable-processing='true' class='table table-sm' style='width: 100%; '",
     escape = FALSE
   ) 
 
@@ -72,7 +72,7 @@ read_excel(
   rename(" " = 1) %>%
   kable(
     caption = "Available with <code>geography(<em>us</em>)</code> only",
-    table.attr = "class='table table-sm' style='width: 100%; xxx'", 
+    table.attr = "data-quarto-disable-processing='true' class='table table-sm' style='width: 100%; xxx'", 
     escape = FALSE
   ) %>%
   footnote(

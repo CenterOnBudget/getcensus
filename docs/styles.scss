@@ -18,18 +18,19 @@ $code-block-bg: #f8f8f8;
 .table {
   width: auto;
 }
-thead {
-  border-top-style: none !important;
+.table > thead {
+  border-top-style: none;
 }
 table > caption {
   text-align: left;
-  border-top-style: none !important;
 }
 .table > tfoot > tr > td {
   font-size: 0.9rem;
-  border-top-style: none;
   border-bottom-style: none;
-  padding: 0.25rem 0.25rem !important;
+  padding: 0.1rem !important;
+}
+.table > :not(:first-child) {
+  border-top: 1px;
 }
 
 // Get rid of syntax highlighting
