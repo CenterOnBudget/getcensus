@@ -322,6 +322,14 @@ program define getcensus
 	}
 
 	// check statefips
+  if "`statefips'" != "*" {
+    foreach f of local statefips {
+      if strlen("`f'") != 2 | missing(real("`f'")) {
+        display as error "{p}{bf:statefips()} must contain two-digit state FIPS code(s).{p_end}"
+        exit 198
+      }
+    }
+  }
 	if "`geography'" == "state" {
 		// check if statefips conflicts with geoids
 		if (("`statefips'" != "*") & ("`geoids'" != "*")) & ("`statefips'" != "`geoids'") {
@@ -364,6 +372,14 @@ program define getcensus
 	}
 
 	// check countyfips
+  if "`countyfips'" != "" {
+    foreach f of local countyfips {
+      if strlen("`f'") != 3 | missing(real("`f'")) {
+        display as error "{p}{bf:countyfips()} must contain three-digit county FIPS code(s).{p_end}"
+        exit 198
+      }
+    }
+  }
 	if "`countyfips'" != "" & !inlist("`geography'", "cousub", "tract", "bg"){
 			display as error "{p}{bf:countyfips()} may not be specified with {bf:geography({it:`geo_full_name'})}.{p_end}"
 			if "`geography'" == "county" {
