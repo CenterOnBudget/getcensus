@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.242">
+<meta name="generator" content="quarto-1.3.333">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -86,7 +86,7 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
       <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./keywords.html">Other Features</a></li><li class="breadcrumb-item"><a href="./keywords.html">Keywords</a></li></ol></nav>
-      <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
@@ -147,7 +147,7 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
  <span class="menu-text">Other Features</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -215,78 +215,74 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <p>Users may use a keyword to retrieve a curated set of variables.</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Keyword</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">pov</td>
-<td style="text-align: left;">Number and percent of population in poverty; overall, by age, and by race</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">povratio</td>
-<td style="text-align: left;">Population by income-to-poverty ratio</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">povratio_char</td>
-<td style="text-align: left;">Characteristics of the population at various income-to-poverty ratios</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">medinc</td>
-<td style="text-align: left;">Median household income, overall and by race of householder</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">snap</td>
-<td style="text-align: left;">Percent of households participating in SNAP and characteristics of participating households</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">medicaid</td>
-<td style="text-align: left;">Number and percent of population covered by Medicaid, overall and by age</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">housing_overview</td>
-<td style="text-align: left;">Housing characteristics, including housing costs*</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">costburden_renters</td>
-<td style="text-align: left;">Detailed renter housing cost burden*</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">costburden_owners</td>
-<td style="text-align: left;">Detailed homeowner housing cost burden</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">tenure_inc</td>
-<td style="text-align: left;">Median household income and family poverty status, by housing tenure</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">kids_nativity</td>
-<td style="text-align: left;">Nativity of children, by age and parent's natvity</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">kids_pov_parents_nativity</td>
-<td style="text-align: left;">Children by poverty status and parent's nativity</td>
-</tr>
-</tbody><tfoot>
-<tr class="odd">
-<td style="text-align: left; padding: 0;"><sup>*</sup> When using the data retrieved by keyword <em>costburden_renters</em> to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the number of renters (B25070_001). This step is not necessary when using the data returned by keyword <em>housing_overview</em>; the total in this table's section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed.</td>
-<td style="text-align: left;"></td>
-</tr>
-</tfoot>
 
+<table data-quarto-disable-processing="true" class="table table-sm" style="NAborder-bottom: 0;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Keyword </th>
+   <th style="text-align:left;"> Description </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> pov </td>
+   <td style="text-align:left;"> Number and percent of population in poverty; overall, by age, and by race </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> povratio </td>
+   <td style="text-align:left;"> Population by income-to-poverty ratio </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> povratio_char </td>
+   <td style="text-align:left;"> Characteristics of the population at various income-to-poverty ratios </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> medinc </td>
+   <td style="text-align:left;"> Median household income, overall and by race of householder </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> snap </td>
+   <td style="text-align:left;"> Percent of households participating in SNAP and characteristics of participating households </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> medicaid </td>
+   <td style="text-align:left;"> Number and percent of population covered by Medicaid, overall and by age </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> housing_overview </td>
+   <td style="text-align:left;"> Housing characteristics, including housing costs* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> costburden_renters </td>
+   <td style="text-align:left;"> Detailed renter housing cost burden* </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> costburden_owners </td>
+   <td style="text-align:left;"> Detailed homeowner housing cost burden </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> tenure_inc </td>
+   <td style="text-align:left;"> Median household income and family poverty status, by housing tenure </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> kids_nativity </td>
+   <td style="text-align:left;"> Nativity of children, by age and parent's natvity </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> kids_pov_parents_nativity </td>
+   <td style="text-align:left;"> Children by poverty status and parent's nativity </td>
+  </tr>
+</tbody>
+<tfoot><tr><td style="padding: 0; " colspan="100%">
+<sup>*</sup> When using the data retrieved by keyword <em>costburden_renters</em> to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the number of renters (B25070_001). This step is not necessary when using the data returned by keyword <em>housing_overview</em>; the total in this table's section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed.</td></tr></tfoot>
 </table>
 
-
 </div>
 </div>
 
 
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
