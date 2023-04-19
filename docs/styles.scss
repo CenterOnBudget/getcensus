@@ -1,7 +1,6 @@
 /*-- scss:defaults --*/
 
 $code-color: #003B4F;
-$code-block-bg: #f8f8f8;
 
 
 /*-- scss:rules --*/
@@ -18,20 +17,16 @@ $code-block-bg: #f8f8f8;
 .table {
   width: auto;
 }
-.table > thead {
-  border-top-style: none;
-}
 table > caption {
   text-align: left;
+  font-size: 1rem;
 }
 .table > tfoot > tr > td {
   font-size: 0.9rem;
-  border-bottom-style: none;
+  border-bottom-style: none !important;
   padding: 0.1rem !important;
 }
-.table > :not(:first-child) {
-  border-top: 1px;
-}
+
 
 // Get rid of syntax highlighting
 code span.kw {

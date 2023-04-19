@@ -6,7 +6,7 @@ title: "getcensus"
 
 # About the Census Bureau API
 
-The Census Bureau publishes thousands of data tables on the web at [data.census.gov](https://www.data.cenus.gov). The underlying data is available through the Census Bureau Application Programming Interface (API).[^1]
+The Census Bureau publishes thousands of ACS data tables on the web at [data.census.gov](https://www.data.cenus.gov). The underlying data is available through the Census Bureau Application Programming Interface (API).[^1]
 
 [^1]: In fact, data.census.gov is powered by the API.
 

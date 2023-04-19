@@ -8,17 +8,26 @@ library(readxl)
 library(dplyr)
 library(knitr)
 library(kableExtra)
-options(knitr.kable.NA = "")
-options(knitr.table.format = "html")
 ```
 
 Users may use a keyword to retrieve a curated set of variables. 
 
 ```{r}
-read_excel("resources/doc_tables.xlsx", sheet = "keywords") %>%
-  kable(table.attr = "class='table table-sm'") %>%
+
+fn <- c(
+  "When using the data retrieved by keyword <em>costburden_renters</em> to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the number of renters (B25070_001). This step is not necessary when using the data returned by keyword <em>housing_overview</em>; the total in this table's section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed."
+)
+
+read_excel(
+  "resources/doc_tables.xlsx", 
+  sheet = "keywords"
+) |>
+  kable(
+    table.attr = "data-quarto-disable-processing='true' class='table table-sm'"
+  ) |>
   footnote(
-    symbol = c("When using the data retrieved by keyword <em>costburden_renters</em> to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the number of renters (B25070_001). This step is not necessary when using the data returned by keyword <em>housing_overview</em>; the total in this table's section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed."),
+    symbol = fn,
     escape = FALSE
-    )
+  )
+
 ```

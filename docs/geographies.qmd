@@ -6,11 +6,8 @@ title: "Supported Geographies"
 #| include: false
 library(readxl)
 library(dplyr)
-library(stringr)
 library(knitr)
 library(kableExtra)
-options(knitr.kable.NA = "")
-options(knitr.table.format = "html")
 ```
 
 # Geographies
@@ -26,21 +23,29 @@ getcensus does not currently support retrieving 5-year estimates for metropolita
 A list of geographies supported by getcensus can be found below. For some geographies, users may specify an abbreviation rather than the full name. The Options column indicates whether `statefips()` or `countyfips()` may be specified with a given geography. Bold indicates the option is required with a given geography.
 
 ```{r}
+
+fns <- c(
+  "only 5-year estimates are available for this geography",
+  "only 5-year estimates are available when <code>statefips()</code> is specified with this geography",
+  "may not be specified starting with the 2020 5-year estimates (2019 for subject tables)"
+)
+
 read_excel(
   "resources/doc_tables.xlsx", 
   sheet = "geographies", 
   .name_repair = "minimal"
-  ) %>%
-  rename(" " = 1) %>%
-  kable(table.attr = "data-quarto-disable-processing='true' class='table table-sm'", escape = FALSE) %>%
-  footnote(
-    symbol = 
-      c("only 5-year estimates are available for this geography",
-        "only 5-year estimates are available when <code>statefips()</code> is specified with this geography",
-        "may not be specified starting with the 2020 5-year estimates (2019 for subject tables)"),
+) |>
+  rename(" " = 1) |>
+  kable(
+    table.attr = "data-quarto-disable-processing='true' class='table table-sm'",
     escape = FALSE
-  ) %>%
+  ) |>
+  footnote(
+    symbol = fns,
+    escape = FALSE
+  ) |>
   column_spec(1, width = "5%")
+
 ```
 
 # Geographic Components
@@ -51,34 +56,40 @@ Geographic components are division of a geographic unit by certain criteria. get
 
 An example: `getcensus [variable IDs], geography(state) geocomponents(H0 C0)` will return two observations for each state: one for the portion of the state not in a metropolitan statistical area ("H0"), and one for the portion of the state in a metropolitan statistical area ("C0").
 
-```{r geocomponents}
+```{r}
+
 read_excel(
   "resources/doc_tables.xlsx", 
   sheet = "geocomponents", 
   range = cell_cols("A:B") 
-) %>%
+) |>
   kable(
     caption = "Available with <code>geography()</code> <em>us</em>, <em>region</em>, <em>division</em>, or <em>state</em>",
     table.attr = "data-quarto-disable-processing='true' class='table table-sm' style='width: 100%; '",
     escape = FALSE
   ) 
 
+
+fns <- c(
+  "only 5-year estimates are available for this geographic component",
+  "1-year estimates are not avaialble for this geographic component"
+)
+
 read_excel(
   "resources/doc_tables.xlsx", 
   sheet = "geocomponents", 
   range = cell_cols("D:F"),
   .name_repair = "minimal"
-)  %>%
-  rename(" " = 1) %>%
+)  |>
+  rename(" " = 1) |>
   kable(
     caption = "Available with <code>geography(<em>us</em>)</code> only",
     table.attr = "data-quarto-disable-processing='true' class='table table-sm' style='width: 100%; xxx'", 
     escape = FALSE
-  ) %>%
+  ) |>
   footnote(
-    symbol = 
-      c("only 5-year estimates are available for this geographic component",
-        "1-year estimates are not avaialble for this geographic component"),
+    symbol = fns,
     escape = FALSE
   )
+
 ```
