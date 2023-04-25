@@ -282,18 +282,6 @@ program define getcensus
 	local geo_full_name "`s(geo_full_name)'"
 	local geo_order "`s(geo_order)'"	// used to order variables later
 	sreturn clear
-  
-  // fix label changed in 2021 5-year
-  if "`geography'" == "metro" & `sample' == 5 & `max_year' == 2021 {
-    if !`multiple_years' {
-      local geo_full_name "metropolitan/micropolitan statistical area"
-      local geo_order "metropolitanmicropolitanstatisti"
-    }
-    if `multiple_years' {
-      display as error "{p}getcensus currently does not support retrieving 5-year estimates for {bf:geography({it:metro})} if multiple years are requested and 2021 is one of the requested years. This will be fixed in a future release.{p_end}"
-      exit 198
-    }
-  }
 
 	// replace unspecified geoid and statefips with wildcard
 	if "`geoids'" == "" {
