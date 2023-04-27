@@ -1,3 +1,9 @@
+## 2.1.3
+
+-   Restored support for retrieving multiple years of 5-year estimates for `geography(metro)` if 2021 is one of the requested years ([#66](https://github.com/CenterOnBudget/getcensus/issues/66)).
+-   getcensus will now throw an error if a user specifies anything other than two-digit code(s) to `statefips()` or anything other than three-digit code(s) to `countyfips()` ([#60](https://github.com/CenterOnBudget/getcensus/issues/60)).
+
+
 ## 2.1.2
 
 -   Fixed an issue where getcensus could not retrieve 2021 5-year estimates for metropolitan/micropolitan statistical areas ([#61](https://github.com/CenterOnBudget/getcensus/issues/61)). However, retrieving multiple years of 5-year estimates for `geography(metro)` if 2021 is one of the requested years is *not* supported at this time. For example, `getcensus B19013, years(2012 2021) sample(5) geography(metro)` will throw an error. This will be fixed in a future release.

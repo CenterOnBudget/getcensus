@@ -1,4 +1,4 @@
-*! version 2.1.2
+*! version 2.1.3
 
 program define getcensus
 
@@ -282,18 +282,6 @@ program define getcensus
 	local geo_full_name "`s(geo_full_name)'"
 	local geo_order "`s(geo_order)'"	// used to order variables later
 	sreturn clear
-  
-  // fix label changed in 2021 5-year
-  if "`geography'" == "metro" & `sample' == 5 & `max_year' == 2021 {
-    if !`multiple_years' {
-      local geo_full_name "metropolitan/micropolitan statistical area"
-      local geo_order "metropolitanmicropolitanstatisti"
-    }
-    if `multiple_years' {
-      display as error "{p}getcensus currently does not support retrieving 5-year estimates for {bf:geography({it:metro})} if multiple years are requested and 2021 is one of the requested years. This will be fixed in a future release.{p_end}"
-      exit 198
-    }
-  }
 
 	// replace unspecified geoid and statefips with wildcard
 	if "`geoids'" == "" {
@@ -322,6 +310,14 @@ program define getcensus
 	}
 
 	// check statefips
+  if "`statefips'" != "*" {
+    foreach f of local statefips {
+      if strlen("`f'") != 2 | missing(real("`f'")) {
+        display as error "{p}{bf:statefips()} must contain two-digit state FIPS code(s).{p_end}"
+        exit 198
+      }
+    }
+  }
 	if "`geography'" == "state" {
 		// check if statefips conflicts with geoids
 		if (("`statefips'" != "*") & ("`geoids'" != "*")) & ("`statefips'" != "`geoids'") {
@@ -364,6 +360,14 @@ program define getcensus
 	}
 
 	// check countyfips
+  if "`countyfips'" != "" {
+    foreach f of local countyfips {
+      if strlen("`f'") != 3 | missing(real("`f'")) {
+        display as error "{p}{bf:countyfips()} must contain three-digit county FIPS code(s).{p_end}"
+        exit 198
+      }
+    }
+  }
 	if "`countyfips'" != "" & !inlist("`geography'", "cousub", "tract", "bg"){
 			display as error "{p}{bf:countyfips()} may not be specified with {bf:geography({it:`geo_full_name'})}.{p_end}"
 			if "`geography'" == "county" {
