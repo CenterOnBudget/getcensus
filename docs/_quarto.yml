@@ -10,6 +10,7 @@ website:
   google-analytics: "G-76S419M6JZ"
   page-navigation: true
   back-to-top-navigation: true
+  bread-crumbs: false
   page-footer:
     center:
       - text: "Copyright &copy; 2019 Center on Budget and Policy Priorities"
@@ -53,7 +54,8 @@ format:
     footnotes-hover: true
     callout-appearance: simple
     shift-heading-level-by: 1
-    
+    quarto-required: "1.4.*"
+
 knitr:
   opts_chunk:
     R.options:
