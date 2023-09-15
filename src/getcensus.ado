@@ -544,9 +544,9 @@ program define getcensus
 			}
 			if !`show_link' {
 				display as error "{p}To see the error message returned by the Census Bureau API, copy the URL below into a web browser.{p_end}"
-				local n_lines = ceil(ustrlen("`api_url'") / 80)
+				local n_lines = ceil(ustrlen("`api_url'") / `c(linesize)')
 				forvalues n = 1/`n_lines' {
-					local line : piece `n' 80 of "`api_url'"
+					local line : piece `n' `c(linesize)' of "`api_url'"
 					display as text "`line'"
 				}
 			}
@@ -563,9 +563,9 @@ program define getcensus
 			}
 			if !`show_link' {
 				display as result "Link to data for `year':"
-				local n_lines = ceil(ustrlen("`api_url'") / 80)
+				local n_lines = ceil(ustrlen("`api_url'") / `c(linesize)')
 				forvalues n = 1/`n_lines' {
-					local line : piece `n' 80 of "`api_url'"
+					local line : piece `n' `c(linesize)' of "`api_url'"
 					display as text "`line'"
 				}
 			}
