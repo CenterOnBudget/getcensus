@@ -108,9 +108,9 @@ program define getcensus
 	// set cache location -----------------------------------------------------
 
 	if "`cachepath'" == "" {
-		local cachepath = cond("`c(os)'" == "Windows", 						///
-							   "~/AppData/Local/getcensus",					///
-							   "~/Library/Application Support/getcensus")
+    if "`c(os)'" == "Windows" local cachepath "~/AppData/Local/getcensus"
+    if "`c(os)'" == "MacOSX" local cachepath "~/Library/Application Support/getcensus"
+    if "`c(os)'" == "Unix" local cachepath "~/.local/share/getcensus"
 	}
 	capture mkdir "`cachepath'"
 
