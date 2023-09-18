@@ -1,3 +1,8 @@
+## 2.1.4
+
+- getcensus now defaults to `year(2022)` to retrieve data for 2022
+
+
 ## 2.1.3
 
 -   Restored support for retrieving multiple years of 5-year estimates for `geography(metro)` if 2021 is one of the requested years ([#66](https://github.com/CenterOnBudget/getcensus/issues/66)).

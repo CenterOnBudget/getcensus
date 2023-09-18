@@ -22,7 +22,7 @@ program define getcensus
 	
 	// defaults
 	if "`years'" == "" {
-		local years = 2021
+		local years = 2022
 	}
 	
 
