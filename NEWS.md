@@ -1,6 +1,7 @@
 ## 2.1.4
 
 - getcensus now defaults to `year(2022)` to retrieve data for 2022
+- Requests for not-yet-released data now throw the same generic error message as requests for other unavailable data. Support for newly released ACS data will no longer require updating getcensus.
 
 
 ## 2.1.3
