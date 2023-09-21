@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.320">
+<meta name="generator" content="quarto-1.4.358">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -53,6 +53,7 @@ ul.task-list li input[type="checkbox"] {
     "/",
     "s"
   ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -193,16 +194,17 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#section" id="toc-section" class="nav-link active" data-scroll-target="#section">2.1.3</a></li>
-  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1">2.1.2</a></li>
-  <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2">2.1.1</a></li>
-  <li><a href="#section-3" id="toc-section-3" class="nav-link" data-scroll-target="#section-3">2.1.0</a></li>
-  <li><a href="#section-4" id="toc-section-4" class="nav-link" data-scroll-target="#section-4">2.0.1</a></li>
-  <li><a href="#section-5" id="toc-section-5" class="nav-link" data-scroll-target="#section-5">2.0.0</a></li>
-  <li><a href="#section-6" id="toc-section-6" class="nav-link" data-scroll-target="#section-6">1.1.0</a></li>
-  <li><a href="#section-7" id="toc-section-7" class="nav-link" data-scroll-target="#section-7">1.0.0</a></li>
-  <li><a href="#section-8" id="toc-section-8" class="nav-link" data-scroll-target="#section-8">0.1.2</a></li>
-  <li><a href="#section-9" id="toc-section-9" class="nav-link" data-scroll-target="#section-9">0.1.1</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link active" data-scroll-target="#section">2.1.4</a></li>
+  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1">2.1.3</a></li>
+  <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2">2.1.2</a></li>
+  <li><a href="#section-3" id="toc-section-3" class="nav-link" data-scroll-target="#section-3">2.1.1</a></li>
+  <li><a href="#section-4" id="toc-section-4" class="nav-link" data-scroll-target="#section-4">2.1.0</a></li>
+  <li><a href="#section-5" id="toc-section-5" class="nav-link" data-scroll-target="#section-5">2.0.1</a></li>
+  <li><a href="#section-6" id="toc-section-6" class="nav-link" data-scroll-target="#section-6">2.0.0</a></li>
+  <li><a href="#section-7" id="toc-section-7" class="nav-link" data-scroll-target="#section-7">1.1.0</a></li>
+  <li><a href="#section-8" id="toc-section-8" class="nav-link" data-scroll-target="#section-8">1.0.0</a></li>
+  <li><a href="#section-9" id="toc-section-9" class="nav-link" data-scroll-target="#section-9">0.1.2</a></li>
+  <li><a href="#section-10" id="toc-section-10" class="nav-link" data-scroll-target="#section-10">0.1.1</a></li>
   </ul>
 </nav>
 </nav>
@@ -232,14 +234,21 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 </header>
 
 <section id="section" class="level3">
-<h3 class="anchored" data-anchor-id="section">2.1.3</h3>
+<h3 class="anchored" data-anchor-id="section">2.1.4</h3>
+<ul>
+<li>getcensus now defaults to <code>year(2022)</code> to retrieve data for 2022</li>
+<li>Requests for not-yet-released data now throw the same generic error message as requests for other unavailable data. Support for newly released ACS data will no longer require updating getcensus.</li>
+</ul>
+</section>
+<section id="section-1" class="level3">
+<h3 class="anchored" data-anchor-id="section-1">2.1.3</h3>
 <ul>
 <li>Restored support for retrieving multiple years of 5-year estimates for <code>geography(metro)</code> if 2021 is one of the requested years (<a href="https://github.com/CenterOnBudget/getcensus/issues/66">#66</a>).</li>
 <li>getcensus will now throw an error if a user specifies anything other than two-digit code(s) to <code>statefips()</code> or anything other than three-digit code(s) to <code>countyfips()</code> (<a href="https://github.com/CenterOnBudget/getcensus/issues/60">#60</a>).</li>
 </ul>
 </section>
-<section id="section-1" class="level3">
-<h3 class="anchored" data-anchor-id="section-1">2.1.2</h3>
+<section id="section-2" class="level3">
+<h3 class="anchored" data-anchor-id="section-2">2.1.2</h3>
 <ul>
 <li>Fixed an issue where getcensus could not retrieve 2021 5-year estimates for metropolitan/micropolitan statistical areas (<a href="https://github.com/CenterOnBudget/getcensus/issues/61">#61</a>). However, retrieving multiple years of 5-year estimates for <code>geography(metro)</code> if 2021 is one of the requested years is <em>not</em> supported at this time. For example, <code>getcensus B19013, years(2012 2021) sample(5) geography(metro)</code> will throw an error. This will be fixed in a future release.</li>
 <li>getcensus now throws an informative error if <code>statefips()</code> is specified with <code>geography(zcta)</code> for data years/samples where the Census Bureau API does not support retrieving data for zip code tabulation areas within specific states (<a href="https://github.com/CenterOnBudget/getcensus/issues/63">#63</a>).</li>
@@ -247,28 +256,28 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <li>If an unsupported year is requested, users are prompted to try updating getcensus in addition to checking the ACS data release schedule (<a href="https://github.com/CenterOnBudget/getcensus/issues/64">#64</a>).</li>
 </ul>
 </section>
-<section id="section-2" class="level3">
-<h3 class="anchored" data-anchor-id="section-2">2.1.1</h3>
+<section id="section-3" class="level3">
+<h3 class="anchored" data-anchor-id="section-3">2.1.1</h3>
 <ul>
 <li>getcensus now supports 2021 5-year estimates</li>
 </ul>
 </section>
-<section id="section-3" class="level3">
-<h3 class="anchored" data-anchor-id="section-3">2.1.0</h3>
+<section id="section-4" class="level3">
+<h3 class="anchored" data-anchor-id="section-4">2.1.0</h3>
 <ul>
 <li><p>getcensus now defaults to <code>year(2021)</code> to retrieve data for 2021</p></li>
 <li><p>getcensus now allows 3-year estimates for all years available on the API: 2007 to 2013</p></li>
 </ul>
 </section>
-<section id="section-4" class="level3">
-<h3 class="anchored" data-anchor-id="section-4">2.0.1</h3>
+<section id="section-5" class="level3">
+<h3 class="anchored" data-anchor-id="section-5">2.0.1</h3>
 <ul>
 <li><p>Geographic identifier variables are now returned in an appropriate str format (<a href="https://github.com/CenterOnBudget/getcensus/issues/57">#57</a>)</p></li>
 <li><p>getcensus now throws an informative error message when the API key is invalid (<a href="https://github.com/CenterOnBudget/getcensus/issues/56">#56</a>)</p></li>
 </ul>
 </section>
-<section id="section-5" class="level3">
-<h3 class="anchored" data-anchor-id="section-5">2.0.0</h3>
+<section id="section-6" class="level3">
+<h3 class="anchored" data-anchor-id="section-6">2.0.0</h3>
 <section id="new-features" class="level4">
 <h4 class="anchored" data-anchor-id="new-features">New features</h4>
 <ul>
@@ -322,8 +331,8 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <p>getcensus version 2.0.0 is a full refactor of the program. Contributors should review <a href="https://github.com/CenterOnBudget/getcensus/tree/master/dev#readme">dev/README.md</a>.</p>
 </section>
 </section>
-<section id="section-6" class="level3">
-<h3 class="anchored" data-anchor-id="section-6">1.1.0</h3>
+<section id="section-7" class="level3">
+<h3 class="anchored" data-anchor-id="section-7">1.1.0</h3>
 <p><strong>Main program</strong></p>
 <ul>
 <li>Add explicit support for data years 2005-2009</li>
@@ -331,8 +340,8 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <li>Some cleanup related to deprecation of <code>product</code> option</li>
 </ul>
 </section>
-<section id="section-7" class="level3">
-<h3 class="anchored" data-anchor-id="section-7">1.0.0</h3>
+<section id="section-8" class="level3">
+<h3 class="anchored" data-anchor-id="section-8">1.0.0</h3>
 <p><strong>Main program</strong></p>
 <ul>
 <li>Add geographic component (e.g.&nbsp;metro/non-metro) option (<a href="https://github.com/CenterOnBudget/getcensus/issues/11">#11</a>)</li>
@@ -349,8 +358,8 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <li>Add link to GitHub page</li>
 </ul>
 </section>
-<section id="section-8" class="level3">
-<h3 class="anchored" data-anchor-id="section-8">0.1.2</h3>
+<section id="section-9" class="level3">
+<h3 class="anchored" data-anchor-id="section-9">0.1.2</h3>
 <p><strong>Main program</strong></p>
 <ul>
 <li>Fix issue <a href="https://github.com/CenterOnBudget/getcensus/issues/13">#13</a></li>
@@ -361,8 +370,8 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <li>Several minor edits and typo fixes</li>
 </ul>
 </section>
-<section id="section-9" class="level3">
-<h3 class="anchored" data-anchor-id="section-9">0.1.1</h3>
+<section id="section-10" class="level3">
+<h3 class="anchored" data-anchor-id="section-10">0.1.1</h3>
 <p><strong>Main program</strong></p>
 <ul>
 <li>New keywords to retreive data on housing, children’s nativity</li>
