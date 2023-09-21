@@ -1,4 +1,4 @@
-*! version 2.1.3
+*! version 2.1.4
 
 program define getcensus
 
@@ -22,7 +22,7 @@ program define getcensus
 	
 	// defaults
 	if "`years'" == "" {
-		local years = 2021
+		local years = 2022
 	}
 	
 
@@ -94,23 +94,13 @@ program define getcensus
 		exit
 	}
 
-	// check max year is available for given sample
-	local max_avail_year = cond(`sample' == 1, 2021, 2021)
-	if `max_year' > `max_avail_year' {
-		display as error "{p}Cannot fetch `sample'-year ACS estimates for `max_year'.{p_end}"
-    display as error "{p}This may be because:{p_end}"
-    display as error "{phang}{c 149}  You need to update getcensus. To update, run {stata ado update getcensus, update}.{p_end}" 
-    display as error `"{phang}{c 149}  The `max_year' `sample'-year estimates have not yet been released. Check the {browse "https://www.census.gov/programs-surveys/acs/news/data-releases.html":ACS data release page} on the Census Bureau website.{p_end}"'
-		exit
-	}
-
 
 	// set cache location -----------------------------------------------------
 
 	if "`cachepath'" == "" {
-		local cachepath = cond("`c(os)'" == "Windows", 						///
-							   "~/AppData/Local/getcensus",					///
-							   "~/Library/Application Support/getcensus")
+    if "`c(os)'" == "Windows" local cachepath "~/AppData/Local/getcensus"
+    if "`c(os)'" == "MacOSX" local cachepath "~/Library/Application Support/getcensus"
+    if "`c(os)'" == "Unix" local cachepath "~/.local/share/getcensus"
 	}
 	capture mkdir "`cachepath'"
 
@@ -544,9 +534,9 @@ program define getcensus
 			}
 			if !`show_link' {
 				display as error "{p}To see the error message returned by the Census Bureau API, copy the URL below into a web browser.{p_end}"
-				local n_lines = ceil(ustrlen("`api_url'") / 80)
+				local n_lines = ceil(ustrlen("`api_url'") / `c(linesize)')
 				forvalues n = 1/`n_lines' {
-					local line : piece `n' 80 of "`api_url'"
+					local line : piece `n' `c(linesize)' of "`api_url'"
 					display as text "`line'"
 				}
 			}
@@ -563,9 +553,9 @@ program define getcensus
 			}
 			if !`show_link' {
 				display as result "Link to data for `year':"
-				local n_lines = ceil(ustrlen("`api_url'") / 80)
+				local n_lines = ceil(ustrlen("`api_url'") / `c(linesize)')
 				forvalues n = 1/`n_lines' {
-					local line : piece `n' 80 of "`api_url'"
+					local line : piece `n' `c(linesize)' of "`api_url'"
 					display as text "`line'"
 				}
 			}

@@ -1,4 +1,4 @@
-*! version 2.1.3
+*! version 2.1.4
 *! getcensus internal program
 
 program define _getcensus_catalog
@@ -73,7 +73,11 @@ program define _getcensus_catalog
 
 	// load, clean, and reshape 
 	clear
-	jsonio kv, file("https://api.census.gov/data/`year'/acs/acs`sample'`product_dir'/variables.json")
+	capture jsonio kv, file("https://api.census.gov/data/`year'/acs/acs`sample'`product_dir'/variables.json")
+  if _rc != 0 {
+    display as error "{p}Unable to load the requested data dictionary from the Census Bureau API.{p_end}"
+    exit 601
+  }
 	split key, parse("/")
 	keep if !inlist(key3, "for", "in", "ucgid")
 	keep if inlist(key4, "label", "concept", "group")
