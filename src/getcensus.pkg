@@ -1,4 +1,4 @@
-v 2.1.4
+v 2.1.5
 
 d 'GETCENSUS': Load American Community Survey data from the U.S. Census Bureau API into Stata.
 
@@ -10,7 +10,7 @@ d www.centeronbudget.github.io/getcensus/
 
 d Requires: Stata version 13.1
 
-d Distribution-Date: 20230921
+d Distribution-Date: 20250422
 
 d Author: Center on Budget and Policy Priorities
 

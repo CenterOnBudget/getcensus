@@ -1,3 +1,10 @@
+## 2.1.5
+
+- getcensus now defaults to `year(2023)` to retrieve data for 2023
+- Requests for block group data for years before 2013 will now throw an error and direct users to the ACS summary file; these data are not on the API ([#70](https://github.com/CenterOnBudget/getcensus/issues/70))
+- Years are now properly validated for 3-year estimates ([#71](https://github.com/CenterOnBudget/getcensus/issues/71))
+
+
 ## 2.1.4
 
 - getcensus now defaults to `year(2022)` to retrieve data for 2022
