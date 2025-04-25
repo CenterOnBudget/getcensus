@@ -13,7 +13,7 @@ website:
   bread-crumbs: false
   page-footer:
     center:
-      - text: "Copyright &copy; 2019 Center on Budget and Policy Priorities"
+      - text: "Copyright &copy; 2025 Center on Budget and Policy Priorities"
         href: https://github.com/CenterOnBudget/getcensus/blob/master/LICENSE
   sidebar:
     style: floating
@@ -32,8 +32,8 @@ website:
       - geographies.qmd
       - section: "Other Features"
         contents:
-          - keywords.qmd
           - dialog-box.qmd
+          - keywords.qmd
       - examples.qmd
       - news.qmd
       - authors.qmd

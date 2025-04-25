@@ -1,4 +1,4 @@
-*! version 2.1.4
+*! version 2.1.5
 
 program define getcensus
 
@@ -22,7 +22,7 @@ program define getcensus
 	
 	// defaults
 	if "`years'" == "" {
-		local years = 2022
+		local years = 2023
 	}
 	
 
@@ -88,11 +88,13 @@ program define getcensus
 			exit
 		}
 	}
-	local min_avail_year = cond(`sample' == 1, 2005, 2009)
-	if `min_year' < `min_avail_year' {
-		display as error "{p}`sample'-year ACS estimates are available for `min_avail_year' and later.{p_end}"
-		exit
-	}
+  if inlist(`sample', 1, 5) {
+    local min_avail_year = cond(`sample' == 1, 2005, 2009)
+    if `min_year' < `min_avail_year' {
+      display as error "{p}`sample'-year ACS estimates are available for `min_avail_year' and later.{p_end}"
+      exit
+    }
+  }
 
 
 	// set cache location -----------------------------------------------------
@@ -335,6 +337,11 @@ program define getcensus
       }
       local geo_order "zipcodetabulationarea"
     }
+  }
+  // block group data for 2012 and earlier not on API
+  if "`geography'" == "bg" & `min_year' <= 2012 {
+    display as error `"{p}Block group ACS estimates for 2012 and earlier are not available via the Census Bureau API. Find this data in the {browse "https://www.census.gov/programs-surveys/acs/data/summary-file/sequence-based.html":ACS Summary File}.{p_end}"'
+    exit
   }
 	if inlist("`geography'", "cousub", "tract", "bg", "elsd", "scsd", "unsd", 	///
 			  "sldu", "sldl") &											///
