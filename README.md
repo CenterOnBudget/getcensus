@@ -1,4 +1,4 @@
-<img src="https://www.cbpp.org/sites/all/themes/custom/cbpp/logo.png" align="right" width="200" style="border:1.5px solid #0C61A4;"/>
+<img src="https://github.com/CenterOnBudget/getcensus/blob/0d5926c3690fb5f1329a414dfe23d246f1dd55ce/docs/resources/cbpp-logo.png" align="right" width="100"/>
 
 # getcensus
 
