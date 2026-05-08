@@ -1,3 +1,7 @@
+## 3.0.0
+
+- **Breaking change**: `year()` must now be specified; it no longer defaults to the latest available year.
+
 ## 2.1.5
 
 - getcensus now defaults to `year(2023)` to retrieve data for 2023

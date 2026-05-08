@@ -33,7 +33,7 @@ Search the API data dictionary
 {synopthdr}
 {synoptline}
 {syntab:Main}
-{synopt:{opth year:s(numlist)}}year(s) to retrieve; default is most recent available.
+{synopt:{opth year:s(numlist)}}year(s) to retrieve.
 {p_end}
 {synopt:{opt samp:le(integer)}}1, 3, or 5; default is {opt sample(1)}.
 {p_end}
@@ -126,11 +126,10 @@ Options
 
 {phang}
 {opth years(numlist)} specifies the years (or endyears, if multiyear estimates 
-are requested) of the sample to be retrieved. Defaults is the most recent 
-available. If multiple years are requested, data for all years requested will be 
-appended together. Users requesting multiple years should be aware that not all 
-ACS estimates are available for all years, and table specifications and 
-geographies may change between years; see 
+are requested) of the sample to be retrieved. If multiple years are requested, 
+data for all years requested will be appended together. Users requesting 
+multiple years should be aware that not all ACS estimates are available for all 
+years, and table specifications and geographies may change between years; see 
 [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) 
 on the Census Bureau website. Users may deviate from {help numlist} conventions 
 and separate ranges with "-" rather than "/" (e.g., "2017-2019" for 2017, 2018 

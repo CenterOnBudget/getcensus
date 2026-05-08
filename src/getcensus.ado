@@ -5,7 +5,7 @@ program define getcensus
 	version 13.1
 
 	syntax [anything(name=estimates)], 									///
-		   [YEARs(string) SAMPle(integer 1)]							///
+		   YEARs(string) [SAMPle(integer 1)]							///
 		   [GEOgraphy(string) STatefips(string) COuntyfips(string)]		///
 		   [GEOIDs(string) GEOCOMPonents(string)]						///
 		   [NOLabel NOERRor]											///
@@ -18,11 +18,6 @@ program define getcensus
 	if "`estimates'" == "" {
 		db getcensus
 		exit
-	}
-	
-	// defaults
-	if "`years'" == "" {
-		local years = 2023
 	}
 	
 
