@@ -5,29 +5,33 @@ title: "Keywords"
 ```{r}
 #| include: false
 library(readxl)
-library(dplyr)
-library(knitr)
-library(kableExtra)
+library(gt)
 ```
 
 Users may use a keyword to retrieve a curated set of variables. 
 
 ```{r}
-
-fn <- c(
-  "When using the data retrieved by keyword <em>costburden_renters</em> to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the number of renters (B25070_001). This step is not necessary when using the data returned by keyword <em>housing_overview</em>; the total in this table's section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed."
-)
+#| html-table-processing: none
 
 read_excel(
   "resources/doc_tables.xlsx", 
   sheet = "keywords"
 ) |>
-  kable(
-    table.attr = "data-quarto-disable-processing='true' class='table table-sm'"
+  gt() |>
+  tab_footnote(
+    footnote = md("When using the data retrieved by keyword *costburden_renters* to compute rates of renter housing cost burden, compute the denominator by subtracting the number of renters for whom cost burden is not computed (B25070_011) from the number of renters (B25070_001). This step is not necessary when using the data returned by keyword *housing_overview*; the total in this table's section on rent burden (DP04_0136) already excludes the number of renters for whom cost burden cannot be computed."),
+    locations = cells_body(
+      columns = Description,
+      rows = Keyword %in% c("housing_overview", "costburden_renters")
+    )
   ) |>
-  footnote(
-    symbol = fn,
-    escape = FALSE
-  )
+  tab_options(
+    table.align = "left",
+    table.font.names = "Source Sans Pro",
+    footnotes.marks = "standard",
+    footnotes.spec_ref = "^",
+    footnotes.spec_ftr = "^",
+    column_labels.font.weight = "bold"
+  ) 
 
 ```

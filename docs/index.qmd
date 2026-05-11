@@ -6,7 +6,7 @@ title: "getcensus"
 
 # About the Census Bureau API
 
-The Census Bureau publishes thousands of ACS data tables on the web at [data.census.gov](https://www.data.cenus.gov). The underlying data is available through the Census Bureau Application Programming Interface (API).[^1]
+The Census Bureau publishes thousands of ACS data tables on the web at [data.census.gov](https://www.data.cenus.gov). The underlying data is available through the Census Bureau Data Application Programming Interface (API).[^1]
 
 [^1]: In fact, data.census.gov is powered by the API.
 
@@ -21,6 +21,12 @@ By default, getcensus retrieves both estimates and their margins of error[^2] an
 [^2]: If the option `noerror` is specified, getcensus will retrieve estimates only; see [Options](options.qmd).
 
 [^3]: If the option `nolabel` is specified, this metadata will not be included; see [Options](options.qmd).
+
+# Using an API Key
+
+An API key is required to access the Census Bureau Data API. Register for a key at <https://api.census.gov/data/key_signup.html>. 
+
+Users must provide their API key to getcensus by specifying the `key()` option, or, to avoid specifying `key()` each time getcensus is used, storing their API key in a global macro named *censuskey* in their [profile.do](https://www.stata.com/support/faqs/programming/profile-do-file/).
 
 # Searching the API Data Dictionary with getcensus
 
