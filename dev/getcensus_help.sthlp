@@ -246,7 +246,7 @@ geographic components available on the Census Bureau API; see
 {opt product(string)} will load the API data dictionary for variables in tables 
 of a given product type, as specified with a two-letter abbreviation. Default is 
 DT. For information about ACS tables and product types, see 
-{browse "https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html":Table IDs Explained} 
+{browse "https://www.census.gov/programs-surveys/acs/data/data-tables/table-ids-explained.html":Table IDs Explained} 
 on the Census Bureau website. If both {bf:product()} and {bf:table()} are 
 specified with {bf:getcensus catalog}, {bf:product()} is ignored and the 
 appropriate product type is determined by the contents of {bf:table()}.
@@ -261,7 +261,7 @@ appropriate product type is determined by the contents of {bf:table()}.
 {phang}
 {opt table(string)} will load the API data dictionary for a given table. For 
 information about ACS tables and product types, see 
-{browse "https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html":Table IDs Explained} 
+{browse "https://www.census.gov/programs-surveys/acs/data/data-tables/table-ids-explained.html":Table IDs Explained} 
 on the Census Bureau website. If both {bf:product()} and {bf:table()} are 
 specified with {bf:getcensus catalog}, {bf:product()} is ignored and the 
 appropriate product type is determined by the contents of {bf:table()}.
