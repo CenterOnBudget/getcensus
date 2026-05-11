@@ -405,68 +405,68 @@ Example(s)
 {p}{it:Variables, tables, and keywords}{p_end}
 
 	Single table  
-		{bf:. getcensus S2701}
+		{bf:. getcensus S2701, year(2024)}
 
 	Single variable  
-		{bf:. getcensus B19013_001}
+		{bf:. getcensus B19013_001, year(2024)}
 
 	Multiple variables from a single table  
-		{bf:. getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057}
+		{bf:. getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057, year(2024)}
 
 	Multiple variables from more than one table  
-		{bf:. getcensus S1701_C03_001 S2701_C05_001}
+		{bf:. getcensus S1701_C03_001 S2701_C05_001, year(2024)}
 
 	Keyword  
-		{bf:. getcensus medinc}
+		{bf:. getcensus medinc, year(2024)}
 
 {p}{it:Years and samples}{p_end}
 
-	Single year (default is most recent available)  
-		{bf:. getcensus B19013, year(2010)}
+	Single year
+		{bf:. getcensus B19013, year(2024)}
 
 	Multiple years  
-		{bf:. getcensus B19013, years(2018/2019)}  
-		{bf:. getcensus B19013, years(2010 2015 2019)}
+		{bf:. getcensus B19013, years(2022/2024)}  
+		{bf:. getcensus B19013, years(2019 2021 2024)}
 
 	Samples (default is 1)  
-		{bf:. getcensus B19013, sample(5)}  
-		{bf:. getcensus B19013, sample(3) year(2013)}
+		{bf:. getcensus B19013, year(2024) sample(5)}  
+		{bf:. getcensus B19013, year(2013) sample(3)}
 
 {p}{it:Geographies}{p_end}
 
 	Types (default is state)  
-		{bf:. getcensus B19013, geography(us)}  
-		{bf:. getcensus B19013, geography(county)}  
-		{bf:. getcensus B19013, sample(5) geography(sldu) statefips(26)}
+		{bf:. getcensus B19013, year(2024) geography(us)}  
+		{bf:. getcensus B19013, year(2024) geography(county)}  
+		{bf:. getcensus B19013, year(2024) sample(5) geography(sldu) statefips(26)}
 
 	Within a state or set of states  
-		{bf:. getcensus B19013, statefips(11)}  
-		{bf:. getcensus B19013, geography(county) statefips(04)}  
-		{bf:. getcensus B19013, geography(congressional district) statefips(24 51)}  
-		{bf:. getcensus B19013, sample(5) geography(metro) statefips(06)}
+		{bf:. getcensus B19013, year(2024) statefips(11)}  
+		{bf:. getcensus B19013, year(2024) geography(county) statefips(04)}  
+		{bf:. getcensus B19013, year(2024) geography(congressional district) statefips(24 51)}  
+		{bf:. getcensus B19013, year(2024) sample(5) geography(metro) statefips(06)}
 
 	With specific GEOIDs  
-		{bf:. getcensus B19013_001, geography(metro) geoids(47900)}  
-		{bf:. getcensus B19013_001, geography(county) statefips(24) geoids(005 510)}  
-		{bf:. getcensus B19013_001, geography(place) statefips(48) geoids(35000)}  
-		{bf:. getcensus B19013_001, sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)}
+		{bf:. getcensus B19013_001, year(2024) geography(metro) geoids(47900)}  
+		{bf:. getcensus B19013_001, year(2024) geography(county) statefips(24) geoids(005 510)}  
+		{bf:. getcensus B19013_001, year(2024) geography(place) statefips(48) geoids(35000)}  
+		{bf:. getcensus B19013_001, year(2024) sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)}
 
 	Geographic components  
-		{bf:. getcensus B19013, geocomponents(H0)}  
-		{bf:. getcensus B19013, geocomponents(01 43) statefips(13)}  
-		{bf:. getcensus B19013, sample(5) geography(us) geocomponents(92)}
+		{bf:. getcensus B19013, year(2024) geocomponents(H0)}  
+		{bf:. getcensus B19013, year(2024) geocomponents(01 43) statefips(13)}  
+		{bf:. getcensus B19013, year(2024) sample(5) geography(us) geocomponents(92)}
 
 {p}{it:Catalog}{p_end}
 
 	All variables in tables of a given product type  
-		{bf:. getcensus catalog, product(DP)}
+		{bf:. getcensus catalog, year(2024) product(DP)}
 
 	Variables from a single table  
-		{bf:. getcensus catalog, table(S0901)}
+		{bf:. getcensus catalog, year(2024) table(S0901)}
 
 	Variables matching a search term  
-		{bf:. getcensus catalog, search(children) product(ST)}  
-		{bf:. getcensus catalog, search(educational attainment) table(S1701)}
+		{bf:. getcensus catalog, year(2024) search(children) product(ST)}  
+		{bf:. getcensus catalog, year(2024) search(educational attainment) table(S1701)}
 
 
 Website

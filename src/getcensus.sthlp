@@ -420,82 +420,82 @@ renters for whom cost burden cannot be computed.{sf}
 
 {p 4 4 2}
 	Single table    {break}
-		{bf:. getcensus S2701}
+		{bf:. getcensus S2701, year(2024)}
 
 {p 4 4 2}
 	Single variable    {break}
-		{bf:. getcensus B19013_001}
+		{bf:. getcensus B19013_001, year(2024)}
 
 {p 4 4 2}
 	Multiple variables from a single table    {break}
-		{bf:. getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057}
+		{bf:. getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057, year(2024)}
 
 {p 4 4 2}
 	Multiple variables from more than one table    {break}
-		{bf:. getcensus S1701_C03_001 S2701_C05_001}
+		{bf:. getcensus S1701_C03_001 S2701_C05_001, year(2024)}
 
 {p 4 4 2}
 	Keyword    {break}
-		{bf:. getcensus medinc}
+		{bf:. getcensus medinc, year(2024)}
 
 {p}{it:Years and samples}{p_end}
 
 {p 4 4 2}
-	Single year (default is most recent available)    {break}
-		{bf:. getcensus B19013, year(2010)}
+	Single year
+		{bf:. getcensus B19013, year(2024)}
 
 {p 4 4 2}
 	Multiple years    {break}
-		{bf:. getcensus B19013, years(2018/2019)}    {break}
-		{bf:. getcensus B19013, years(2010 2015 2019)}
+		{bf:. getcensus B19013, years(2022/2024)}    {break}
+		{bf:. getcensus B19013, years(2019 2021 2024)}
 
 {p 4 4 2}
 	Samples (default is 1)    {break}
-		{bf:. getcensus B19013, sample(5)}    {break}
-		{bf:. getcensus B19013, sample(3) year(2013)}
+		{bf:. getcensus B19013, year(2024) sample(5)}    {break}
+		{bf:. getcensus B19013, year(2013) sample(3)}
 
 {p}{it:Geographies}{p_end}
 
 {p 4 4 2}
 	Types (default is state)    {break}
-		{bf:. getcensus B19013, geography(us)}    {break}
-		{bf:. getcensus B19013, geography(county)}    {break}
-		{bf:. getcensus B19013, sample(5) geography(sldu) statefips(26)}
+		{bf:. getcensus B19013, year(2024) geography(us)}    {break}
+		{bf:. getcensus B19013, year(2024) geography(county)}    {break}
+		{bf:. getcensus B19013, year(2024) sample(5) geography(sldu) statefips(26)}
 
 {p 4 4 2}
 	Within a state or set of states    {break}
-		{bf:. getcensus B19013, statefips(11)}    {break}
-		{bf:. getcensus B19013, geography(county) statefips(04)}    {break}
-		{bf:. getcensus B19013, geography(congressional district) statefips(24 51)}    {break}
-		{bf:. getcensus B19013, sample(5) geography(metro) statefips(06)}
+		{bf:. getcensus B19013, year(2024) statefips(11)}    {break}
+		{bf:. getcensus B19013, year(2024) geography(county) statefips(04)}    {break}
+		{bf:. getcensus B19013, year(2024) geography(congressional district) statefips(24 51)}    {break}
+		{bf:. getcensus B19013, year(2024) sample(5) geography(metro) statefips(06)}
 
 {p 4 4 2}
 	With specific GEOIDs    {break}
-		{bf:. getcensus B19013_001, geography(metro) geoids(47900)}    {break}
-		{bf:. getcensus B19013_001, geography(county) statefips(24) geoids(005 510)}    {break}
-		{bf:. getcensus B19013_001, geography(place) statefips(48) geoids(35000)}    {break}
-		{bf:. getcensus B19013_001, sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)}
+		{bf:. getcensus B19013_001, year(2024) geography(metro) geoids(47900)}    {break}
+		{bf:. getcensus B19013_001, year(2024) geography(county) statefips(24) geoids(005 510)}    {break}
+		{bf:. getcensus B19013_001, year(2024) geography(place) statefips(48) geoids(35000)}    {break}
+		{bf:. getcensus B19013_001, year(2024) sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)}
 
 {p 4 4 2}
 	Geographic components    {break}
-		{bf:. getcensus B19013, geocomponents(H0)}    {break}
-		{bf:. getcensus B19013, geocomponents(01 43) statefips(13)}    {break}
-		{bf:. getcensus B19013, sample(5) geography(us) geocomponents(92)}
+		{bf:. getcensus B19013, year(2024) geocomponents(H0)}    {break}
+		{bf:. getcensus B19013, year(2024) geocomponents(01 43) statefips(13)}    {break}
+		{bf:. getcensus B19013, year(2024) sample(5) geography(us) geocomponents(92)}
 
 {p}{it:Catalog}{p_end}
 
 {p 4 4 2}
 	All variables in tables of a given product type    {break}
-		{bf:. getcensus catalog, product(DP)}
+		{bf:. getcensus catalog, year(2024) product(DP)}
 
 {p 4 4 2}
 	Variables from a single table    {break}
-		{bf:. getcensus catalog, table(S0901)}
+		{bf:. getcensus catalog, year(2024) table(S0901)}
 
 {p 4 4 2}
 	Variables matching a search term    {break}
-		{bf:. getcensus catalog, search(children) product(ST)}    {break}
-		{bf:. getcensus catalog, search(educational attainment) table(S1701)}
+		{bf:. getcensus catalog, year(2024) search(children) product(ST)}    {break}
+		{bf:. getcensus catalog, year(2024) search(educational attainment) table(S1701)}
 
 
 
