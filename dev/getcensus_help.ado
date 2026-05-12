@@ -115,6 +115,11 @@ If you are new to American Community Survey data, the Census Bureau's handbook
 [Understanding and Using American Community Survey Data: What All Data Users Need to Know](https://www.census.gov/programs-surveys/acs/guidance/handbooks/general.html) 
 is the best place to start.
 
+An API key is required to access the Census Bureau Data API. Register for a key 
+at {browse "https://api.census.gov/data/key_signup.html"}. Users must provide 
+their API key to getcensus by specifying the __key()__ option or by storing 
+their API key in a global macro named {it:censuskey}.
+
 _getcensus uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau._
 
 
