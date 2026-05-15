@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.27">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>getcensus</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -37,10 +40,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-985aa47af68dae11cd4d235c71fb941e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-55fdfad763645d82ef0f7b1255d5da88.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-1910985d27d318d4989c277780c23c26.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -197,6 +200,7 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
   <ul>
   <li><a href="#about-the-census-bureau-api" id="toc-about-the-census-bureau-api" class="nav-link active" data-scroll-target="#about-the-census-bureau-api">About the Census Bureau API</a></li>
   <li><a href="#accessing-acs-data-with-getcensus" id="toc-accessing-acs-data-with-getcensus" class="nav-link" data-scroll-target="#accessing-acs-data-with-getcensus">Accessing ACS Data with getcensus</a></li>
+  <li><a href="#using-an-api-key" id="toc-using-an-api-key" class="nav-link" data-scroll-target="#using-an-api-key">Using an API Key</a></li>
   <li><a href="#searching-the-api-data-dictionary-with-getcensus" id="toc-searching-the-api-data-dictionary-with-getcensus" class="nav-link" data-scroll-target="#searching-the-api-data-dictionary-with-getcensus">Searching the API Data Dictionary with getcensus</a></li>
   </ul>
 </nav>
@@ -230,13 +234,18 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
 <p><strong>getcensus</strong> is a Stata package for loading American Community Survey (ACS) data from the U.S. Census Bureau API into Stata.</p>
 <section id="about-the-census-bureau-api" class="level2">
 <h2 class="anchored" data-anchor-id="about-the-census-bureau-api">About the Census Bureau API</h2>
-<p>The Census Bureau publishes thousands of ACS data tables on the web at <a href="https://www.data.cenus.gov">data.census.gov</a>. The underlying data is available through the Census Bureau Application Programming Interface (API).<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>The Census Bureau publishes thousands of ACS data tables on the web at <a href="https://www.data.cenus.gov">data.census.gov</a>. The underlying data is available through the Census Bureau Data Application Programming Interface (API).<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <p>To obtain data from the API, you will need to know the table ID and variable ID of the data point you are interested in. Each table that the Census Bureau publishes on data.census.gov has a unique table ID, and each data point within a table has a unique variable ID. For instance, ACS table S1701, <a href="https://data.census.gov/cedsci/table?tid=ACSST1Y2019.S1701&amp;hidePreview=true">Poverty status in the past 12 months</a>, contains the estimated number of people in poverty. The variable ID for this data point is S1701_C02_001.</p>
 </section>
 <section id="accessing-acs-data-with-getcensus" class="level2">
 <h2 class="anchored" data-anchor-id="accessing-acs-data-with-getcensus">Accessing ACS Data with getcensus</h2>
 <p>To retrieve ACS data from the API, users may specify one or more variable IDs, a single table ID, or a <a href="./keywords.html">keyword</a> to getcensus. For instance, <code>getcensus S1701_C02_001</code> will load variable S1701_C02_001, the estimated number of people in poverty. <code>getcensus S1701</code> will load all variables in table S1701, Poverty status in the past 12 months.</p>
 <p>By default, getcensus retrieves both estimates and their margins of error<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> and attaches metadata from the API data dictionary to the dataset in the form of variable labels and notes.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+</section>
+<section id="using-an-api-key" class="level2">
+<h2 class="anchored" data-anchor-id="using-an-api-key">Using an API Key</h2>
+<p>An API key is required to access the Census Bureau Data API. Register for a key at <a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a>.</p>
+<p>Users must provide their API key to getcensus by specifying the <code>key()</code> option, or, to avoid specifying <code>key()</code> each time getcensus is used, storing their API key in a global macro named <em>censuskey</em> in their <a href="https://www.stata.com/support/faqs/programming/profile-do-file/">profile.do</a>.</p>
 </section>
 <section id="searching-the-api-data-dictionary-with-getcensus" class="level2">
 <h2 class="anchored" data-anchor-id="searching-the-api-data-dictionary-with-getcensus">Searching the API Data Dictionary with getcensus</h2>
@@ -315,13 +324,14 @@ gtag('config', 'G-76S419M6JZ', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
