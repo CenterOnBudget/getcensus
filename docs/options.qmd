@@ -1,5 +1,6 @@
 ---
 title: "Options"
+editor: source
 ---
 
 <!-- Do not open in RStudio Visual Markdown Editor -->
@@ -7,7 +8,7 @@ title: "Options"
 
 # Main
 
-<code>**<u>year</u>s(**<i>numlist</i>**)**</code> specifies the years (or endyears, if multiyear estimates are requested) of the sample to be retrieved. Defaults is the most recent available. If multiple years are requested, data for all years requested will be appended together. Users requesting multiple years should be aware that not all ACS estimates are available for all years, and table specifications and geographies may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website. Users may deviate from *numlist* conventions and separate ranges with "-" rather than "/" (e.g., "2017-2019" for 2017, 2018 and 2019).
+<code>**<u>year</u>s(**<i>numlist</i>**)**</code> specifies the years (or endyears, if multiyear estimates are requested) of the sample to be retrieved. If multiple years are requested, data for all years requested will be appended together. Users requesting multiple years should be aware that not all ACS estimates are available for all years, and table specifications and geographies may change between years; see [ACS Table & Geography Changes](https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html) on the Census Bureau website. Users may deviate from *numlist* conventions and separate ranges with "-" rather than "/" (e.g., "2017-2019" for 2017, 2018 and 2019).
 
 <code>**<u>samp</u>le(**<i>integer</i>**)**</code> specifies the sample to retrieve: 1 for 1-year estimates, 3 for 3-year estimates (2007-2013 only), or 5 for 5-year estimates. Default is 1. 1-year estimates are only available for geographic areas with more than 65,000 residents; see [When to Use 1-year or 5-year Estimates](https://www.census.gov/programs-surveys/acs/guidance/estimates.html) on the Census Bureau website.
 
@@ -41,7 +42,7 @@ title: "Options"
 
 # Catalog Options
 
-<code>**<u>pr</u>oduct(**<i>string</i>**)**</code> will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. Default is DT. For information about ACS tables and product types, see [Table IDs Explained](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. If both `product()` and `table()` are specified with `getcensus catalog`, `product()` is ignored and the appropriate product type is determined by the contents of `table()`.
+<code>**<u>pr</u>oduct(**<i>string</i>**)**</code> will load the API data dictionary for variables in tables of a given product type, as specified with a two-letter abbreviation. Default is DT. For information about ACS tables and product types, see [Table IDs Explained](https://www.census.gov/programs-surveys/acs/data/data-tables/table-ids-explained.html) on the Census Bureau website. If both `product()` and `table()` are specified with `getcensus catalog`, `product()` is ignored and the appropriate product type is determined by the contents of `table()`.
 
 | Abbreviation | Product type       |
 |:-------------|:-------------------|
@@ -51,7 +52,7 @@ title: "Options"
 | DT           | Detailed Table     |
 
 
-<code>**<u>t</u>able(**<i>string</i>**)**</code> will load the API data dictionary for a given table. For information about ACS tables and product types, see [Table IDs Explained](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html) on the Census Bureau website. If both `product()` and `table()` are specified with `getcensus catalog`, `product()` is ignored and the appropriate product type is determined by the contents of `table()`.
+<code>**<u>t</u>able(**<i>string</i>**)**</code> will load the API data dictionary for a given table. For information about ACS tables and product types, see [Table IDs Explained](https://www.census.gov/programs-surveys/acs/data/data-tables/table-ids-explained.html) on the Census Bureau website. If both `product()` and `table()` are specified with `getcensus catalog`, `product()` is ignored and the appropriate product type is determined by the contents of `table()`.
 
 <code>**search(**<i>string</i>**)**</code> will load the API data dictionary for variables whose descriptions match a given search term, such as "children", "poverty", or "veteran". A regular expression may be specified to `search()`.
 

@@ -1,3 +1,8 @@
+## 3.0.0
+
+- **Breaking change**: `year()` must now be specified; it no longer defaults to the latest available year.
+- getcensus now throws an error if an API key is not provided. As of May 12, 2026, an API key is required to access the Census Bureau Data API.
+
 ## 2.1.5
 
 - getcensus now defaults to `year(2023)` to retrieve data for 2023

@@ -20,7 +20,9 @@ net install getcensus, from("https://raw.githubusercontent.com/CenterOnBudget/ge
 
 # API Key
 
-We recommend using getcensus with an API key, which can acquired free at <https://api.census.gov/data/key_signup.html>. Remember to activate your API key before attempting to use it. Without an API key, queries are limited to 500 per day per IP address.
+An API key is required to access the Census Bureau Data API. Register for a key at <https://api.census.gov/data/key_signup.html>. Remember to activate your API key before attempting to use it. 
+
+Provide getcensus with your API key by specifying the `key()` option. Or, to avoid specifying `key()` each time getcensus is used, store your API key in a global macro named *censuskey* in your profile.do. Learn about where to find your profile.do in the [profile.do FAQ](https://www.stata.com/support/faqs/programming/profile-do-file/) on the Stata website. If you are unfamiliar with global macros, simply type `global censuskey "your-api-key-here"` into your profile.do.
 
 # Updating
 

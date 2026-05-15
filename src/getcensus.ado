@@ -1,11 +1,11 @@
-*! version 2.1.5
+*! version 3.0.0
 
 program define getcensus
 
 	version 13.1
 
 	syntax [anything(name=estimates)], 									///
-		   [YEARs(string) SAMPle(integer 1)]							///
+		   YEARs(string) [SAMPle(integer 1)]							///
 		   [GEOgraphy(string) STatefips(string) COuntyfips(string)]		///
 		   [GEOIDs(string) GEOCOMPonents(string)]						///
 		   [NOLabel NOERRor]											///
@@ -18,11 +18,6 @@ program define getcensus
 	if "`estimates'" == "" {
 		db getcensus
 		exit
-	}
-	
-	// defaults
-	if "`years'" == "" {
-		local years = 2023
 	}
 	
 
@@ -421,7 +416,8 @@ program define getcensus
 	// check API key is supplied
   local has_api_key = "`key'" != "" | "$censuskey" != ""
   if !`has_api_key' {
-    display as result "{p}You have not provided an API key. Without a key, you are limited to 500 API queries per day. To use an API key, specify {bf:key()} or store your API key in a global macro named {it:censuskey} in your profile.do.{p_end}"
+    display as error "{p}An API key is required. Specify {bf:key()} or store your API key in a global macro named {it:censuskey} in your profile.do.{p_end}"
+    exit 198
   }
   if `has_api_key' {
     local key = cond("`key'" != "", "`key'", "$censuskey")

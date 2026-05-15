@@ -49,3 +49,5 @@ rsconnect/
 /.quarto/
 /_site/
 /site/
+
+**/*.quarto_ipynb

@@ -35,7 +35,7 @@ Search the API data dictionary
 {synopthdr}
 {synoptline}
 {syntab:Main}
-{synopt:{opth year:s(numlist)}}year(s) to retrieve; default is most recent available.
+{synopt:{opth year:s(numlist)}}year(s) to retrieve.
 {p_end}
 {synopt:{opt samp:le(integer)}}1, 3, or 5; default is {opt sample(1)}.
 {p_end}
@@ -124,6 +124,12 @@ If you are new to American Community Survey data, the Census Bureau{c 39}s handb
 is the best place to start.
 
 {p 4 4 2}
+An API key is required to access the Census Bureau Data API. Register for a key 
+at {browse "https://api.census.gov/data/key_signup.html"}. Users must provide 
+their API key to getcensus by specifying the {bf:key()} option or by storing 
+their API key in a global macro named {it:censuskey}.
+
+{p 4 4 2}
 {it:getcensus uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.}
 
 
@@ -135,11 +141,10 @@ is the best place to start.
 
 {phang}
 {opth years(numlist)} specifies the years (or endyears, if multiyear estimates 
-are requested) of the sample to be retrieved. Defaults is the most recent 
-available. If multiple years are requested, data for all years requested will be 
-appended together. Users requesting multiple years should be aware that not all 
-ACS estimates are available for all years, and table specifications and 
-geographies may change between years; see 
+are requested) of the sample to be retrieved. If multiple years are requested, 
+data for all years requested will be appended together. Users requesting 
+multiple years should be aware that not all ACS estimates are available for all 
+years, and table specifications and geographies may change between years; see 
 {browse "https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes.html":ACS Table & Geography Changes} 
 on the Census Bureau website. Users may deviate from {help numlist} conventions 
 and separate ranges with "-" rather than "/" (e.g., "2017-2019" for 2017, 2018 
@@ -247,7 +252,7 @@ geographic components available on the Census Bureau API; see
 {opt product(string)} will load the API data dictionary for variables in tables 
 of a given product type, as specified with a two-letter abbreviation. Default is 
 DT. For information about ACS tables and product types, see 
-{browse "https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html":Table IDs Explained} 
+{browse "https://www.census.gov/programs-surveys/acs/data/data-tables/table-ids-explained.html":Table IDs Explained} 
 on the Census Bureau website. If both {bf:product()} and {bf:table()} are 
 specified with {bf:getcensus catalog}, {bf:product()} is ignored and the 
 appropriate product type is determined by the contents of {bf:table()}.
@@ -262,7 +267,7 @@ appropriate product type is determined by the contents of {bf:table()}.
 {phang}
 {opt table(string)} will load the API data dictionary for a given table. For 
 information about ACS tables and product types, see 
-{browse "https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html":Table IDs Explained} 
+{browse "https://www.census.gov/programs-surveys/acs/data/data-tables/table-ids-explained.html":Table IDs Explained} 
 on the Census Bureau website. If both {bf:product()} and {bf:table()} are 
 specified with {bf:getcensus catalog}, {bf:product()} is ignored and the 
 appropriate product type is determined by the contents of {bf:table()}.
@@ -421,82 +426,82 @@ renters for whom cost burden cannot be computed.{sf}
 
 {p 4 4 2}
 	Single table    {break}
-		{bf:. getcensus S2701}
+		{bf:. getcensus S2701, year(2024)}
 
 {p 4 4 2}
 	Single variable    {break}
-		{bf:. getcensus B19013_001}
+		{bf:. getcensus B19013_001, year(2024)}
 
 {p 4 4 2}
 	Multiple variables from a single table    {break}
-		{bf:. getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057}
+		{bf:. getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057, year(2024)}
 
 {p 4 4 2}
 	Multiple variables from more than one table    {break}
-		{bf:. getcensus S1701_C03_001 S2701_C05_001}
+		{bf:. getcensus S1701_C03_001 S2701_C05_001, year(2024)}
 
 {p 4 4 2}
 	Keyword    {break}
-		{bf:. getcensus medinc}
+		{bf:. getcensus medinc, year(2024)}
 
 {p}{it:Years and samples}{p_end}
 
 {p 4 4 2}
-	Single year (default is most recent available)    {break}
-		{bf:. getcensus B19013, year(2010)}
+	Single year
+		{bf:. getcensus B19013, year(2024)}
 
 {p 4 4 2}
 	Multiple years    {break}
-		{bf:. getcensus B19013, years(2018/2019)}    {break}
-		{bf:. getcensus B19013, years(2010 2015 2019)}
+		{bf:. getcensus B19013, years(2022/2024)}    {break}
+		{bf:. getcensus B19013, years(2019 2021 2024)}
 
 {p 4 4 2}
 	Samples (default is 1)    {break}
-		{bf:. getcensus B19013, sample(5)}    {break}
-		{bf:. getcensus B19013, sample(3) year(2013)}
+		{bf:. getcensus B19013, year(2024) sample(5)}    {break}
+		{bf:. getcensus B19013, year(2013) sample(3)}
 
 {p}{it:Geographies}{p_end}
 
 {p 4 4 2}
 	Types (default is state)    {break}
-		{bf:. getcensus B19013, geography(us)}    {break}
-		{bf:. getcensus B19013, geography(county)}    {break}
-		{bf:. getcensus B19013, sample(5) geography(sldu) statefips(26)}
+		{bf:. getcensus B19013, year(2024) geography(us)}    {break}
+		{bf:. getcensus B19013, year(2024) geography(county)}    {break}
+		{bf:. getcensus B19013, year(2024) sample(5) geography(sldu) statefips(26)}
 
 {p 4 4 2}
 	Within a state or set of states    {break}
-		{bf:. getcensus B19013, statefips(11)}    {break}
-		{bf:. getcensus B19013, geography(county) statefips(04)}    {break}
-		{bf:. getcensus B19013, geography(congressional district) statefips(24 51)}    {break}
-		{bf:. getcensus B19013, sample(5) geography(metro) statefips(06)}
+		{bf:. getcensus B19013, year(2024) statefips(11)}    {break}
+		{bf:. getcensus B19013, year(2024) geography(county) statefips(04)}    {break}
+		{bf:. getcensus B19013, year(2024) geography(congressional district) statefips(24 51)}    {break}
+		{bf:. getcensus B19013, year(2024) sample(5) geography(metro) statefips(06)}
 
 {p 4 4 2}
 	With specific GEOIDs    {break}
-		{bf:. getcensus B19013_001, geography(metro) geoids(47900)}    {break}
-		{bf:. getcensus B19013_001, geography(county) statefips(24) geoids(005 510)}    {break}
-		{bf:. getcensus B19013_001, geography(place) statefips(48) geoids(35000)}    {break}
-		{bf:. getcensus B19013_001, sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)}
+		{bf:. getcensus B19013_001, year(2024) geography(metro) geoids(47900)}    {break}
+		{bf:. getcensus B19013_001, year(2024) geography(county) statefips(24) geoids(005 510)}    {break}
+		{bf:. getcensus B19013_001, year(2024) geography(place) statefips(48) geoids(35000)}    {break}
+		{bf:. getcensus B19013_001, year(2024) sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)}
 
 {p 4 4 2}
 	Geographic components    {break}
-		{bf:. getcensus B19013, geocomponents(H0)}    {break}
-		{bf:. getcensus B19013, geocomponents(01 43) statefips(13)}    {break}
-		{bf:. getcensus B19013, sample(5) geography(us) geocomponents(92)}
+		{bf:. getcensus B19013, year(2024) geocomponents(H0)}    {break}
+		{bf:. getcensus B19013, year(2024) geocomponents(01 43) statefips(13)}    {break}
+		{bf:. getcensus B19013, year(2024) sample(5) geography(us) geocomponents(92)}
 
 {p}{it:Catalog}{p_end}
 
 {p 4 4 2}
 	All variables in tables of a given product type    {break}
-		{bf:. getcensus catalog, product(DP)}
+		{bf:. getcensus catalog, year(2024) product(DP)}
 
 {p 4 4 2}
 	Variables from a single table    {break}
-		{bf:. getcensus catalog, table(S0901)}
+		{bf:. getcensus catalog, year(2024) table(S0901)}
 
 {p 4 4 2}
 	Variables matching a search term    {break}
-		{bf:. getcensus catalog, search(children) product(ST)}    {break}
-		{bf:. getcensus catalog, search(educational attainment) table(S1701)}
+		{bf:. getcensus catalog, year(2024) search(children) product(ST)}    {break}
+		{bf:. getcensus catalog, year(2024) search(educational attainment) table(S1701)}
 
 
 

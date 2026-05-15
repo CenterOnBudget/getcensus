@@ -7,53 +7,53 @@ title: "Examples"
 Single table
 
 ``` stata
-getcensus S2701
+getcensus S2701, year(2024)
 ```
 
 Single variable
 
 ``` stata
-getcensus B19013_001
+getcensus B19013_001, year(2024)
 ```
 
 Multiple variables from a single table
 
 ``` stata
-getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057
+getcensus DP02_0053 DP02_0054 DP02_0055 DP02_0056 DP02_0057, year(2024)
 ```
 
 Multiple variables from more than one table
 
 ``` stata
-getcensus S1701_C03_001 S2701_C05_001
+getcensus S1701_C03_001 S2701_C05_001, year(2024)
 ```
 
 Keyword
 
 ``` stata
-getcensus medinc
+getcensus medinc, year(2024)
 ```
 
 # Years and Samples
 
-Single year (default is most recent available)
+Single year
 
 ``` stata
-getcensus B19013, year(2010)
+getcensus B19013, year(2024)
 ```
 
 Multiple years
 
 ``` stata
-getcensus B19013, years(2018/2019)
-getcensus B19013, years(2010 2015 2019)
+getcensus B19013, years(2022/2024)
+getcensus B19013, years(2019 2021 2024)
 ```
 
 Samples (default is 1)
 
 ``` stata
-getcensus B19013, sample(5)
-getcensus B19013, sample(3) year(2013)
+getcensus B19013, year(2024) sample(5)
+getcensus B19013, year(2013) sample(3)
 ```
 
 # Geographies
@@ -61,34 +61,34 @@ getcensus B19013, sample(3) year(2013)
 Types (default is state)
 
 ``` stata
-getcensus B19013, geography(us)
-getcensus B19013, geography(county)
-getcensus B19013, sample(5) geography(sldu) statefips(26)
+getcensus B19013, year(2024) geography(us)
+getcensus B19013, year(2024) geography(county)
+getcensus B19013, year(2024) sample(5) geography(sldu) statefips(26)
 ```
 
 Within a state or set of states
 
 ``` stata
-getcensus B19013, statefips(11)
-getcensus B19013, geography(county) statefips(04)
-getcensus B19013, geography(congressional district) statefips(24 51)
-getcensus B19013, sample(5) geography(metro) statefips(06)
+getcensus B19013, year(2024) statefips(11)
+getcensus B19013, year(2024) geography(county) statefips(04)
+getcensus B19013, year(2024) geography(congressional district) statefips(24 51)
+getcensus B19013, year(2024) sample(5) geography(metro) statefips(06)
 ```
 
 With specific GEOIDs
 
 ``` stata
-getcensus B19013, geography(metro) geoids(47900)
-getcensus B19013, geography(county) statefips(24) geoids(005 510)
-getcensus B19013, sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)
+getcensus B19013, year(2024) geography(metro) geoids(47900)
+getcensus B19013, year(2024) geography(county) statefips(24) geoids(005 510)
+getcensus B19013, year(2024) sample(5) geography(tract) statefips(01) countyfips(001) geoids(020100)
 ```
 
 Geographic components
 
 ``` stata
-getcensus B19013, geocomponents(H0)
-getcensus B19013, geocomponents(01 43) statefips(13)
-getcensus B19013, sample(5) geography(us) geocomponents(92)
+getcensus B19013, year(2024) geocomponents(H0)
+getcensus B19013, year(2024) geocomponents(01 43) statefips(13)
+getcensus B19013, year(2024) sample(5) geography(us) geocomponents(92)
 ```
 
 # Catalog
@@ -96,18 +96,18 @@ getcensus B19013, sample(5) geography(us) geocomponents(92)
 All variables in tables of a given product type
 
 ``` stata
-getcensus catalog, product(DP)
+getcensus catalog, year(2024) product(DP)
 ```
 
 Variables from a single table
 
 ``` stata
-getcensus catalog, table(S0901)
+getcensus catalog, year(2024) table(S0901)
 ```
 
 Variables matching a search term
 
 ``` stata
-getcensus catalog, search(children) product(ST)
-getcensus catalog, search(educational attainment) table(S1701)
+getcensus catalog, year(2024) search(children) product(ST)
+getcensus catalog, year(2024) search(educational attainment) table(S1701)
 ```
